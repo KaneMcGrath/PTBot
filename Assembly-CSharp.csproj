@@ -34,7 +34,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug\</OutputPath>
+    <OutputPath>bin\PTBot\PTBot_Data\Managed\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -400,6 +400,11 @@
     <Compile Include="Scripts\Human\ThunderSpear\BombUtil.cs" />
     <Compile Include="Scripts\Human\TriggerColliderWeapon.cs" />
     <Compile Include="Scripts\Human\UNIFORM_TYPE.cs" />
+    <Compile Include="TitanBot\CGTools.cs" />
+    <Compile Include="TitanBot\FlatUI5\FlatUI.cs" />
+    <Compile Include="TitanBot\KaneGameManager.cs" />
+    <Compile Include="TitanBot\PTBot.cs" />
+    <Compile Include="TitanBot\QuickMenu.cs" />
     <Compile Include="Unorganized\Language.cs" />
     <Compile Include="Scripts\Map\Cannon\Cannon.cs" />
     <Compile Include="Scripts\Map\Cannon\CannonBall.cs" />

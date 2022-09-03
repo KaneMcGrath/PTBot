@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using ApplicationManagers;
 using Settings;
+using TitanBot;
 
 namespace UI
 {
@@ -88,10 +89,11 @@ namespace UI
             Text versionText = ElementFactory.CreateDefaultLabel(transform, ElementStyle.Default, string.Empty).GetComponent<Text>();
             ElementFactory.SetAnchor(versionText.gameObject, TextAnchor.LowerCenter, TextAnchor.LowerCenter, new Vector2(0f, 20f));
             versionText.color = Color.white;
-            if (ApplicationConfig.DevelopmentMode)
-                versionText.text = "RC MOD DEVELOPMENT VERSION";
-            else
-                versionText.text = "RC Mod Version " + ApplicationConfig.GameVersion + ".";
+            versionText.text = KaneGameManager.GameVersionString;
+            //if (ApplicationConfig.DevelopmentMode)
+            //    versionText.text = "RC MOD DEVELOPMENT VERSION";
+            //else
+            //    versionText.text = "RC Mod Version " + ApplicationConfig.GameVersion + ".";
         }
 
         private void Update()

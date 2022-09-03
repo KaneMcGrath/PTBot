@@ -40,7 +40,8 @@ namespace ApplicationManagers
             // initialize other app managers
             DebugConsole.Init();
             ApplicationConfig.Init();
-            AutoUpdateManager.Init();
+            //AutoUpdateManager.Init();
+            AutoUpdateManager.Status = AutoUpdateStatus.Updated;
             LevelInfo.Init();
             SettingsManager.Init();
             FullscreenHandler.Init();
@@ -52,6 +53,8 @@ namespace ApplicationManagers
             GameProgressManager.Init();
             MapManager.Init();
             MaterialCache.Init();
+
+            TitanBot.KaneGameManager.Init();
             if (ApplicationConfig.DevelopmentMode)
             {
                 DebugTesting.Init();

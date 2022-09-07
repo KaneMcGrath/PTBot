@@ -1,6 +1,6 @@
 using System;
 
-class RCActionHelper
+public class RCActionHelper
 {
     public int helperClass;
     public int helperType;

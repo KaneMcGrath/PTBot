@@ -7,7 +7,7 @@ using ExitGames.Client.Photon;
 using System;
 using UnityEngine;
 
-class RCAction
+public class RCAction
 {
     private int actionClass;
     private int actionType;

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace CustomSkins
 {
-    class HookCustomSkinPart : BaseCustomSkinPart
+    public class HookCustomSkinPart : BaseCustomSkinPart
     {
         public Material HookMaterial;
         public bool Transparent;

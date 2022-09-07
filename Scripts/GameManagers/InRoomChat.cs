@@ -239,6 +239,24 @@ public class InRoomChat : Photon.MonoBehaviour
                             this.addLINE("<color=#FFCC00>error: not master client</color>");
                         }
                     }
+                    else if (this.inputLine.StartsWith("/timescale"))
+                    {
+                        if (PhotonNetwork.isMasterClient)
+                        {
+                            if (float.TryParse(inputLine.Substring(11), out float f))
+                            {
+                                Time.timeScale = f;
+                            }
+                            else
+                            {
+                                addLINE("could not parse float");
+                            }
+                        }
+                        else
+                        {
+                            this.addLINE("<color=#FFCC00>error: not master client</color>");
+                        }
+                    }
                     else if (this.inputLine.StartsWith("/resetkd"))
                     {
                         Hashtable hashtable;

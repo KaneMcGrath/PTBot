@@ -400,10 +400,12 @@
     <Compile Include="Scripts\Human\ThunderSpear\BombUtil.cs" />
     <Compile Include="Scripts\Human\TriggerColliderWeapon.cs" />
     <Compile Include="Scripts\Human\UNIFORM_TYPE.cs" />
+    <Compile Include="TitanBot\PlayerTitanBot.cs" />
     <Compile Include="TitanBot\CGTools.cs" />
     <Compile Include="TitanBot\FlatUI5\FlatUI.cs" />
     <Compile Include="TitanBot\KaneGameManager.cs" />
-    <Compile Include="TitanBot\PTBot.cs" />
+    <Compile Include="TitanBot\PTAction.cs" />
+    <Compile Include="TitanBot\PTDataMachine.cs" />
     <Compile Include="TitanBot\QuickMenu.cs" />
     <Compile Include="Unorganized\Language.cs" />
     <Compile Include="Scripts\Map\Cannon\Cannon.cs" />

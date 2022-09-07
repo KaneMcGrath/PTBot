@@ -8,7 +8,7 @@ using ApplicationManagers;
 
 namespace CustomSkins
 {
-    class BaseCustomSkinPart
+    public class BaseCustomSkinPart
     {
         protected BaseCustomSkinLoader _loader;
         protected List<Renderer> _renderers;

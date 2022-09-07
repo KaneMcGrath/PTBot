@@ -6,7 +6,7 @@ using System.Collections;
 
 namespace CustomSkins
 {
-    abstract class BaseCustomSkinLoader: MonoBehaviour
+    public abstract class BaseCustomSkinLoader: MonoBehaviour
     {
         public static readonly string TransparentURL = "transparent";
         protected abstract string RendererIdPrefix { get; }

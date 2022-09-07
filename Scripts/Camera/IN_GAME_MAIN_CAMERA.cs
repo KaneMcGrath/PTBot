@@ -8,7 +8,7 @@ using System;
 using Constants;
 using Weather;
 
-class IN_GAME_MAIN_CAMERA : MonoBehaviour
+public class IN_GAME_MAIN_CAMERA : MonoBehaviour
 {
     public RotationAxes axes;
     public AudioSource bgmusic;

@@ -5,6 +5,7 @@
 
 using Photon;
 using System;
+using TitanBot;
 using UnityEngine;
 
 public class EnemyCheckCollider : Photon.MonoBehaviour
@@ -19,6 +20,7 @@ public class EnemyCheckCollider : Photon.MonoBehaviour
         if (this.count > 1)
         {
             this.active_me = false;
+            
         }
         else
         {
@@ -107,6 +109,27 @@ public class EnemyCheckCollider : Photon.MonoBehaviour
     {
         this.active_me = true;
         this.count = 0;
+
+        //PTDataMachine.CreateVisualizationSphere(this.transform.position, this.GetComponent<SphereCollider>().radius * PhotonView.Find(base.transform.root.gameObject.GetComponent<EnemyfxIDcontainer>().myOwnerViewID).gameObject.GetComponent<TITAN>().myLevel);
+        if (this.GetComponent<SphereCollider>())
+        {
+            SphereCollider sphereCollider = this.GetComponent<SphereCollider>();
+            PTDataMachine.CreateColliderSphere(sphereCollider.transform.position, sphereCollider.radius, dmg);
+        }
+        if (this.GetComponent<BoxCollider>())
+        {
+            BoxCollider boxCollider = this.GetComponent<BoxCollider>();
+            PTDataMachine.CreateColliderBox(boxCollider.transform.position, boxCollider.size, boxCollider.transform.rotation);
+        }
+        if (this.GetComponent<MeshCollider>())
+        {
+            CGTools.log("there is a mesh collider");
+        }
+        if (this.GetComponent<CapsuleCollider>())
+        {
+            CGTools.log("there is a cap collider");
+        }
+
     }
 }
 

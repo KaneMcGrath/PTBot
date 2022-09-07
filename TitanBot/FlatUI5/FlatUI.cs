@@ -77,7 +77,7 @@ namespace TitanBot.FlatUI5
             {
                 outlineModifier = 1;
             }
-            Rect insideRect = new Rect(Rect.x + defaultOutlineThickness + outlineModifier, Rect.y + defaultOutlineThickness + outlineModifier, Rect.width - (defaultOutlineThickness - outlineModifier) * 2, Rect.height - (defaultOutlineThickness - outlineModifier) * 2);
+            Rect insideRect = new Rect(Rect.x + defaultOutlineThickness + outlineModifier, Rect.y + defaultOutlineThickness + outlineModifier, Rect.width - (defaultOutlineThickness + outlineModifier) * 2, Rect.height - (defaultOutlineThickness + outlineModifier) * 2);
             if (invert)
             {
                 GUI.DrawTexture(Rect, insideColorTex);
@@ -119,6 +119,11 @@ namespace TitanBot.FlatUI5
         {
             SwitchBox(Rect, IsMouseInRect(Rect) && Input.GetKey(KeyCode.Mouse0), defaultButtonTex);
             return GUI.Button(Rect, label, ButtonStyle);
+        }
+        public static bool Button(Rect Rect, string label, Texture2D insideTex)
+        {
+            SwitchBox(Rect, IsMouseInRect(Rect) && Input.GetKey(KeyCode.Mouse0), insideTex);
+            return GUI.Button(Rect, label, BlackTextButtonStyle);
         }
 
         /// <summary>
@@ -166,6 +171,13 @@ namespace TitanBot.FlatUI5
             border = new RectOffset(1, 1, 1, 1),
             alignment = TextAnchor.MiddleCenter,
             normal = { textColor = Color.white }
+        };
+
+        private static GUIStyle BlackTextButtonStyle = new GUIStyle
+        {
+            border = new RectOffset(1, 1, 1, 1),
+            alignment = TextAnchor.MiddleCenter,
+            normal = { textColor = Color.black }
         };
 
     }

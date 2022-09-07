@@ -5,7 +5,7 @@ using System.Collections;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
-class Bullet : Photon.MonoBehaviour
+public class Bullet : Photon.MonoBehaviour
 {
     private Vector3 heightOffSet = ((Vector3) (Vector3.up * 0.48f));
     private bool isdestroying;

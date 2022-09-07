@@ -9,7 +9,7 @@ using Utility;
 
 namespace CustomSkins
 {
-    class HumanCustomSkinLoader : BaseCustomSkinLoader
+    public class HumanCustomSkinLoader : BaseCustomSkinLoader
     {
         protected override string RendererIdPrefix { get { return "human"; } }
         private int _horseViewId;

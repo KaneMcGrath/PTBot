@@ -13,7 +13,7 @@ using UI;
 using Weather;
 using GameManagers;
 
-class FengGameManagerMKII : Photon.MonoBehaviour
+public class FengGameManagerMKII : Photon.MonoBehaviour
 {
     public static bool JustLeftRoom = false;
     public Dictionary<int, CannonValues> allowedToCannon;

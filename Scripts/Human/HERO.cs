@@ -11,7 +11,7 @@ using Constants;
 using Weather;
 using GameProgress;
 
-class HERO : Photon.MonoBehaviour
+public class HERO : Photon.MonoBehaviour
 {
     private HERO_STATE _state;
     private bool almostSingleHook;

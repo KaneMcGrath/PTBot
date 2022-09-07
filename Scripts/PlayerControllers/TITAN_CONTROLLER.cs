@@ -1,8 +1,3 @@
-
-
-
-
-
 using Settings;
 using System;
 using UnityEngine;

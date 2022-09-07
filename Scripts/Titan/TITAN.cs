@@ -12,8 +12,10 @@ using CustomSkins;
 using Settings;
 using UI;
 using GameProgress;
+using TitanBot;
+using System.ComponentModel;
 
-class TITAN : Photon.MonoBehaviour
+public class TITAN : Photon.MonoBehaviour
 {
     [CompilerGenerated]
     private static Dictionary<string, int> fswitchSmap5;
@@ -137,6 +139,8 @@ class TITAN : Photon.MonoBehaviour
     private HashSet<string> _fastHeadRotationAnimations;
     private bool _ignoreLookTarget;
     private bool _fastHeadRotation;
+
+    public bool isCustomTitan = false;
 
     // extremely hacky, just move the titan far away to hide it
     private void HideTitanIfBomb()
@@ -692,6 +696,8 @@ class TITAN : Photon.MonoBehaviour
     private GameObject checkIfHitHand(Transform hand)
     {
         float num = 2.4f * this.myLevel;
+
+        PTDataMachine.CreateVisualizationSphere(hand.GetComponent<SphereCollider>().transform.position, num + 1f);
         foreach (Collider collider in Physics.OverlapSphere(hand.GetComponent<SphereCollider>().transform.position, num + 1f))
         {
             if (collider.transform.root.tag == "Player")
@@ -710,12 +716,14 @@ class TITAN : Photon.MonoBehaviour
                 }
             }
         }
+        
         return null;
     }
 
     private GameObject checkIfHitHead(Transform head, float rad)
     {
         float num = rad * this.myLevel;
+        PTDataMachine.CreateVisualizationSphere(head.position + ((Vector3)((Vector3.up * 1.5f) * this.myLevel)), num);
         foreach (GameObject obj2 in GameObject.FindGameObjectsWithTag("Player"))
         {
             if ((obj2.GetComponent<TITAN_EREN>() == null) && ((obj2.GetComponent<HERO>() == null) || !obj2.GetComponent<HERO>().isInvincible()))
@@ -819,7 +827,7 @@ class TITAN : Photon.MonoBehaviour
                 {
                     this.grabbedTarget.GetPhotonView().RPC("netUngrabbed", PhotonTargets.All, new object[0]);
                 }
-                if (this.nonAI)
+                if (this.nonAI && !isCustomTitan)
                 {
                     this.currentCamera.GetComponent<IN_GAME_MAIN_CAMERA>().setMainObject(null, true, false);
                     this.currentCamera.GetComponent<IN_GAME_MAIN_CAMERA>().setSpectorMode(true);
@@ -859,7 +867,7 @@ class TITAN : Photon.MonoBehaviour
             {
                 this.OnTitanDie(view);
             }
-            if (this.nonAI)
+            if (this.nonAI && !isCustomTitan)
             {
                 FengGameManagerMKII.instance.titanGetKill(view.owner, damage, (string) PhotonNetwork.player.customProperties[PhotonPlayerProperty.name]);
             }
@@ -943,7 +951,7 @@ class TITAN : Photon.MonoBehaviour
                 {
                     this.grabbedTarget.GetPhotonView().RPC("netUngrabbed", PhotonTargets.All, new object[0]);
                 }
-                if (this.nonAI)
+                if (this.nonAI && !isCustomTitan)
                 {
                     this.currentCamera.GetComponent<IN_GAME_MAIN_CAMERA>().setMainObject(null, true, false);
                     this.currentCamera.GetComponent<IN_GAME_MAIN_CAMERA>().setSpectorMode(true);
@@ -2708,7 +2716,7 @@ class TITAN : Photon.MonoBehaviour
         if (!this.hasDie)
         {
             this.hasDie = true;
-            if (this.nonAI)
+            if (this.nonAI && !isCustomTitan)
             {
                 this.currentCamera.GetComponent<IN_GAME_MAIN_CAMERA>().setMainObject(null, true, false);
                 this.currentCamera.GetComponent<IN_GAME_MAIN_CAMERA>().setSpectorMode(true);
@@ -3548,7 +3556,17 @@ class TITAN : Photon.MonoBehaviour
             {
                 this.findNearestHero2();
             }
-            this.controller = base.gameObject.GetComponent<TITAN_CONTROLLER>();
+            if (isCustomTitan)
+            {
+                this.gameObject.AddComponent<PlayerTitanBot>();
+                this.controller = base.gameObject.GetComponent<PlayerTitanBot>();
+                this.controller.targetDirection = -874f;
+            }
+            else
+            {
+                this.controller = base.gameObject.GetComponent<TITAN_CONTROLLER>();
+            }
+            QuickMenu.myLastPT = this;
             StartCoroutine(HandleSpawnCollisionCoroutine(2f, 20f));
         }
         if ((this.maxHealth == 0) && (SettingsManager.LegacyGameSettings.TitanHealthMode.Value > 0))
@@ -4167,6 +4185,7 @@ class TITAN : Photon.MonoBehaviour
                         if ((IN_GAME_MAIN_CAMERA.gametype == GAMETYPE.MULTIPLAYER) && base.photonView.isMine)
                         {
                             obj9 = PhotonNetwork.Instantiate("FX/" + this.fxName, this.fxPosition, this.fxRotation, 0);
+                            CGTools.log("Instantiate : FX/" + this.fxName);
                         }
                         else
                         {

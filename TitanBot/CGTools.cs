@@ -59,5 +59,27 @@ namespace TitanBot
             }
             return new Color(num, num2, num3);
         }
+
+        public static GameObject[] GetHeros()
+        {
+            return GameObject.FindGameObjectsWithTag("Player");
+
+        }
+
+        public static GameObject player()
+        {
+            foreach (GameObject gameObject in GameObject.FindGameObjectsWithTag("Player"))
+            {
+                if (IN_GAME_MAIN_CAMERA.gametype != GAMETYPE.SINGLE && gameObject.GetPhotonView().owner.isLocal)
+                {
+                    return gameObject;
+                }
+            }
+            if (Camera.main.GetComponent<IN_GAME_MAIN_CAMERA>().main_object.GetComponent<HERO>())
+            {
+                return Camera.main.GetComponent<IN_GAME_MAIN_CAMERA>().main_object;
+            }
+            return null;
+        }
     }
 }

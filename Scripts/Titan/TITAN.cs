@@ -3561,6 +3561,7 @@ public class TITAN : Photon.MonoBehaviour
                 this.gameObject.AddComponent<PlayerTitanBot>();
                 this.controller = base.gameObject.GetComponent<PlayerTitanBot>();
                 this.controller.targetDirection = -874f;
+                
             }
             else
             {

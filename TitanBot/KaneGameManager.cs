@@ -12,9 +12,10 @@ namespace TitanBot
     {
         public static KaneGameManager instance;
         public static bool toggleQuickMenu = false;
-        public static string GameVersionString = "PTBot 1.0 (Dev)";
+        public static string GameVersionString = "PTBot 1.1 (Dev)";
         public static bool doCameraRotation = false;
         public static float cameraRotationSpeed = 30f;
+        public static string Path = Application.dataPath + "/PTBot/";
 
         public static void Init()
         {
@@ -34,7 +35,6 @@ namespace TitanBot
 
         public void Update()
         {
-            PTDataMachine.UpdatePlayerCapsule();
             if (doCameraRotation)
             {
                 Camera.main.transform.RotateAround(Vector3.zero, Vector3.up, cameraRotationSpeed * Time.deltaTime);

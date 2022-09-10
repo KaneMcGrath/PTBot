@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using Settings;
 using GameProgress;
+using TitanBot;
 
 public class TriggerColliderWeapon : MonoBehaviour
 {
@@ -64,6 +65,7 @@ public class TriggerColliderWeapon : MonoBehaviour
             }
             if (other.gameObject.tag == "playerHitbox")
             {
+                
                 if (LevelInfo.getInfo(FengGameManagerMKII.level).pvp)
                 {
                     float b = 1f - (Vector3.Distance(other.gameObject.transform.position, base.transform.position) * 0.05f);
@@ -99,6 +101,8 @@ public class TriggerColliderWeapon : MonoBehaviour
             }
             else if (other.gameObject.tag == "titanneck")
             {
+                
+
                 HitBox item = other.gameObject.GetComponent<HitBox>();
                 if (((item != null) && this.checkIfBehind(item.transform.root.gameObject)) && !this.currentHits.Contains(item))
                 {

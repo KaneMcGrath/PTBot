@@ -21,15 +21,7 @@ namespace TitanBot
         public static string[] tabNames = new string[]
         {
             "TitanBot",
-            "Hitbox Data",
-            "General",
-            "Administration",
-            "Level Manager",
-            "Hero Settings",
-            "Titan Settings",
-            "Spawn Objects",
-            "Graphics",
-            "Additional"
+            "Hitbox Data"
         };
 
         private static bool resetPositionsOnAttack = false;
@@ -75,7 +67,7 @@ namespace TitanBot
                 
                 myPTGO.GetComponent<TITAN>().isCustomTitan = true;
             }
-            PTDataMachine.KeepHitboxes = FlatUI.Check(IndexToRect(0, 2, 1), PTDataMachine.KeepHitboxes ,"Keep Hitbox");
+            
             if (FlatUI.Button(IndexToRect(1,2,0), "Reset Position"))
             {
                 myLastPT.transform.position = Vector3.zero;
@@ -135,6 +127,10 @@ namespace TitanBot
                 {
                     PTDataMachine.DeleteVisualizationSpheres();
                 }
+                if (PTDataMachine.RecordData)
+                {
+                    PTDataMachine.StartRecordingHitbox(PTAction.Attack);
+                }
             }
             if (FlatUI.Button(IndexToRect(3, 8, 6, 2), "slam", PTButtonColor))
             {
@@ -148,6 +144,10 @@ namespace TitanBot
                 {
                     PTDataMachine.DeleteVisualizationSpheres();
                 }
+                if (PTDataMachine.RecordData)
+                {
+                    PTDataMachine.StartRecordingHitbox(PTAction.AttackII);
+                }
             }
             if (FlatUI.Button(IndexToRect(4, 8, 4, 2), "jump", PTButtonColor))
             {
@@ -160,6 +160,10 @@ namespace TitanBot
                 if (clearHitboxesOnAttack)
                 {
                     PTDataMachine.DeleteVisualizationSpheres();
+                }
+                if (PTDataMachine.RecordData)
+                {
+                    PTDataMachine.StartRecordingHitbox(PTAction.Jump);
                 }
             }
             if (FlatUI.Button(IndexToRect(4, 8, 6, 2), "cover", PTButtonColor))
@@ -213,6 +217,10 @@ namespace TitanBot
                 {
                     PTDataMachine.DeleteVisualizationSpheres();
                 }
+                if (PTDataMachine.RecordData)
+                {
+                    PTDataMachine.StartRecordingHitbox(PTAction.grabnapel);
+                }
             }
             if (FlatUI.Button(IndexToRect(6, 8, 6, 2), "grabnaper", PTButtonColor))
             {
@@ -225,6 +233,10 @@ namespace TitanBot
                 if (clearHitboxesOnAttack)
                 {
                     PTDataMachine.DeleteVisualizationSpheres();
+                }
+                if (PTDataMachine.RecordData)
+                {
+                    PTDataMachine.StartRecordingHitbox(PTAction.grabnaper);
                 }
             }
             if (FlatUI.Button(IndexToRect(7, 8, 0, 2), "grabbackl", PTButtonColor))
@@ -239,6 +251,10 @@ namespace TitanBot
                 {
                     PTDataMachine.DeleteVisualizationSpheres();
                 }
+                if (PTDataMachine.RecordData)
+                {
+                    PTDataMachine.StartRecordingHitbox(PTAction.grabbackl);
+                }
             }
             if (FlatUI.Button(IndexToRect(7, 8, 2, 2), "grabbackr", PTButtonColor))
             {
@@ -251,6 +267,10 @@ namespace TitanBot
                 if (clearHitboxesOnAttack)
                 {
                     PTDataMachine.DeleteVisualizationSpheres();
+                }
+                if (PTDataMachine.RecordData)
+                {
+                    PTDataMachine.StartRecordingHitbox(PTAction.grabbackr);
                 }
             }
             if (FlatUI.Button(IndexToRect(7, 8, 4, 2), "grabfrontl", PTButtonColor))
@@ -265,6 +285,10 @@ namespace TitanBot
                 {
                     PTDataMachine.DeleteVisualizationSpheres();
                 }
+                if (PTDataMachine.RecordData)
+                {
+                    PTDataMachine.StartRecordingHitbox(PTAction.grabfrontl);
+                }
             }
             if (FlatUI.Button(IndexToRect(7, 8, 6, 2), "grabfrontr", PTButtonColor))
             {
@@ -277,6 +301,10 @@ namespace TitanBot
                 if (clearHitboxesOnAttack)
                 {
                     PTDataMachine.DeleteVisualizationSpheres();
+                }
+                if (PTDataMachine.RecordData)
+                {
+                    PTDataMachine.StartRecordingHitbox(PTAction.grabfrontr);
                 }
             }
             if (FlatUI.Button(IndexToRect(8, 8, 0, 2), "Suicide", PTButtonColor))
@@ -304,6 +332,10 @@ namespace TitanBot
                 {
                     PTDataMachine.DeleteVisualizationSpheres();
                 }
+                if (PTDataMachine.RecordData)
+                {
+                    PTDataMachine.StartRecordingHitbox(PTAction.choptl);
+                }
             }
             if (FlatUI.Button(IndexToRect(8, 8, 4, 2), "choptr", PTButtonColor))
             {
@@ -316,6 +348,10 @@ namespace TitanBot
                 if (clearHitboxesOnAttack)
                 {
                     PTDataMachine.DeleteVisualizationSpheres();
+                }
+                if (PTDataMachine.RecordData)
+                {
+                    PTDataMachine.StartRecordingHitbox(PTAction.choptr);
                 }
             }
             if (FlatUI.Button(IndexToRect(8, 8, 6, 2), "bite", PTButtonColor))
@@ -330,6 +366,10 @@ namespace TitanBot
                 {
                     PTDataMachine.DeleteVisualizationSpheres();
                 }
+                if (PTDataMachine.RecordData)
+                {
+                    PTDataMachine.StartRecordingHitbox(PTAction.bite);
+                }
             }
             if (FlatUI.Button(IndexToRect(9, 8, 0, 2), "bitel", PTButtonColor))
             {
@@ -342,6 +382,10 @@ namespace TitanBot
                 if (clearHitboxesOnAttack)
                 {
                     PTDataMachine.DeleteVisualizationSpheres();
+                }
+                if (PTDataMachine.RecordData)
+                {
+                    PTDataMachine.StartRecordingHitbox(PTAction.bitel);
                 }
             }
             if (FlatUI.Button(IndexToRect(9, 8, 2, 2), "biter", PTButtonColor))
@@ -356,6 +400,10 @@ namespace TitanBot
                 {
                     PTDataMachine.DeleteVisualizationSpheres();
                 }
+                if (PTDataMachine.RecordData)
+                {
+                    PTDataMachine.StartRecordingHitbox(PTAction.biter);
+                }
             }
             if (FlatUI.Button(IndexToRect(9, 8, 4, 2), "sit"))
             {
@@ -369,6 +417,10 @@ namespace TitanBot
                 {
                     PTDataMachine.DeleteVisualizationSpheres();
                 }
+            }
+            if (FlatUI.Button(IndexToRect(10), "Stop Recording", PTDataMachine.isRecording ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
+            {
+                PTDataMachine.FinishRecordingHitbox();
             }
 
             if (FlatUI.Button(IndexToRect(11, 3, 0), "Camera 1", CameraPositions[0] == Vector3.zero ? FlatUI.insideColorTex : QuickMenu.PTButtonColor))
@@ -487,6 +539,29 @@ namespace TitanBot
                 KaneGameManager.cameraRotationSpeed += 10f;
             }
             clearHitboxesOnAttack = FlatUI.Check(IndexToRect(18), clearHitboxesOnAttack, "clearHitboxesOnAttack");
+            PTDataMachine.KeepHitboxes = FlatUI.Check(IndexToRect(19), PTDataMachine.KeepHitboxes, "HitboxHistory");
+            if (FlatUI.Button(IndexToRect(20), "QuickPlayerCapsule"))
+            {
+                GameObject player = CGTools.player();
+                PTDataMachine.CreateCapsule(player.GetComponent<CapsuleCollider>(), player);
+            }
+            if (PTDataMachine.currentlyRecordingHitboxData != null)
+            {
+                GUI.Label(IndexToRect(21), "Current size :" + PTDataMachine.currentlyRecordingHitboxData.HitboxSize.ToString());
+            }
+            if (FlatUI.Button(IndexToRect(22), "Display HitboxData")){
+                if (PTDataMachine.currentlyRecordingHitboxData != null)
+                {
+                    foreach (HitboxTime hitboxTime in PTDataMachine.currentlyRecordingHitboxData.SampledHitboxes)
+                    {
+                        PTDataMachine.CreateVisualizationSphere(hitboxTime.Position, PTDataMachine.currentlyRecordingHitboxData.HitboxSize);
+                    }
+                }
+                else
+                {
+                    CGTools.log("We dont have it boss");
+                }
+            }
         }
 
         public static Rect IndexToRect(int i)

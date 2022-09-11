@@ -34,33 +34,34 @@ namespace TitanBot
         public static bool RecordData = true;
         public static bool isRecording = false;
         public static float recordingStartTime = 0f;
-        public static hitboxData currentlyRecordingHitboxData;
-        public static List<HitboxTime> hitBoxes = new List<HitboxTime>();
+        public static FloatingFire.MovesetData currentlyRecordingHitboxData;
+        public static List<FloatingFire.Hitbox> hitBoxes = new List<FloatingFire.Hitbox>();
 
         public static void StartRecordingHitbox(PTAction action)
         {
             hitBoxes.Clear();
-            currentlyRecordingHitboxData = new hitboxData(action, QuickMenu.myLastPT.myLevel, false, 0);
+            currentlyRecordingHitboxData = new FloatingFire.MovesetData(action, QuickMenu.myLastPT.myLevel);
             recordingStartTime = Time.time;
             isRecording = true;
         }
 
         public static void FinishRecordingHitbox()
         {
-            currentlyRecordingHitboxData.SampledHitboxes = hitBoxes.ToArray();
+            currentlyRecordingHitboxData.hitboxes = hitBoxes.ToArray();
             isRecording = false;
+            FloatingFire.AddData(currentlyRecordingHitboxData);
             if (!Directory.Exists(KaneGameManager.Path + "HitboxData/"))
                 Directory.CreateDirectory(KaneGameManager.Path + "HitboxData/");
             string[] lines = currentlyRecordingHitboxData.GetDataString();
-            File.WriteAllLines(KaneGameManager.Path + "HitboxData/" + currentlyRecordingHitboxData.PTAction.ToString() + "_" + currentlyRecordingHitboxData.Size.ToString() + ".txt", lines);
+            File.WriteAllLines(KaneGameManager.Path + "HitboxData/" + currentlyRecordingHitboxData.action.ToString() + "_" + currentlyRecordingHitboxData.titanLevel.ToString() + ".txt", lines);
         }
 
         public static void CreateVisualizationSphere(Vector3 pos, float radius)
         {
             if (isRecording)
             {
-                hitBoxes.Add(new HitboxTime(pos, Time.time - recordingStartTime));
-                currentlyRecordingHitboxData.HitboxSize = radius;
+                hitBoxes.Add(new FloatingFire.HitboxSphere(pos, Time.time - recordingStartTime, radius));
+
             }
             if (DrawHitboxes)
             {
@@ -96,8 +97,8 @@ namespace TitanBot
         {
             if (isRecording)
             {
-                hitBoxes.Add(new HitboxTime(pos, Time.time - recordingStartTime));
-                currentlyRecordingHitboxData.HitboxSize = radius;
+                if (damage > 0)
+                    hitBoxes.Add(new FloatingFire.HitboxSphere(pos, Time.time - recordingStartTime, radius));
             }
             if (DrawHitboxes)
             {

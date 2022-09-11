@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using Utility;
+using System.IO;
 
 namespace TitanBot
 {
@@ -22,10 +23,13 @@ namespace TitanBot
             instance = SingletonFactory.CreateSingleton(instance);
             QuickMenu.Init();
             FlatUI.Init();
+            CGLog.Start();
+            CGTools.log(GameVersionString);
         }
 
         public void OnGUI()
         {
+            CGLog.OnGUI();
             if (toggleQuickMenu)
             {
                 QuickMenu.OnGUI();

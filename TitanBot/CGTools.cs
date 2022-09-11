@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -38,9 +39,14 @@ namespace TitanBot
             return texture2D;
         }
 
+
+
+        //public static StreamWriter logWriter = new StreamWriter(KaneGameManager.Path + "log.txt");
         public static void log(string message)
         {
-            Debug.Log(message);
+            CGLog.log(message);
+            //logWriter.WriteLine(message);
+            //logWriter.Flush();
         }
 
         public static Color randomColor()

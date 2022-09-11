@@ -1,5 +1,6 @@
 ﻿using Settings;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -13,8 +14,81 @@ namespace TitanBot
     /// </summary>
     public class PlayerTitanBot : TITAN_CONTROLLER
     {
+        
+        public bool doStuff = false;
         public TITAN MyTitan = null;
-        public Dictionary<PTAction, bool> updateNextFrameList = new Dictionary<PTAction, bool>();
+        private Dictionary<PTAction, bool> updateNextFrameList = new Dictionary<PTAction, bool>();
+        
+        public float forsight = 4f;//how far into the future titan will predict player velocity
+        public int forsightSteps = 2;//how many steps not including the current position that the titan will predict
+
+        //calculated moveset data for this titan to use
+        private Dictionary<PTAction, FloatingFire.MovesetData> MovesetDatabase = new Dictionary<PTAction, FloatingFire.MovesetData>();
+
+        //All the actions we want to calculate movesetData for
+        private readonly PTAction[] pTActions = { 
+            PTAction.Attack,
+            PTAction.Jump,
+            PTAction.bitel,
+            PTAction.biter,
+            PTAction.bite,
+            PTAction.choptl,
+            PTAction.choptr
+        };
+
+        /// <summary>
+        /// Main AI Decision making function
+        /// </summary>
+        private void TheBalrog()
+        {
+            letErRip();
+        }
+
+        private void letErRip()
+        {
+            GameObject[] players = GetPlayersToCalculate();
+            if (players.Length == 0)
+            {
+                return;
+            }
+            PTAction NextAction = CheckAttacks(players);
+            if (NextAction != PTAction.nothing)
+            {
+                ExecuteAction(NextAction);
+            }
+        }
+
+        private void ExecuteAction(PTAction a)
+        {
+            if (a == PTAction.Attack)
+            {
+                isAttackDown = true;
+            }
+            if (a == PTAction.Jump)
+            {
+                isJumpDown = true;
+            }
+            if (a == PTAction.bite)
+            {
+                bite = true;
+            }
+            if (a == PTAction.bitel)
+            {
+                bitel = true;
+            }
+            if (a == PTAction.biter)
+            {
+                biter = true;
+            }
+            if (a == PTAction.choptl)
+            {
+                choptl = true;
+            }
+            if (a == PTAction.choptr)
+            {
+                choptr = true;
+            }
+        }
 
         private void Start()
         {
@@ -25,8 +99,28 @@ namespace TitanBot
             }
         }
 
+        /// <summary>
+        /// finds the closest movesetData from the database
+        /// if its not an exact match attempt to scale it
+        /// </summary>
+        /// <param name="titanLevel"></param>
+        public void CalculateMovesetData(float titanLevel)
+        {
+            foreach (PTAction action in pTActions)
+            {
+                FloatingFire.MovesetData data = FloatingFire.GetClosestData(action, titanLevel);
+                if (data != null)
+                    MovesetDatabase.Add(action, data);
+                else
+                {
+                    CGTools.log("CalculateMovesetData(float titanLevel) > Null Data for PTAction [" + action.ToString() + "]");
+                }
+            }
+        }
+
         private void Update()
         {
+            TheBalrog();
             if (isAttackDown)
             {
                 if (updateNextFrameList[PTAction.Attack])
@@ -220,7 +314,36 @@ namespace TitanBot
 
         }
 
-        
+        /// <summary>
+        /// checks for the quickest attack that can be excecuted and returns the corresponding PTAction
+        /// </summary>
+        /// <param name="PlayersToCheck"></param>
+        /// <returns></returns>
+        private PTAction CheckAttacks(GameObject[] PlayersToCheck)
+        {
+            PTAction result = PTAction.nothing;
+            float lowestTime = float.MaxValue;
+            
+            foreach (PTAction action in MovesetDatabase.Keys)
+            {
+                foreach (GameObject p in PlayersToCheck)
+                {
+                    for (int i = 0; i < forsightSteps + 1; i++)
+                    {
+                        //float f = FloatingFire.checkMoveset(MovesetDatabase[action], PTTools.predictPlayerMotion(p, (forsight / forsightSteps) * i), (forsight / forsightSteps) * i);
+                        float f = FloatingFire.CatchingSmoke(MovesetDatabase[action], p, (forsight / forsightSteps) * i);
+                        if (f < lowestTime)
+                        {
+                            lowestTime = f;
+                            result = action;
+                        }
+                    }
+                    
+                }
+            }
+
+            return result;
+        }
 
         /// <summary>
         /// Finds nearby players as well as players on a trajectory towards the titan
@@ -237,8 +360,8 @@ namespace TitanBot
                 }
                 else
                 {
-                    Vector3 pos1 = predictPlayerMotion(g, 0.5f);
-                    Vector3 pos2 = predictPlayerMotion(g, 1f);
+                    Vector3 pos1 = PTTools.predictPlayerMotion(g, 0.5f);
+                    Vector3 pos2 = PTTools.predictPlayerMotion(g, 1f);
                     if (Vector3.Distance(pos1, MyTitan.transform.position) < 200f || Vector3.Distance(pos1, MyTitan.transform.position) < 200f)
                     {
                         list.Add(g);
@@ -254,18 +377,5 @@ namespace TitanBot
                 return new GameObject[0];
             }
         }
-
-        /// <summary>
-        /// Estimates a players position after a given amount of time
-        /// dosent take acceleration, hooks, or collisions into account
-        /// </summary>
-        /// <param name="player"></param>
-        /// <param name="t"></param>
-        /// <returns></returns>
-        private Vector3 predictPlayerMotion(GameObject player, float t)
-        {
-            return player.transform.position + player.transform.rigidbody.velocity * t + new Vector3(0f, -20f * player.rigidbody.mass, 0f) * t * t * 0.5f;
-        }
-
     }
 }

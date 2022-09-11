@@ -25,6 +25,7 @@ namespace TitanBot
         bitel,
         biter,
         cover,
-        sit
+        sit,
+        nothing
     }
 }

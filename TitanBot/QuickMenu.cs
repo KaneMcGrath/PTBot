@@ -540,21 +540,21 @@ namespace TitanBot
             }
             clearHitboxesOnAttack = FlatUI.Check(IndexToRect(18), clearHitboxesOnAttack, "clearHitboxesOnAttack");
             PTDataMachine.KeepHitboxes = FlatUI.Check(IndexToRect(19), PTDataMachine.KeepHitboxes, "HitboxHistory");
-            if (FlatUI.Button(IndexToRect(20), "QuickPlayerCapsule"))
+            if (FlatUI.Button(IndexToRect(20), "setup stuff"))
             {
-                GameObject player = CGTools.player();
-                PTDataMachine.CreateCapsule(player.GetComponent<CapsuleCollider>(), player);
+                ((PlayerTitanBot)myLastPT.controller).CalculateMovesetData(myLastPT.myLevel);
             }
-            if (PTDataMachine.currentlyRecordingHitboxData != null)
+            if (FlatUI.Button(IndexToRect(21), "enable stuff"))
             {
-                GUI.Label(IndexToRect(21), "Current size :" + PTDataMachine.currentlyRecordingHitboxData.HitboxSize.ToString());
+                ((PlayerTitanBot)myLastPT.controller).doStuff = true;
             }
+
             if (FlatUI.Button(IndexToRect(22), "Display HitboxData")){
                 if (PTDataMachine.currentlyRecordingHitboxData != null)
                 {
-                    foreach (HitboxTime hitboxTime in PTDataMachine.currentlyRecordingHitboxData.SampledHitboxes)
+                    foreach (FloatingFire.HitboxSphere hitboxTime in PTDataMachine.currentlyRecordingHitboxData.hitboxes)
                     {
-                        PTDataMachine.CreateVisualizationSphere(hitboxTime.Position, PTDataMachine.currentlyRecordingHitboxData.HitboxSize);
+                        PTDataMachine.CreateVisualizationSphere(hitboxTime.pos, hitboxTime.radius);
                     }
                 }
                 else

@@ -16,9 +16,10 @@ namespace TitanBot
     {
         public static Dictionary<PTAction, List<MovesetData>> AllHitboxData = new Dictionary<PTAction, List<MovesetData>>();
         public static float HitboxTimeGrace = 0.3f;
+        public static bool debugMovementChecking = false;
 
         //checks hitboxes in order of time and returns the time of the first hitbox to connect
-        public static float checkMoveset(MovesetData data, Vector3 target, float timeOffset = 0f)
+        public static float checkMoveset(MovesetData data, Vector3 target, Transform owner, float timeOffset = 0f)
         {
             for (int i = 0; i < data.hitboxes.Length; i++)
             {
@@ -26,7 +27,7 @@ namespace TitanBot
                 Hitbox h = data.hitboxes[i];
                 if (h.time > timeOffset - HitboxTimeGrace && h.time < timeOffset + HitboxTimeGrace)
                 {
-                    if (h.CheckTrigger(target))
+                    if (h.CheckTrigger(target, owner))
                     {
                         return h.time;
                     }
@@ -38,22 +39,19 @@ namespace TitanBot
         //calculates intercepts at the time of each hitbox then see if that hits
         //returns the lowest time that hits
         //probably a lag machine
-        public static float CatchingSmoke(MovesetData data, GameObject target, float timeOffset = 0f)
+        public static float CatchingSmoke(MovesetData data, GameObject target, Transform owner)
         {
-            CGLog.track("CatchingSmokeAction", data.action.ToString());
+            if (debugMovementChecking) CGTools.pointsToTrack.Add(target.transform.position);
             for (int i = 0; i < data.hitboxes.Length; i++)
             {
                 Hitbox h = data.hitboxes[i];
-                CGLog.track("CatchingSmokeHitbox[" + i.ToString() + "]", h.time.ToString() + timeOffset.ToString());
-                if (h.time > timeOffset - HitboxTimeGrace && h.time < timeOffset + HitboxTimeGrace)
+                Vector3 future = PTTools.predictPlayerMotion(target, h.time);
+                //Vector3 future = PTTools.LonelySteelSheetFlyer(target, h.time);
+                
+                if (h.CheckTrigger(future, owner))
                 {
-                    bool b = h.CheckTrigger(PTTools.predictPlayerMotion(target, timeOffset));
-                    if (b)
-                    {
-                        
-                        return h.time;
-                    }
                     
+                    return h.time;
                 }
             }
             return float.MaxValue;
@@ -137,7 +135,7 @@ namespace TitanBot
                 this.time = time;
             }
 
-            public virtual bool CheckTrigger(Vector3 target)
+            public virtual bool CheckTrigger(Vector3 target, Transform owner)
             {
                 return false;
             }
@@ -157,7 +155,7 @@ namespace TitanBot
                 this.RectangleDimentions = RectangleDimentions;
             }
 
-            public override bool CheckTrigger(Vector3 target)
+            public override bool CheckTrigger(Vector3 target, Transform owner)
             {
                 return false;
             }
@@ -174,13 +172,16 @@ namespace TitanBot
 
             //need to make this work at some point
             //think it through
-            public override bool CheckTrigger(Vector3 target)
+            public override bool CheckTrigger(Vector3 target, Transform owner)
             {
-            
-                if (Vector3.Distance(target, pos) < radius)
+                Vector3 tp = CGTools.TransformPointUnscaled(owner, pos);
+                if (debugMovementChecking) CGTools.pointsToTrack.Add(tp);
+                if (Vector3.Distance(target, tp) < radius)
                 {
+                    if (debugMovementChecking) CGTools.redPointsToTrack.Add(target);
                     return true;
                 }
+                if (debugMovementChecking) CGTools.greenPointsToTrack.Add(target);
                 return false;
             }
 

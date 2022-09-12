@@ -331,7 +331,7 @@ namespace TitanBot
                     for (int i = 0; i < forsightSteps + 1; i++)
                     {
                         //float f = FloatingFire.checkMoveset(MovesetDatabase[action], PTTools.predictPlayerMotion(p, (forsight / forsightSteps) * i), (forsight / forsightSteps) * i);
-                        float f = FloatingFire.CatchingSmoke(MovesetDatabase[action], p, (forsight / forsightSteps) * i);
+                        float f = FloatingFire.CatchingSmoke(MovesetDatabase[action], p, MyTitan.transform);
                         if (f < lowestTime)
                         {
                             lowestTime = f;
@@ -377,5 +377,14 @@ namespace TitanBot
                 return new GameObject[0];
             }
         }
+    }
+
+    public enum TitanState
+    {
+        Running,
+        Repositioning,
+        Attacking,
+        Jumping,
+
     }
 }

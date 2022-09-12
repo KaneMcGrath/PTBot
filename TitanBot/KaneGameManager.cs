@@ -24,12 +24,14 @@ namespace TitanBot
             QuickMenu.Init();
             FlatUI.Init();
             CGLog.Start();
+            CGTools.Init();
             CGTools.log(GameVersionString);
         }
 
         public void OnGUI()
         {
             CGLog.OnGUI();
+            CGTools.OnGUI();
             if (toggleQuickMenu)
             {
                 QuickMenu.OnGUI();
@@ -39,6 +41,7 @@ namespace TitanBot
 
         public void Update()
         {
+            CGTools.Update();
             if (doCameraRotation)
             {
                 Camera.main.transform.RotateAround(Vector3.zero, Vector3.up, cameraRotationSpeed * Time.deltaTime);
@@ -47,6 +50,9 @@ namespace TitanBot
             {
                 if (!toggleQuickMenu)
                 {
+                    
+                    CGLog.showLogGui = true;
+                    
                     toggleQuickMenu = true;
                     if (!Camera.main.GetComponent<IN_GAME_MAIN_CAMERA>().enabled)
                     {
@@ -65,6 +71,7 @@ namespace TitanBot
                     }
                     return;
                 }
+                CGLog.showLogGui = false;
                 toggleQuickMenu = false;
                 if (!Camera.main.GetComponent<IN_GAME_MAIN_CAMERA>().enabled)
                 {
@@ -98,6 +105,11 @@ namespace TitanBot
                     PTDataMachine.hitboxWaitCounter--;
                 }
             }
+        }
+
+        public static void OnInstantiate(PhotonPlayer player, string key, GameObject GO)
+        {
+
         }
     }
 }

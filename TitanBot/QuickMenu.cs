@@ -29,6 +29,7 @@ namespace TitanBot
 
         public static void OnGUI()
         {
+            
             FlatUI.Box(new Rect(menuX, menuY, 250f, 700f), tabColors[tabIndex], FengGameManagerMKII.instance.textureBackgroundBlack);
             tabIndex = tabs(new Rect(menuX + 250f, menuY, 700f, 100f), tabNames, tabIndex, false, tabColors);
             if (tabIndex == 0) TabMain();
@@ -546,20 +547,27 @@ namespace TitanBot
             }
             if (FlatUI.Button(IndexToRect(21), "enable stuff"))
             {
-                ((PlayerTitanBot)myLastPT.controller).doStuff = true;
+                ((PlayerTitanBot)myLastPT.controller).doStuff = !((PlayerTitanBot)myLastPT.controller).doStuff;
+                CGTools.log("Do stuff = " + ((PlayerTitanBot)myLastPT.controller).doStuff.ToString());
             }
 
-            if (FlatUI.Button(IndexToRect(22), "Display HitboxData")){
-                if (PTDataMachine.currentlyRecordingHitboxData != null)
+            showHitboxs = FlatUI.Check(IndexToRect(22), showHitboxs, "showHitboxes");
+        }
+
+       // if (!Directory.Exists(KaneGameManager.Path + "HitboxData/"))
+       // Directory.CreateDirectory(KaneGameManager.Path + "HitboxData/");
+       //     string[] lines = currentlyRecordingHitboxData.GetDataString();
+       // File.WriteAllLines(KaneGameManager.Path + "HitboxData/" + currentlyRecordingHitboxData.action.ToString() + "_" + currentlyRecordingHitboxData.titanLevel.ToString() + ".txt", lines);
+
+        public static bool showHitboxs = false;
+
+        public static void drawHitboxes()
+        {
+            if (showHitboxs && PTDataMachine.hitBoxes != null && PTDataMachine.hitBoxes.Count > 0)
+            {
+                foreach (FloatingFire.HitboxSphere hitboxTime in PTDataMachine.hitBoxes)
                 {
-                    foreach (FloatingFire.HitboxSphere hitboxTime in PTDataMachine.currentlyRecordingHitboxData.hitboxes)
-                    {
-                        PTDataMachine.CreateVisualizationSphere(hitboxTime.pos, hitboxTime.radius);
-                    }
-                }
-                else
-                {
-                    CGTools.log("We dont have it boss");
+                    CGTools.drawPoint(hitboxTime.pos);
                 }
             }
         }

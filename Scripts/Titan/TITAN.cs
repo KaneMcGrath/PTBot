@@ -1484,7 +1484,7 @@ public class TITAN : Photon.MonoBehaviour
                                     else if (!(((IN_GAME_MAIN_CAMERA.gametype != GAMETYPE.MULTIPLAYER) || !base.photonView.isMine) || obj2.GetComponent<HERO>().HasDied()))
                                     {
                                         obj2.GetComponent<HERO>().markDie();
-                                        object[] parameters = new object[] { (Vector3) (((obj2.transform.position - position) * 15f) * this.myLevel), true, !this.nonAI ? -1 : base.photonView.viewID, base.name, true };
+                                        object[] parameters = new object[] { (Vector3) (((obj2.transform.position - position) * 15f) * this.myLevel), true, (!this.nonAI || isCustomTitan) ? -1 : base.photonView.viewID, base.name, true };
                                         obj2.GetComponent<HERO>().photonView.RPC("netDie", PhotonTargets.All, parameters);
                                     }
                                 }
@@ -2789,6 +2789,10 @@ public class TITAN : Photon.MonoBehaviour
             base.name = "Punk";
             this.runAnimation = "run_abnormal_1";
             base.GetComponent<TITAN_SETUP>().setHair2();
+        }
+        if (isCustomTitan)
+        {
+            base.name = "PTBot";
         }
         if (((this.abnormalType == AbnormalType.TYPE_I) || (this.abnormalType == AbnormalType.TYPE_JUMPER)) || (this.abnormalType == AbnormalType.TYPE_PUNK))
         {
@@ -4115,7 +4119,7 @@ public class TITAN : Photon.MonoBehaviour
                                 else if (!(((IN_GAME_MAIN_CAMERA.gametype != GAMETYPE.MULTIPLAYER) || !base.photonView.isMine) || obj5.GetComponent<HERO>().HasDied()))
                                 {
                                     obj5.GetComponent<HERO>().markDie();
-                                    object[] objArray3 = new object[] { (Vector3) (((obj5.transform.position - position) * 15f) * this.myLevel), false, !this.nonAI ? -1 : base.photonView.viewID, base.name, true };
+                                    object[] objArray3 = new object[] { (Vector3) (((obj5.transform.position - position) * 15f) * this.myLevel), false, (!this.nonAI || isCustomTitan) ? -1 : base.photonView.viewID, base.name, true };
                                     obj5.GetComponent<HERO>().photonView.RPC("netDie", PhotonTargets.All, objArray3);
                                 }
                             }
@@ -4133,7 +4137,7 @@ public class TITAN : Photon.MonoBehaviour
                                 else if (!(((IN_GAME_MAIN_CAMERA.gametype != GAMETYPE.MULTIPLAYER) || !base.photonView.isMine) || obj6.GetComponent<HERO>().HasDied()))
                                 {
                                     obj6.GetComponent<HERO>().markDie();
-                                    object[] objArray4 = new object[] { (Vector3) (((obj6.transform.position - vector3) * 15f) * this.myLevel), false, !this.nonAI ? -1 : base.photonView.viewID, base.name, true };
+                                    object[] objArray4 = new object[] { (Vector3) (((obj6.transform.position - vector3) * 15f) * this.myLevel), false, (!this.nonAI || isCustomTitan) ? -1 : base.photonView.viewID, base.name, true };
                                     obj6.GetComponent<HERO>().photonView.RPC("netDie", PhotonTargets.All, objArray4);
                                 }
                             }
@@ -4154,7 +4158,7 @@ public class TITAN : Photon.MonoBehaviour
                                 else if (!(((IN_GAME_MAIN_CAMERA.gametype != GAMETYPE.MULTIPLAYER) || !base.photonView.isMine) || obj7.GetComponent<HERO>().HasDied()))
                                 {
                                     obj7.GetComponent<HERO>().markDie();
-                                    object[] objArray5 = new object[] { (Vector3) (((obj7.transform.position - vector4) * 15f) * this.myLevel), false, !this.nonAI ? -1 : base.photonView.viewID, base.name, true };
+                                    object[] objArray5 = new object[] { (Vector3) (((obj7.transform.position - vector4) * 15f) * this.myLevel), false, (!this.nonAI || isCustomTitan) ? -1 : base.photonView.viewID, base.name, true };
                                     obj7.GetComponent<HERO>().photonView.RPC("netDie", PhotonTargets.All, objArray5);
                                 }
                             }
@@ -4172,7 +4176,7 @@ public class TITAN : Photon.MonoBehaviour
                                 else if (!(((IN_GAME_MAIN_CAMERA.gametype != GAMETYPE.MULTIPLAYER) || !base.photonView.isMine) || obj8.GetComponent<HERO>().HasDied()))
                                 {
                                     obj8.GetComponent<HERO>().markDie();
-                                    object[] objArray6 = new object[] { (Vector3) (((obj8.transform.position - vector5) * 15f) * this.myLevel), false, !this.nonAI ? -1 : base.photonView.viewID, base.name, true };
+                                    object[] objArray6 = new object[] { (Vector3) (((obj8.transform.position - vector5) * 15f) * this.myLevel), false, (!this.nonAI || isCustomTitan) ? -1 : base.photonView.viewID, base.name, true };
                                     obj8.GetComponent<HERO>().photonView.RPC("netDie", PhotonTargets.All, objArray6);
                                 }
                             }
@@ -4347,7 +4351,7 @@ public class TITAN : Photon.MonoBehaviour
                                 else if (!(((IN_GAME_MAIN_CAMERA.gametype != GAMETYPE.MULTIPLAYER) || !base.photonView.isMine) || obj10.GetComponent<HERO>().HasDied()))
                                 {
                                     obj10.GetComponent<HERO>().markDie();
-                                    object[] objArray8 = new object[] { (Vector3) (((obj10.transform.position - vector13) * 15f) * this.myLevel), true, !this.nonAI ? -1 : base.photonView.viewID, base.name, true };
+                                    object[] objArray8 = new object[] { (Vector3) (((obj10.transform.position - vector13) * 15f) * this.myLevel), true, (!this.nonAI || isCustomTitan) ? -1 : base.photonView.viewID, base.name, true };
                                     obj10.GetComponent<HERO>().photonView.RPC("netDie", PhotonTargets.All, objArray8);
                                 }
                                 if (this.abnormalType == AbnormalType.TYPE_CRAWLER)
@@ -4534,7 +4538,7 @@ public class TITAN : Photon.MonoBehaviour
                                         else if (!obj13.GetComponent<HERO>().HasDied())
                                         {
                                             obj13.GetComponent<HERO>().markDie();
-                                            object[] objArray9 = new object[] { (Vector3) (((obj13.transform.position - vector15) * 15f) * this.myLevel), true, !this.nonAI ? -1 : base.photonView.viewID, base.name, true };
+                                            object[] objArray9 = new object[] { (Vector3) (((obj13.transform.position - vector15) * 15f) * this.myLevel), true, (!this.nonAI || isCustomTitan) ? -1 : base.photonView.viewID, base.name, true };
                                             obj13.GetComponent<HERO>().photonView.RPC("netDie", PhotonTargets.All, objArray9);
                                         }
                                     }

@@ -3,6 +3,7 @@ using Photon;
 using System;
 using System.Collections;
 using System.Runtime.InteropServices;
+using TitanBot;
 using UnityEngine;
 
 public class Bullet : Photon.MonoBehaviour

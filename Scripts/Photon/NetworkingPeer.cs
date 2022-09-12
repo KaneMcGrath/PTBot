@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using TitanBot;
 using UnityEngine;
 using Utility;
 
@@ -724,6 +725,7 @@ internal class NetworkingPeer : LoadbalancingPeer, IPhotonPeerListener
             this.RemoveInstantiatedGO(go, true);
         }
         this.instantiatedObjects.Add(instantiationId, obj3);
+        KaneGameManager.OnInstantiate(photonPlayer, key, obj3);
         obj3.SendMessage(PhotonNetworkingMessage.OnPhotonInstantiate.ToString(), new PhotonMessageInfo(photonPlayer, timestamp, null), SendMessageOptions.DontRequireReceiver);
         return obj3;
     }

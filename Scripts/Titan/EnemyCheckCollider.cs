@@ -83,7 +83,7 @@ public class EnemyCheckCollider : Photon.MonoBehaviour
                             string titanName = string.Empty;
                             if (base.transform.root.gameObject.GetComponent<EnemyfxIDcontainer>() != null)
                             {
-                                myOwnerViewID = base.transform.root.gameObject.GetComponent<EnemyfxIDcontainer>().myOwnerViewID;
+                                 myOwnerViewID = base.transform.root.gameObject.GetComponent<EnemyfxIDcontainer>().myOwnerViewID;
                                 titanName = base.transform.root.gameObject.GetComponent<EnemyfxIDcontainer>().titanName;
                             }
                             object[] objArray2 = new object[5];

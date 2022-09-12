@@ -11,6 +11,7 @@ namespace TitanBot
     /// <summary>
     /// Stores and retrieves hitbox information at different sizes and velocities and tries to return
     /// hitboxes based on the closest match in our database
+    /// I tried to scale it to match with transform point but that didnt work for some reason
     /// </summary>
     public static class PTDataMachine
     {
@@ -50,10 +51,7 @@ namespace TitanBot
             currentlyRecordingHitboxData.hitboxes = hitBoxes.ToArray();
             isRecording = false;
             FloatingFire.AddData(currentlyRecordingHitboxData);
-            if (!Directory.Exists(KaneGameManager.Path + "HitboxData/"))
-                Directory.CreateDirectory(KaneGameManager.Path + "HitboxData/");
-            string[] lines = currentlyRecordingHitboxData.GetDataString();
-            File.WriteAllLines(KaneGameManager.Path + "HitboxData/" + currentlyRecordingHitboxData.action.ToString() + "_" + currentlyRecordingHitboxData.titanLevel.ToString() + ".txt", lines);
+            
         }
 
         public static void CreateVisualizationSphere(Vector3 pos, float radius)
@@ -98,7 +96,7 @@ namespace TitanBot
             if (isRecording)
             {
                 if (damage > 0)
-                    hitBoxes.Add(new FloatingFire.HitboxSphere(pos, Time.time - recordingStartTime, radius));
+                    hitBoxes.Add(new FloatingFire.HitboxSphere(pos, Time.time - recordingStartTime, radius * QuickMenu.myLastPT.transform.localScale.y * 1.5f));
             }
             if (DrawHitboxes)
             {

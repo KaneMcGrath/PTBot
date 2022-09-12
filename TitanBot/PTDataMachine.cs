@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 using System.IO;
+using Mono.Security.X509.Extensions;
 
 namespace TitanBot
 {
@@ -31,12 +32,127 @@ namespace TitanBot
         public static bool DrawHitboxes = true;
 
         
-        public static Dictionary<PTAction, List<hitboxData>> Database = new Dictionary<PTAction, List<hitboxData>>();
+        //public static Dictionary<PTAction, List<hitboxData>> Database = new Dictionary<PTAction, List<hitboxData>>();
         public static bool RecordData = true;
         public static bool isRecording = false;
         public static float recordingStartTime = 0f;
         public static FloatingFire.MovesetData currentlyRecordingHitboxData;
         public static List<FloatingFire.Hitbox> hitBoxes = new List<FloatingFire.Hitbox>();
+
+        public static void SaveHitboxData(bool overwrite = false)
+        {
+            string dataPath = KaneGameManager.Path + "/HitboxData/";
+            foreach (PTAction action in FloatingFire.AllHitboxData.Keys)
+            {
+                List<FloatingFire.MovesetData> list = FloatingFire.AllHitboxData[action];
+                foreach (FloatingFire.MovesetData data in list)
+                {
+                    string filename = data.action.ToString() + "_" + data.titanLevel.ToString() + ".txt";
+                    bool flag = true;
+                    if (File.Exists(dataPath + filename) && !overwrite)
+                        flag = false;
+                    if (flag)
+                    {
+                        string[] lines = data.GetDataString();
+                        File.WriteAllLines(dataPath + filename, lines);
+                    }
+                }
+            }
+        }
+
+        public static void LoadHitboxData()
+        {
+            string dataPath = KaneGameManager.Path + "/HitboxData/";
+            string[] files = Directory.GetFiles(dataPath);
+            //1 moveset data per file
+            foreach (string file in files)
+            {
+                string text = File.ReadAllText(file).Replace(Environment.NewLine, "");
+
+                List<FloatingFire.Hitbox> readHitBoxData = new List<FloatingFire.Hitbox>();
+
+                
+
+                //ex. Attack:5
+                string preData = text.Substring(0, text.IndexOf('{'));
+                CGTools.log("preData > " + preData);
+                string body = ParseMaster.FirstEncapsulatedString(text, '{', '}');
+                CGTools.log("body > " + body);
+
+                //ex. (Hsphere{13},0.4196033[22.95233,67.94828,31.8136])
+                string[] hitboxDataStrings = body.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (string hitboxDataString in hitboxDataStrings)
+                {
+                    CGTools.log("hitboxDataString > " + hitboxDataString);
+                    //ex. Hsphere{13},0.4196033
+                    string typeAndTime = hitboxDataString.Substring(1, hitboxDataString.IndexOf('[') - 1);
+                    CGTools.log("typeAndTime > " + typeAndTime);
+                    string[] typeAndTimeData = typeAndTime.Split(',');
+
+                    //ex. 22.95233,67.94828,31.8136
+                    string vector3Data = ParseMaster.FirstEncapsulatedString(hitboxDataString, '[', ']');
+                    string[] vector3Floats = vector3Data.Split(',');
+                    if (!float.TryParse(vector3Floats[0], out float x))
+                    {
+                        CGTools.log("Failed to parse file \"" + file + "\" > Vector3 x");
+                        return;
+                    }
+                    if (!float.TryParse(vector3Floats[1], out float y))
+                    {
+                        CGTools.log("Failed to parse file \"" + file + "\" > Vector3 y");
+                        return;
+                    }
+                    if (!float.TryParse(vector3Floats[2], out float z))
+                    {
+                        CGTools.log("Failed to parse file \"" + file + "\" > Vector3 z");
+                        return;
+                    }
+                    if (!float.TryParse(typeAndTimeData[1], out float time))
+                    {
+                        CGTools.log("Failed to parse file \"" + file + "\" > time");
+                        return;
+                    }
+
+
+
+                    if (typeAndTimeData[0].StartsWith("Hsphere"))
+                    {
+                        string radius = ParseMaster.FirstEncapsulatedString(typeAndTimeData[0], '{', '}');
+                        CGTools.log("radius > " + radius);
+                        if (!float.TryParse(radius, out float rad))
+                        {
+                            CGTools.log("Failed to parse file \"" + file + "\" > radius");
+                            return;
+                        }
+                        readHitBoxData.Add(new FloatingFire.HitboxSphere(new Vector3(x, y, z), time, rad));
+                    }
+                }
+
+                PTAction action = PTAction.nothing;
+                float titanLevel = 0f;
+                string[] preDataSplit = preData.Split(':');
+
+                try
+                {
+                    action = (PTAction)Enum.Parse(typeof(PTAction), preDataSplit[0]);
+                }
+                catch (Exception e)
+                {
+                    CGTools.log("Failed to parse file \\\"\" + file + \"\\\" > PTAction");
+                }
+                if (!float.TryParse(preDataSplit[1], out titanLevel))
+                {
+                    CGTools.log("Failed to parse file \"" + file + "\" > titanLevel");
+                    return;
+                }
+
+
+                FloatingFire.MovesetData movesetData = new FloatingFire.MovesetData(action, titanLevel);
+                movesetData.hitboxes = readHitBoxData.ToArray();
+
+                FloatingFire.AddData(movesetData);
+            }
+        }
 
         public static void StartRecordingHitbox(PTAction action)
         {
@@ -283,28 +399,7 @@ namespace TitanBot
             VisualizationSpheres.Clear();
         }
 
-        public static hitboxData GetClosestHitboxData(PTAction action, float size)
-        {
-            if (Database.ContainsKey(action))
-            {
-                hitboxData[] hitboxData = Database[action].ToArray();
-                float lastClosestSize = float.PositiveInfinity;
-                int lastClosestIndex = -1;
-                for (int i = 0; i < hitboxData.Length; i++)
-                {
-                    if (Math.Abs(size - hitboxData[i].Size) < lastClosestSize)
-                    {
-                        lastClosestSize = hitboxData[i].Size;
-                        lastClosestIndex = i;
-                    }
-                }
-                if (lastClosestIndex >= 0)
-                {
-                    return hitboxData[lastClosestIndex];
-                }
-            }
-            return null;
-        }
+
 
         
 

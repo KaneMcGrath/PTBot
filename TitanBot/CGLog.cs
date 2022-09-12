@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using TitanBot.FlatUI5;
@@ -9,9 +10,18 @@ namespace TitanBot
 {
     public class CGLog
     {
-        // Token: 0x06000015 RID: 21 RVA: 0x00002101 File Offset: 0x00000301
+        public static bool WriteToFile = true;
+        public static string filePath = KaneGameManager.Path + "log.txt";
+
+        public static StreamWriter logWriter = new StreamWriter(KaneGameManager.Path + "log.txt");
+
         public static void log(string message)
         {
+            if (WriteToFile)
+            {
+                logWriter.WriteLine(message);
+                logWriter.Flush();
+            }
             CGLog.fullLog.Add(message);
             CGLog.logTimer = Time.time + CGLog.waitTime;
         }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using static UIPopupList;
+using static ICSharpCode.SharpZipLib.Zip.FastZip;
 
 namespace TitanBot
 {
@@ -68,7 +69,24 @@ namespace TitanBot
                 
                 myPTGO.GetComponent<TITAN>().isCustomTitan = true;
             }
-            
+            if (FlatUI.Button(IndexToRect(0, 2, 1), "Draw Data"))
+            {
+                foreach (PTAction action in FloatingFire.AllHitboxData.Keys)
+                {
+                    List<FloatingFire.MovesetData> list = FloatingFire.AllHitboxData[action];
+                    foreach (FloatingFire.MovesetData data in list)
+                    {
+                        foreach (FloatingFire.Hitbox hitbox in data.hitboxes)
+                        {
+                            if (hitbox.GetType() == typeof(FloatingFire.HitboxSphere))
+                            {
+                                FloatingFire.HitboxSphere hitboxSphere = (FloatingFire.HitboxSphere)hitbox;
+                                PTDataMachine.CreateVisualizationSphere(hitboxSphere.pos, hitboxSphere.radius);
+                            }
+                        }
+                    }
+                }
+            }
             if (FlatUI.Button(IndexToRect(1,2,0), "Reset Position"))
             {
                 myLastPT.transform.position = Vector3.zero;
@@ -523,12 +541,19 @@ namespace TitanBot
                 Camera.main.transform.position = CameraPositions[id];
                 Camera.main.transform.rotation = CameraRotations[id];
             }
-            if (FlatUI.Button(IndexToRect(14), "Reset Cameras"))
+            if (FlatUI.Button(IndexToRect(14,2,0), "Reset Cameras"))
             {
                 CameraPositions = new Vector3[10];
             }
-
-            resetPositionsOnAttack = FlatUI.Check(IndexToRect(15), resetPositionsOnAttack, "Reset Position On Attack");
+            resetPositionsOnAttack = FlatUI.Check(IndexToRect(14,2,1), resetPositionsOnAttack, "Reset Position");
+            if (FlatUI.Button(IndexToRect(15, 2, 0), "Save Data"))
+            {
+                PTDataMachine.SaveHitboxData(true);
+            }
+            if (FlatUI.Button(IndexToRect(15, 2, 1), "Load Data"))
+            {
+                PTDataMachine.LoadHitboxData();
+            }
             KaneGameManager.doCameraRotation = FlatUI.Check(IndexToRect(16), KaneGameManager.doCameraRotation, "doCameraRotation");
             if(FlatUI.Button(IndexToRect(17, 4, 0), "--"))
             {
@@ -553,11 +578,6 @@ namespace TitanBot
 
             showHitboxs = FlatUI.Check(IndexToRect(22), showHitboxs, "showHitboxes");
         }
-
-       // if (!Directory.Exists(KaneGameManager.Path + "HitboxData/"))
-       // Directory.CreateDirectory(KaneGameManager.Path + "HitboxData/");
-       //     string[] lines = currentlyRecordingHitboxData.GetDataString();
-       // File.WriteAllLines(KaneGameManager.Path + "HitboxData/" + currentlyRecordingHitboxData.action.ToString() + "_" + currentlyRecordingHitboxData.titanLevel.ToString() + ".txt", lines);
 
         public static bool showHitboxs = false;
 

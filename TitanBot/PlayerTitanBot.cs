@@ -41,21 +41,38 @@ namespace TitanBot
         /// </summary>
         private void TheBalrog()
         {
+            spin();
             letErRip();
         }
 
-        private void letErRip()
+        private void spin()
+        {
+            float spinrate = 600f;
+            if (targetDirection > 360f)
+            {
+                targetDirection = 0f;
+            }
+            if (targetDirection < 0f)
+            {
+                targetDirection = 360f;
+            }
+            targetDirection += spinrate * Time.deltaTime;
+        }
+
+        private bool letErRip()
         {
             GameObject[] players = GetPlayersToCalculate();
             if (players.Length == 0)
             {
-                return;
+                return false;
             }
             PTAction NextAction = CheckAttacks(players);
             if (NextAction != PTAction.nothing)
             {
                 ExecuteAction(NextAction);
+                return true;
             }
+            return false;
         }
 
         private void ExecuteAction(PTAction a)
@@ -385,6 +402,6 @@ namespace TitanBot
         Repositioning,
         Attacking,
         Jumping,
-
+        Spinning
     }
 }

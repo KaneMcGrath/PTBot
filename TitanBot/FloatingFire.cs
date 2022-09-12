@@ -187,7 +187,7 @@ namespace TitanBot
 
             public override string GetDataString()
             {
-                return "(Hsphere," + time.ToString() + "[" + pos.x.ToString() + "," + pos.y.ToString() + "," + pos.z.ToString() + "])";
+                return "(Hsphere{" + radius.ToString() + "}," + time.ToString() + "[" + pos.x.ToString() + "," + pos.y.ToString() + "," + pos.z.ToString() + "])";
             }
         }
     }

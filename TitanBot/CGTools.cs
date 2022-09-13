@@ -13,7 +13,8 @@ namespace TitanBot
         public static Texture2D crosshairTex;
         public static Texture2D redCrosshairTex;
         public static Texture2D greenCrosshairTex;
-        public static float crosshairSize = 100f;
+        public static Texture2D mouseTex;
+        public static float crosshairSize = 30f;
         public static List<Vector3> pointsToTrack = new List<Vector3>();
         public static List<Vector3> redPointsToTrack = new List<Vector3>();
         public static List<Vector3> greenPointsToTrack = new List<Vector3>();
@@ -58,7 +59,7 @@ namespace TitanBot
             crosshairTex = readTextureFromFile(KaneGameManager.Path + "crosshairTex.png");
             redCrosshairTex = applyColorToTexture(crosshairTex, Color.red);
             greenCrosshairTex = applyColorToTexture(crosshairTex, Color.green);
-            
+            mouseTex = readTextureFromFile(KaneGameManager.Path + "MouseTex.png");
 
         }
 
@@ -68,6 +69,13 @@ namespace TitanBot
         {
             return transform.position + transform.rotation * position;
         }
+
+        public static float Wrap(float input, float min, float max)
+        {
+            return (((input - min) % (max - min)) + (max - min)) % (max - min) + min;
+        }
+
+        
 
         public static Texture2D readTextureFromFile(string path)
         {
@@ -102,7 +110,7 @@ namespace TitanBot
                 {
                     if (tex.GetPixel(x, y).a > 0.5f)
                     {
-                        CGTools.log(x.ToString() + "," + y.ToString());
+                        //CGTools.log(x.ToString() + "," + y.ToString());
                         result.SetPixel(x, y, c);
                     }
                     else
@@ -115,6 +123,28 @@ namespace TitanBot
             return result;
         }
 
+        /// <summary>
+        /// just the unity random range but im lazy
+        /// </summary>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <returns></returns>
+        public static float RandomRange(float min, float max)
+        {
+            return UnityEngine.Random.Range(min, max);
+        }
+
+        
+        /// <summary>
+        /// has a percent chance off returning true
+        /// </summary>
+        /// <param name="percent"></param>
+        /// <returns></returns>
+        public static bool Chance(float percent)
+        {
+            return (RandomRange(0, 100) < percent);
+        }
+
         //should scale from a distance of 5 to 200
         //but it fucking wont
         //I did math just please work
@@ -122,7 +152,7 @@ namespace TitanBot
         {
             Vector3 screenPosition = Camera.main.camera.WorldToScreenPoint(point);
             float distance = Vector3.Distance(Camera.main.transform.position, point);
-            float scale = Mathf.Clamp(((1/distance) * 1000f) + 10f, 5f, 200f);
+            float scale = Mathf.Clamp(((1/distance) * 1000f) + crosshairSize, 5f, 200f);
             if (screenPosition.z >= 0f)
             {
                 GUI.DrawTexture(new Rect(screenPosition.x - (scale / 2f), ((float)Screen.height - screenPosition.y) - (scale / 2f), scale, scale), crosshairTex);
@@ -133,7 +163,7 @@ namespace TitanBot
         {
             Vector3 screenPosition = Camera.main.camera.WorldToScreenPoint(point);
             float distance = Vector3.Distance(Camera.main.transform.position, point);
-            float scale = Mathf.Clamp(((1 / distance) * 1000f) + 10f, 5f, 200f);
+            float scale = Mathf.Clamp(((1 / distance) * 1000f) + crosshairSize, 5f, 200f);
             if (screenPosition.z >= 0f)
             {
                 GUI.DrawTexture(new Rect(screenPosition.x - (scale / 2f), ((float)Screen.height - screenPosition.y) - (scale / 2f), scale, scale), redCrosshairTex);
@@ -144,7 +174,7 @@ namespace TitanBot
         {
             Vector3 screenPosition = Camera.main.camera.WorldToScreenPoint(point);
             float distance = Vector3.Distance(Camera.main.transform.position, point);
-            float scale = Mathf.Clamp(((1 / distance) * 1000f) + 10f, 5f, 200f);
+            float scale = Mathf.Clamp(((1 / distance) * 1000f) + crosshairSize, 5f, 200f);
             if (screenPosition.z >= 0f)
             {
                 GUI.DrawTexture(new Rect(screenPosition.x - (scale / 2f), ((float)Screen.height - screenPosition.y) - (scale / 2f), scale, scale), greenCrosshairTex);

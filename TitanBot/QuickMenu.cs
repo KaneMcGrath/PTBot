@@ -19,10 +19,11 @@ namespace TitanBot
         public static List<GameObject> platforms = new List<GameObject>();
         public static Vector3[] CameraPositions = new Vector3[10]; 
         public static Quaternion[] CameraRotations = new Quaternion[10];
+        public static float mouseScale = 30f;
         public static string[] tabNames = new string[]
         {
             "TitanBot",
-            "Hitbox Data"
+            "Extra"
         };
 
         private static bool resetPositionsOnAttack = false;
@@ -30,25 +31,73 @@ namespace TitanBot
 
         public static void OnGUI()
         {
-            
+            menuX = Screen.width - 450f;
             FlatUI.Box(new Rect(menuX, menuY, 250f, 700f), tabColors[tabIndex], FengGameManagerMKII.instance.textureBackgroundBlack);
             tabIndex = tabs(new Rect(menuX + 250f, menuY, 700f, 100f), tabNames, tabIndex, false, tabColors);
             if (tabIndex == 0) TabMain();
-            if (tabIndex == 1) tabHitboxData();
+            if (tabIndex == 1) tabExtra();
+            GUI.DrawTexture(new Rect(Input.mousePosition.x - (mouseScale/2f), Screen.height - Input.mousePosition.y - (mouseScale / 2f), 20f, 20f), CGTools.mouseTex);
         }
 
-        public static void tabHitboxData()
+        public static void tabExtra()
         {
-            if (FlatUI.Button(IndexToRect(1), "test Parse"))
+            if (FlatUI.Button(IndexToRect(1), "Spawn Random"))
             {
-                PTDataMachine.parseTest();
+                Vector3 pos = Camera.main.transform.position;
+                Quaternion rot = Quaternion.identity;
+                float x = UnityEngine.Random.Range(-400f, 400f);
+                float z = UnityEngine.Random.Range(-400f, 400f);
+
+                Vector3 rayOrigin = new Vector3(x, 200f, z);
+                Vector3 rayDirection = Vector3.down;
+                Ray ray = new Ray(rayOrigin, rayDirection);
+
+                Vector3 spawnPosition = rayOrigin;
+
+                if (Physics.Raycast(ray, out RaycastHit raycastHit))
+                {
+                    spawnPosition = raycastHit.point;
+                }
+
+                GameObject myPTGO = PhotonNetwork.Instantiate("TITAN_VER3.1",spawnPosition, rot, 0);
+                TITAN MyPT = myPTGO.GetComponent<TITAN>();
+                myLastPT = MyPT;
+                GameObject.Destroy(myPTGO.GetComponent<TITAN_CONTROLLER>());
+                myPTGO.GetComponent<TITAN>().nonAI = true;
+                myPTGO.GetComponent<TITAN>().speed = 30f;
+                myPTGO.GetComponent<TITAN_CONTROLLER>().enabled = true;
+                myPTGO.GetComponent<TITAN>().isCustomTitan = true;
+                
+
             }
-            GUI.Label(IndexToRect(2), "Record Hitboxes");
-            if (myLastPT != null)
+            if (FlatUI.Button(IndexToRect(2), "Print Camera Pos")){
+                CGTools.log(Camera.main.transform.position.ToString());
+            }
+            if (FlatUI.Button(IndexToRect(3), "Test Connect me")){
+                KaneGameManager.OnPhotonPlayerConnected(PhotonNetwork.player);
+            }
+            PlayerTitanBot.TakeOverPT = FlatUI.Check(IndexToRect(4), PlayerTitanBot.TakeOverPT, "TakeOverPT");
+            if (FlatUI.Button(IndexToRect(5), "Announce"))
             {
-                GUI.Label(IndexToRect(3), "Titan Pos : " + myLastPT.transform.position.ToString());
+                KaneGameManager.OnJoinedRoom();
             }
-            
+            PlayerTitanBot.raycasts = SetTextbox(IndexToRect(6), PlayerTitanBot.raycasts, "raycasts", 0);
+            PlayerTitanBot.debugRaycasts = FlatUI.Check(IndexToRect(7), PlayerTitanBot.debugRaycasts, "Debug Raycasts");
+            PlayerTitanBot.debugTargets = FlatUI.Check(IndexToRect(8), PlayerTitanBot.debugTargets, "Debug Targets");
+            KaneGameManager.doInfiniteTitans = FlatUI.Check(IndexToRect(9), KaneGameManager.doInfiniteTitans, "Infinite Titans");
+            KaneGameManager.InfTitanCount = SetTextbox(IndexToRect(10), KaneGameManager.InfTitanCount, "Titan Count", 1);
+            if (FlatUI.Button(IndexToRect(11, 2, 0), "Load Data"))
+            {
+                PTDataMachine.LoadHitboxData();
+            }
+            if (FlatUI.Button(IndexToRect(11, 2, 1), "Check Data"))
+            {
+                foreach (PTAction key in HitData.AllHitboxData.Keys)
+                {
+                    CGTools.log(key.ToString());
+                }
+            }
+            PlayerTitanBot.useCustomHair = FlatUI.Check(IndexToRect(12), PlayerTitanBot.useCustomHair, "Custom Hair");
         }
 
         public static TITAN myLastPT;
@@ -71,16 +120,16 @@ namespace TitanBot
             }
             if (FlatUI.Button(IndexToRect(0, 2, 1), "Draw Data"))
             {
-                foreach (PTAction action in FloatingFire.AllHitboxData.Keys)
+                foreach (PTAction action in HitData.AllHitboxData.Keys)
                 {
-                    List<FloatingFire.MovesetData> list = FloatingFire.AllHitboxData[action];
-                    foreach (FloatingFire.MovesetData data in list)
+                    List<HitData.MovesetData> list = HitData.AllHitboxData[action];
+                    foreach (HitData.MovesetData data in list)
                     {
-                        foreach (FloatingFire.Hitbox hitbox in data.hitboxes)
+                        foreach (HitData.Hitbox hitbox in data.hitboxes)
                         {
-                            if (hitbox.GetType() == typeof(FloatingFire.HitboxSphere))
+                            if (hitbox.GetType() == typeof(HitData.HitboxSphere))
                             {
-                                FloatingFire.HitboxSphere hitboxSphere = (FloatingFire.HitboxSphere)hitbox;
+                                HitData.HitboxSphere hitboxSphere = (HitData.HitboxSphere)hitbox;
                                 PTDataMachine.CreateVisualizationSphere(hitboxSphere.pos, hitboxSphere.radius);
                             }
                         }
@@ -585,7 +634,7 @@ namespace TitanBot
         {
             if (showHitboxs && PTDataMachine.hitBoxes != null && PTDataMachine.hitBoxes.Count > 0)
             {
-                foreach (FloatingFire.HitboxSphere hitboxTime in PTDataMachine.hitBoxes)
+                foreach (HitData.HitboxSphere hitboxTime in PTDataMachine.hitBoxes)
                 {
                     CGTools.drawPoint(hitboxTime.pos);
                 }
@@ -699,6 +748,37 @@ namespace TitanBot
             PTButtonColor = CGTools.ColorTex(new Color(1f,1f,1f));
             menuX = (float)Screen.width / 2f - 350f + 1000f;
             menuY = (float) Screen.height / 2f - 250f;
+        }
+        public static string[] textBoxText = new string[100];
+        public static float SetTextbox(Rect position, float source, string label, int arrayID)
+        {
+            if (textBoxText[arrayID] == null)
+            {
+                textBoxText[arrayID] = source.ToString();
+            }
+            GUI.Label(new Rect(position.x, position.y, position.width - 150f, position.height), label);
+            textBoxText[arrayID] = GUI.TextField(new Rect(position.x + position.width - 150f, position.y, 100f, position.height), textBoxText[arrayID]);
+            if (FlatUI.Button(new Rect(position.x + position.width - 50f, position.y, 50f, position.height), "✓"))
+            {
+                return Convert.ToSingle(textBoxText[arrayID]);
+            }
+            return source;
+        }
+
+        // Token: 0x060011C1 RID: 4545 RVA: 0x000C88DC File Offset: 0x000C6ADC
+        public static int SetTextbox(Rect position, int source, string label, int arrayID)
+        {
+            if (textBoxText[arrayID] == null)
+            {
+                textBoxText[arrayID] = source.ToString();
+            }
+            GUI.Label(new Rect(position.x, position.y, position.width - 150f, position.height), label);
+            textBoxText[arrayID] = GUI.TextField(new Rect(position.x + position.width - 150f, position.y, 100f, position.height), textBoxText[arrayID]);
+            if (FlatUI.Button(new Rect(position.x + position.width - 50f, position.y, 50f, position.height), "✓"))
+            {
+                return Convert.ToInt32(textBoxText[arrayID]);
+            }
+            return source;
         }
     }
 }

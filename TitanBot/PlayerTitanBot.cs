@@ -14,35 +14,322 @@ namespace TitanBot
     /// </summary>
     public class PlayerTitanBot : TITAN_CONTROLLER
     {
-        
+        public static bool TakeOverPT = true;
+        public static int raycasts = 10;
+        public static float spinrate = 0.05f;
+        public static bool debugRaycasts = false;
+        public static bool debugTargets = false;
+        public static bool useCustomHair = true;
+
         public bool doStuff = false;
         public TITAN MyTitan = null;
         private Dictionary<PTAction, bool> updateNextFrameList = new Dictionary<PTAction, bool>();
-        
-        public float forsight = 4f;//how far into the future titan will predict player velocity
-        public int forsightSteps = 2;//how many steps not including the current position that the titan will predict
+        private GameObject[] players;
+        private GameObject closestPlayer;
+        private TitanState state = TitanState.Running;
+
+        // public float forsight = 4f;//how far into the future titan will predict player velocity
+        // public int forsightSteps = 2;//how many steps not including the current position that the titan will predict
 
         //calculated moveset data for this titan to use
-        private Dictionary<PTAction, FloatingFire.MovesetData> MovesetDatabase = new Dictionary<PTAction, FloatingFire.MovesetData>();
+        private Dictionary<PTAction, HitData.MovesetData> MovesetDatabase = new Dictionary<PTAction, HitData.MovesetData>();
 
         //All the actions we want to calculate movesetData for
         private readonly PTAction[] pTActions = { 
             PTAction.Attack,
             PTAction.Jump,
-            PTAction.bitel,
-            PTAction.biter,
-            PTAction.bite,
+            //PTAction.bitel,
+            //PTAction.biter,
+            //PTAction.bite,
             PTAction.choptl,
             PTAction.choptr
         };
 
+        private List<PTAction> usableActions = new List<PTAction>();
+
+        public void DebugGUI()
+        {
+            Vector3 point = Camera.main.WorldToScreenPoint(MyTitan.transform.position);
+            Rect Bounds = new Rect(point.x, Screen.height - point.y, 200f, 500f);
+            GUI.Label(Bounds, "");
+        }
+
+        private void teleportIfAtSpawn()
+        {
+            Vector3 spawnPos = new Vector3(0f, 0f, -530f);
+            Vector3 returnPos = new Vector3(0f, 0f, 530f);
+            if (Vector3.Distance(MyTitan.transform.position, spawnPos) < 200f)
+            {
+                MyTitan.transform.position = returnPos;
+            }
+        }
+
+        private float stateTimer = 0f;
+
         /// <summary>
         /// Main AI Decision making function
         /// </summary>
-        private void TheBalrog()
+        private void AIMaster()
         {
-            spin();
-            letErRip();
+            players = GetPlayersToCalculate();
+            if (debugRaycasts)
+            {
+                showRaycasts();
+            }
+            teleportIfAtSpawn();
+
+            if (CGTools.timer(ref stateTimer, 5f))
+            {
+                int s = UnityEngine.Random.Range(0, 3);
+                
+                if (s == 0)
+                {
+                    state = TitanState.Repositioning;
+                    //CGTools.log(state.ToString());
+                    stateTimer = Time.time + 2f;
+                }
+                if (s == 1)
+                {
+                    state = TitanState.Running;
+                    //CGTools.log(state.ToString());
+                }
+                if (s == 2)
+                {
+                    state = TitanState.Attacking;
+                    //CGTools.log(state.ToString());
+                }
+                if (s == 3)
+                {
+                    state = TitanState.Spinning;
+                    //CGTools.log(state.ToString());
+                    stateTimer = Time.time + 3f;
+                }
+            }
+
+
+            if (state == TitanState.Running)
+            {
+                run();
+                letErRip();
+            }
+            else if(state == TitanState.Attacking)
+            {
+                bool flag = false;
+                if (closestPlayer != null)
+                {
+                    if (Vector3.Distance(closestPlayer.transform.position, MyTitan.neck.position) < 100f)
+                    {
+
+
+                        if (Vector3.Distance(closestPlayer.transform.position, MyTitan.neck.position) < 30f)
+                        {
+                            flag = true;
+                            reposition();
+                        }
+                        else
+                        {
+                            flag = true;
+                            Agro();
+                        }
+                    }
+                }
+                if (!flag)
+                {
+                    run();
+                }
+                letErRip();
+            }
+            else if (state == TitanState.Spinning)
+            {
+                spin();
+            }
+            else if (state == TitanState.Repositioning)
+            {
+                bool flag = false;
+                if (closestPlayer != null)
+                {
+                    if (Vector3.Distance(closestPlayer.transform.position, MyTitan.neck.position) < 100f)
+                    {
+                        flag = true;
+                        reposition();
+                    }
+                }
+                if (!flag)
+                {
+                    run();
+                }
+                letErRip();
+            }
+
+
+            float wobbleRate = 30f;
+            float wobble = Mathf.Sin(Time.time * 4f) * wobbleRate;
+            float targetDirectionFinal = targetDirectionLerp + wobble;
+            targetLerpT += spinrate * Time.deltaTime;
+            targetDirection = Mathf.Lerp(targetDirection, targetDirectionFinal, targetLerpT);
+        }
+
+        private void runToTarget(Vector3 target)
+        {
+            Vector3 direction = target - MyTitan.transform.position;
+            Quaternion rotation = Quaternion.LookRotation(direction);
+            targetDirection = rotation.eulerAngles.y;
+        }
+
+        private void Agro()
+        {
+            Vector3 d = closestPlayer.transform.position - MyTitan.transform.position;
+            Quaternion r = Quaternion.LookRotation(d);
+            if (debugTargets)
+                CGTools.greenPointsToTrack.Add(closestPlayer.transform.position);
+            targetDirectionLerp = r.eulerAngles.y;
+        }
+        
+        private void reposition()
+        {
+            Vector3 d = closestPlayer.transform.position - MyTitan.transform.position;
+            Quaternion r = Quaternion.LookRotation(d);
+            if (debugTargets)
+                CGTools.redPointsToTrack.Add(closestPlayer.transform.position);
+            targetDirectionLerp = Quaternion.Inverse(r).eulerAngles.y;
+        }
+
+        private float targetDirectionLerp = 0f;
+        private float changeTargetDirectionTimer = 0f;
+        private float RaycastDirectionChangeTimer = 0f;
+        private float targetLerpT = 0f;
+
+        private float SpeedTimer = 0f;
+
+        private Vector3 lastFarthestPoint = Vector3.zero;
+
+        
+
+        private void run()
+        {
+            //every half second there is a 10% chance that we walk for that period
+            if (CGTools.timer(ref SpeedTimer, 0.5f))
+            {
+                if (CGTools.Chance(10f))
+                {
+                    isWALKDown = true;
+                }
+                else
+                {
+                    isWALKDown = false;
+                }
+            }
+
+            //Raycast in 8 directions and only choose directions that dont have walls
+            //If a wall is found while running, immediatly choose a new direction
+            Vector3 rayOrigin = MyTitan.transform.position + Vector3.up * 5f;
+            Vector3 rayDirection = MyTitan.transform.forward * 50f;
+            Ray ray = new Ray(rayOrigin, rayDirection);
+            //CGTools.greenPointsToTrack.Add(MyTitan.transform.position + Quaternion.Euler(new Vector3(0f,targetDirectionLerp,0f)) * MyTitan.transform.forward * 50f);
+            if (Physics.Raycast(ray, out RaycastHit raycastHit, 50f))
+            {
+                
+                if (CGTools.timer(ref RaycastDirectionChangeTimer, 1f))
+                {
+
+                    PickNewDirection();
+
+
+
+
+
+                    //targetDirectionLerp = UnityEngine.Random.Range(0f, 359f);
+                    //targetLerpT = 0f;
+                    //changeTargetDirectionTimer = Time.time + 2f;
+
+                }
+
+            }
+            else
+            {
+                RaycastDirectionChangeTimer = 0f;
+            }
+            if (debugRaycasts)
+                CGTools.pointsToTrack.Add(raycastHit.point);
+
+            
+            if (targetDirection > 360f)
+            {
+                targetDirection = 0f;
+            }
+            if (targetDirection < 0f)
+            {
+                targetDirection = 360f;
+            }
+            
+            if (CGTools.timer(ref changeTargetDirectionTimer, 2f))
+            {
+                PickNewDirection();
+            }
+            if (debugRaycasts)
+                CGTools.redPointsToTrack.Add(lastFarthestPoint);
+            
+            
+        }
+
+        
+
+        private void PickNewDirection()
+        {
+            //raycast 360 degrees starting at a random rotation and find the point that goes the farthest
+            int start = (int)UnityEngine.Random.Range(0f, 45f);
+            float lastFarthestDistance = 0f;
+            
+
+            Vector3 rayOrigin2 = MyTitan.transform.position + Vector3.up * 10f;
+            for (int i = 0; i < raycasts; i++)
+            {
+
+                Vector3 rayDirection2 = Quaternion.Euler(new Vector3(0f, i * (360 / raycasts), 0f)) * MyTitan.transform.forward;
+                Ray ray2 = new Ray(rayOrigin2, rayDirection2);
+                if (Physics.Raycast(ray2, out RaycastHit raycastHit2))
+                {
+                    if (raycastHit2.distance > lastFarthestDistance)
+                    {
+                        lastFarthestDistance = raycastHit2.distance;
+                        lastFarthestPoint = raycastHit2.point;
+                    }
+
+                }
+            }
+
+
+            Vector3 direction = lastFarthestPoint - MyTitan.transform.position;
+            Quaternion rotation = Quaternion.LookRotation(direction);
+            targetDirectionLerp = rotation.eulerAngles.y;
+            targetLerpT = 0f;
+        }
+
+        private void showRaycasts()
+        {
+            //raycast 360 degrees starting at a random rotation and find the point that goes the farthest
+            //int start = (int)UnityEngine.Random.Range(0f, 90f);
+            //int start = (int)UnityEngine.Random.Range(0f, 20f);
+            float lastFarthestDistance = 0f;
+
+            Vector3 rayOrigin2 = MyTitan.transform.position + Vector3.up * 10f;
+            for (int i = 0; i < raycasts; i++)
+            {
+                //float angle = CGTools.Wrap(start + i * 18f, 0f, 360f);
+                Vector3 rayDirection2 = Quaternion.Euler(new Vector3(0f, i * (360 / raycasts), 0f)) * MyTitan.transform.forward;
+                Ray ray2 = new Ray(rayOrigin2, rayDirection2);
+                if (Physics.Raycast(ray2, out RaycastHit raycastHit2))
+                {
+                    if (raycastHit2.distance > lastFarthestDistance)
+                    {
+                        lastFarthestDistance = raycastHit2.distance;
+                        lastFarthestPoint = raycastHit2.point;
+                    }
+
+                }
+                CGTools.pointsToTrack.Add(raycastHit2.point);
+                CGTools.redPointsToTrack.Add(lastFarthestPoint);
+            }
         }
 
         private void spin()
@@ -61,7 +348,7 @@ namespace TitanBot
 
         private bool letErRip()
         {
-            GameObject[] players = GetPlayersToCalculate();
+            
             if (players.Length == 0)
             {
                 return false;
@@ -99,10 +386,12 @@ namespace TitanBot
             }
             if (a == PTAction.choptl)
             {
+                targetDirection = -874f;
                 choptl = true;
             }
             if (a == PTAction.choptr)
             {
+                targetDirection = -874f;
                 choptr = true;
             }
         }
@@ -116,6 +405,8 @@ namespace TitanBot
             }
         }
 
+        
+
         /// <summary>
         /// finds the closest movesetData from the database
         /// if its not an exact match attempt to scale it
@@ -125,7 +416,7 @@ namespace TitanBot
         {
             foreach (PTAction action in pTActions)
             {
-                FloatingFire.MovesetData data = FloatingFire.GetClosestData(action, titanLevel);
+                HitData.MovesetData data = HitData.GetClosestData(action, titanLevel);
                 if (data != null)
                     MovesetDatabase.Add(action, data);
                 else
@@ -137,7 +428,8 @@ namespace TitanBot
 
         private void Update()
         {
-            TheBalrog();
+            if (MyTitan == null) return;
+            AIMaster();
             if (isAttackDown)
             {
                 if (updateNextFrameList[PTAction.Attack])
@@ -345,17 +637,16 @@ namespace TitanBot
             {
                 foreach (GameObject p in PlayersToCheck)
                 {
-                    for (int i = 0; i < forsightSteps + 1; i++)
+                
+                    //float f = FloatingFire.checkMoveset(MovesetDatabase[action], PTTools.predictPlayerMotion(p, (forsight / forsightSteps) * i), (forsight / forsightSteps) * i);
+                    float f = HitData.AdvanceMovesetCheck(MovesetDatabase[action], p, MyTitan.transform);
+                    if (f < lowestTime)
                     {
-                        //float f = FloatingFire.checkMoveset(MovesetDatabase[action], PTTools.predictPlayerMotion(p, (forsight / forsightSteps) * i), (forsight / forsightSteps) * i);
-                        float f = FloatingFire.CatchingSmoke(MovesetDatabase[action], p, MyTitan.transform);
-                        if (f < lowestTime)
-                        {
-                            lowestTime = f;
-                            result = action;
-                        }
+                        lowestTime = f;
+                        result = action;
                     }
-                    
+                
+                
                 }
             }
 
@@ -368,17 +659,25 @@ namespace TitanBot
         /// <returns></returns>
         private GameObject[] GetPlayersToCalculate()
         {
+            float shortestDistance = float.MaxValue;
+            GameObject closest = null;
             List<GameObject> list = new List<GameObject>();
             foreach (GameObject g in CGTools.GetHeros())
             {
-                if (Vector3.Distance(g.transform.position, MyTitan.transform.position) < 200f)
+                float dist = Vector3.Distance(g.transform.position, MyTitan.transform.position);
+                if (dist < 200f)
                 {
+                    if (dist < shortestDistance)
+                    {
+                        shortestDistance = dist;
+                        closest = g;
+                    }
                     list.Add(g);
                 }
                 else
                 {
-                    Vector3 pos1 = PTTools.predictPlayerMotion(g, 0.5f);
-                    Vector3 pos2 = PTTools.predictPlayerMotion(g, 1f);
+                    Vector3 pos1 = PTTools.predictPlayerMotion(g, 1f);
+                    Vector3 pos2 = PTTools.predictPlayerMotion(g, 2f);
                     if (Vector3.Distance(pos1, MyTitan.transform.position) < 200f || Vector3.Distance(pos1, MyTitan.transform.position) < 200f)
                     {
                         list.Add(g);
@@ -387,6 +686,7 @@ namespace TitanBot
             }
             if (list.Count > 0)
             {
+                closestPlayer = closest;
                 return list.ToArray();
             }
             else
@@ -401,7 +701,15 @@ namespace TitanBot
         Running,
         Repositioning,
         Attacking,
-        Jumping,
         Spinning
+    }
+
+    public enum Difficulty
+    {
+        easy,
+        medium,
+        Hard,
+        VeryHard,
+        VeryVeryHard
     }
 }

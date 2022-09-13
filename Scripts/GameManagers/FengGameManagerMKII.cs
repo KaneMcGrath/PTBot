@@ -12,6 +12,7 @@ using CustomSkins;
 using UI;
 using Weather;
 using GameManagers;
+using TitanBot;
 
 public class FengGameManagerMKII : Photon.MonoBehaviour
 {
@@ -5100,6 +5101,7 @@ public class FengGameManagerMKII : Photon.MonoBehaviour
 
     public void OnJoinedRoom()
     {
+        KaneGameManager.OnJoinedRoom();
         this.maxPlayers = PhotonNetwork.room.maxPlayers;
         this.playerList = string.Empty;
         char[] separator = new char[] { "`"[0] };
@@ -5139,6 +5141,7 @@ public class FengGameManagerMKII : Photon.MonoBehaviour
         hashtable.Add(PhotonPlayerProperty.isTitan, 0);
         hashtable.Add(PhotonPlayerProperty.RCteam, 0);
         hashtable.Add(PhotonPlayerProperty.currentLevel, string.Empty);
+        hashtable.Add("PTBot", KaneGameManager.GameVersionString);
         ExitGames.Client.Photon.Hashtable propertiesToSet = hashtable;
         PhotonNetwork.player.SetCustomProperties(propertiesToSet);
         this.humanScore = 0;
@@ -5480,6 +5483,7 @@ public class FengGameManagerMKII : Photon.MonoBehaviour
 
     public void OnPhotonPlayerConnected(PhotonPlayer player)
     {
+        KaneGameManager.OnPhotonPlayerConnected(player);
         if (PhotonNetwork.isMasterClient)
         {
             PhotonView photonView = base.photonView;

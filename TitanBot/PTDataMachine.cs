@@ -36,16 +36,16 @@ namespace TitanBot
         public static bool RecordData = true;
         public static bool isRecording = false;
         public static float recordingStartTime = 0f;
-        public static FloatingFire.MovesetData currentlyRecordingHitboxData;
-        public static List<FloatingFire.Hitbox> hitBoxes = new List<FloatingFire.Hitbox>();
+        public static HitData.MovesetData currentlyRecordingHitboxData;
+        public static List<HitData.Hitbox> hitBoxes = new List<HitData.Hitbox>();
 
         public static void SaveHitboxData(bool overwrite = false)
         {
             string dataPath = KaneGameManager.Path + "/HitboxData/";
-            foreach (PTAction action in FloatingFire.AllHitboxData.Keys)
+            foreach (PTAction action in HitData.AllHitboxData.Keys)
             {
-                List<FloatingFire.MovesetData> list = FloatingFire.AllHitboxData[action];
-                foreach (FloatingFire.MovesetData data in list)
+                List<HitData.MovesetData> list = HitData.AllHitboxData[action];
+                foreach (HitData.MovesetData data in list)
                 {
                     string filename = data.action.ToString() + "_" + data.titanLevel.ToString() + ".txt";
                     bool flag = true;
@@ -69,24 +69,24 @@ namespace TitanBot
             {
                 string text = File.ReadAllText(file).Replace(Environment.NewLine, "");
 
-                List<FloatingFire.Hitbox> readHitBoxData = new List<FloatingFire.Hitbox>();
+                List<HitData.Hitbox> readHitBoxData = new List<HitData.Hitbox>();
 
                 
 
                 //ex. Attack:5
                 string preData = text.Substring(0, text.IndexOf('{'));
-                CGTools.log("preData > " + preData);
+                
                 string body = ParseMaster.FirstEncapsulatedString(text, '{', '}');
-                CGTools.log("body > " + body);
+
 
                 //ex. (Hsphere{13},0.4196033[22.95233,67.94828,31.8136])
                 string[] hitboxDataStrings = body.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (string hitboxDataString in hitboxDataStrings)
                 {
-                    CGTools.log("hitboxDataString > " + hitboxDataString);
+
                     //ex. Hsphere{13},0.4196033
                     string typeAndTime = hitboxDataString.Substring(1, hitboxDataString.IndexOf('[') - 1);
-                    CGTools.log("typeAndTime > " + typeAndTime);
+
                     string[] typeAndTimeData = typeAndTime.Split(',');
 
                     //ex. 22.95233,67.94828,31.8136
@@ -118,13 +118,12 @@ namespace TitanBot
                     if (typeAndTimeData[0].StartsWith("Hsphere"))
                     {
                         string radius = ParseMaster.FirstEncapsulatedString(typeAndTimeData[0], '{', '}');
-                        CGTools.log("radius > " + radius);
                         if (!float.TryParse(radius, out float rad))
                         {
                             CGTools.log("Failed to parse file \"" + file + "\" > radius");
                             return;
                         }
-                        readHitBoxData.Add(new FloatingFire.HitboxSphere(new Vector3(x, y, z), time, rad));
+                        readHitBoxData.Add(new HitData.HitboxSphere(new Vector3(x, y, z), time, rad));
                     }
                 }
 
@@ -147,17 +146,18 @@ namespace TitanBot
                 }
 
 
-                FloatingFire.MovesetData movesetData = new FloatingFire.MovesetData(action, titanLevel);
+                HitData.MovesetData movesetData = new HitData.MovesetData(action, titanLevel);
                 movesetData.hitboxes = readHitBoxData.ToArray();
 
-                FloatingFire.AddData(movesetData);
+                HitData.AddData(movesetData);
+                CGTools.log("Hitbox data loaded!");
             }
         }
 
         public static void StartRecordingHitbox(PTAction action)
         {
             hitBoxes.Clear();
-            currentlyRecordingHitboxData = new FloatingFire.MovesetData(action, QuickMenu.myLastPT.myLevel);
+            currentlyRecordingHitboxData = new HitData.MovesetData(action, QuickMenu.myLastPT.myLevel);
             recordingStartTime = Time.time;
             isRecording = true;
         }
@@ -166,7 +166,7 @@ namespace TitanBot
         {
             currentlyRecordingHitboxData.hitboxes = hitBoxes.ToArray();
             isRecording = false;
-            FloatingFire.AddData(currentlyRecordingHitboxData);
+            HitData.AddData(currentlyRecordingHitboxData);
             
         }
 
@@ -174,7 +174,7 @@ namespace TitanBot
         {
             if (isRecording)
             {
-                hitBoxes.Add(new FloatingFire.HitboxSphere(pos, Time.time - recordingStartTime, radius));
+                hitBoxes.Add(new HitData.HitboxSphere(pos, Time.time - recordingStartTime, radius));
 
             }
             if (DrawHitboxes)
@@ -212,7 +212,7 @@ namespace TitanBot
             if (isRecording)
             {
                 if (damage > 0)
-                    hitBoxes.Add(new FloatingFire.HitboxSphere(pos, Time.time - recordingStartTime, radius * QuickMenu.myLastPT.transform.localScale.y * 1.5f));
+                    hitBoxes.Add(new HitData.HitboxSphere(pos, Time.time - recordingStartTime, radius * QuickMenu.myLastPT.transform.localScale.y * 1.5f));
             }
             if (DrawHitboxes)
             {

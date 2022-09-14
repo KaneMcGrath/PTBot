@@ -30,15 +30,18 @@ namespace TitanBot
         public static bool showPlayerCapsule = false;
         public static GameObject player;
         public static bool DrawHitboxes = true;
-
         
+
+             
         //public static Dictionary<PTAction, List<hitboxData>> Database = new Dictionary<PTAction, List<hitboxData>>();
+        
         public static bool RecordData = true;
         public static bool isRecording = false;
         public static float recordingStartTime = 0f;
         public static HitData.MovesetData currentlyRecordingHitboxData;
         public static List<HitData.Hitbox> hitBoxes = new List<HitData.Hitbox>();
-
+        private static Vector3 RecordingPosOffset;
+        
         public static void SaveHitboxData(bool overwrite = false)
         {
             string dataPath = KaneGameManager.Path + "/HitboxData/";
@@ -78,6 +81,23 @@ namespace TitanBot
                 
                 string body = ParseMaster.FirstEncapsulatedString(text, '{', '}');
 
+                PTAction action = PTAction.nothing;
+                float titanLevel = 0f;
+                string[] preDataSplit = preData.Split(':');
+
+                try
+                {
+                    action = (PTAction)Enum.Parse(typeof(PTAction), preDataSplit[0]);
+                }
+                catch (Exception e)
+                {
+                    CGTools.log("Failed to parse file \\\"\" + file + \"\\\" > PTAction");
+                }
+                if (!float.TryParse(preDataSplit[1], out titanLevel))
+                {
+                    CGTools.log("Failed to parse file \"" + file + "\" > titanLevel");
+                    return;
+                }
 
                 //ex. (Hsphere{13},0.4196033[22.95233,67.94828,31.8136])
                 string[] hitboxDataStrings = body.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
@@ -123,27 +143,58 @@ namespace TitanBot
                             CGTools.log("Failed to parse file \"" + file + "\" > radius");
                             return;
                         }
-                        readHitBoxData.Add(new HitData.HitboxSphere(new Vector3(x, y, z), time, rad));
+                        readHitBoxData.Add(new HitData.HitboxSphere(new Vector3(x, y, z), time, titanLevel, rad));
+                    }
+                    else if (typeAndTimeData[0].StartsWith("Hrect"))
+                    {
+                        string frontString = ParseMaster.FirstEncapsulatedString(typeAndTimeData[0], '{', '}');
+                        string[] rectData = frontString.Split('|');
+                        if (rectData.Length != 7)
+                        {
+                            CGTools.log("Failed to parse file \"" + file + "\" > rectData needs 7 arguments");
+                            return;
+                        }
+                        if (!float.TryParse(rectData[0], out float sizex))
+                        {
+                            CGTools.log("Failed to parse file \"" + file + "\" > sizex");
+                            return;
+                        }
+                        if (!float.TryParse(rectData[1], out float sizey))
+                        {
+                            CGTools.log("Failed to parse file \"" + file + "\" > sizey");
+                            return;
+                        }
+                        if (!float.TryParse(rectData[2], out float sizez))
+                        {
+                            CGTools.log("Failed to parse file \"" + file + "\" > sizez");
+                            return;
+                        }
+                        if (!float.TryParse(rectData[3], out float rotw))
+                        {
+                            CGTools.log("Failed to parse file \"" + file + "\" > rotw");
+                            return;
+                        }
+                        if (!float.TryParse(rectData[4], out float rotx))
+                        {
+                            CGTools.log("Failed to parse file \"" + file + "\" > rotx");
+                            return;
+                        }
+                        if (!float.TryParse(rectData[5], out float roty))
+                        {
+                            CGTools.log("Failed to parse file \"" + file + "\" > roty");
+                            return;
+                        }
+                        if (!float.TryParse(rectData[6], out float rotz))
+                        {
+                            CGTools.log("Failed to parse file \"" + file + "\" > rotz");
+                            return;
+                        }
+
+                        readHitBoxData.Add(new HitData.HitboxRectangle(new Vector3(x, y, z), time, titanLevel, new Vector3(sizex, sizey, sizez), new Quaternion(rotw, rotx, roty, rotz)));
                     }
                 }
 
-                PTAction action = PTAction.nothing;
-                float titanLevel = 0f;
-                string[] preDataSplit = preData.Split(':');
-
-                try
-                {
-                    action = (PTAction)Enum.Parse(typeof(PTAction), preDataSplit[0]);
-                }
-                catch (Exception e)
-                {
-                    CGTools.log("Failed to parse file \\\"\" + file + \"\\\" > PTAction");
-                }
-                if (!float.TryParse(preDataSplit[1], out titanLevel))
-                {
-                    CGTools.log("Failed to parse file \"" + file + "\" > titanLevel");
-                    return;
-                }
+                
 
 
                 HitData.MovesetData movesetData = new HitData.MovesetData(action, titanLevel);
@@ -157,6 +208,8 @@ namespace TitanBot
         public static void StartRecordingHitbox(PTAction action)
         {
             hitBoxes.Clear();
+            RecordingPosOffset = QuickMenu.myLastPT.transform.position;
+            CGTools.log("Offset: " + RecordingPosOffset.ToString());
             currentlyRecordingHitboxData = new HitData.MovesetData(action, QuickMenu.myLastPT.myLevel);
             recordingStartTime = Time.time;
             isRecording = true;
@@ -174,8 +227,7 @@ namespace TitanBot
         {
             if (isRecording)
             {
-                hitBoxes.Add(new HitData.HitboxSphere(pos, Time.time - recordingStartTime, radius));
-
+                hitBoxes.Add(new HitData.HitboxSphere(pos - RecordingPosOffset, Time.time - recordingStartTime, QuickMenu.myLastPT.myLevel, radius));
             }
             if (DrawHitboxes)
             {
@@ -212,7 +264,7 @@ namespace TitanBot
             if (isRecording)
             {
                 if (damage > 0)
-                    hitBoxes.Add(new HitData.HitboxSphere(pos, Time.time - recordingStartTime, radius * QuickMenu.myLastPT.transform.localScale.y * 1.5f));
+                    hitBoxes.Add(new HitData.HitboxSphere(pos - RecordingPosOffset, Time.time - recordingStartTime, QuickMenu.myLastPT.myLevel, radius * QuickMenu.myLastPT.transform.localScale.y * 1.5f));
             }
             if (DrawHitboxes)
             {
@@ -257,7 +309,12 @@ namespace TitanBot
         }
         public static void CreateColliderBox(Vector3 pos, Vector3 size, Quaternion rot, int damage = 1)
         {
-
+            if (isRecording)
+            {
+                Vector3 pt = QuickMenu.myLastPT.transform.localScale * 1.5f;
+                if (damage > 0)
+                    hitBoxes.Add(new HitData.HitboxRectangle(pos - RecordingPosOffset, Time.time - recordingStartTime, QuickMenu.myLastPT.myLevel, size, rot));
+            }
             if (DrawHitboxes)
             {
                 Vector3 pt = QuickMenu.myLastPT.transform.localScale * 1.5f;
@@ -281,6 +338,7 @@ namespace TitanBot
                             renderer.material = (Material)FengGameManagerMKII.RCassets.Load("barriereditormat");
                     }
                     hitBox.transform.localScale = new Vector3(size.x * pt.x, size.y * pt.y, size.z * pt.z);
+                    //hitBox.transform.localScale = new Vector3(size.x, size.y, size.z);
                     hitBox.transform.position = pos;
                     hitBox.transform.rotation = rot;
                     hitboxWaitCounter = framesToKeepHitbox;
@@ -289,7 +347,9 @@ namespace TitanBot
                 GameObject s = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 GameObject.Destroy(s.GetComponent<BoxCollider>());
                 // + QuickMenu.myLastPT.transform.localScale * 1.5f * 2f
+
                 s.transform.localScale = new Vector3(size.x * pt.x, size.y * pt.y, size.z * pt.z);
+                //s.transform.localScale = new Vector3(size.x, size.y, size.z);
                 s.transform.rotation = rot;
                 foreach (Renderer renderer in s.GetComponentsInChildren<Renderer>())
                 {
@@ -397,33 +457,6 @@ namespace TitanBot
                 GameObject.Destroy(g);
             }
             VisualizationSpheres.Clear();
-        }
-
-
-
-        
-
-        public static void parseTest()
-        {
-            string input = "(12.438454132[1223.5114,760009.5589,99000.252510000])";
-            CGTools.log("Parsing string " + input);
-
-            float time = 0;
-            Vector3 pos = new Vector3();
-            //(0.4332[13.5114,79.5589,99.25251])
-            string timeCut = input.Substring(1, input.IndexOf('[') - 1);
-            if (!float.TryParse(timeCut, out time)) CGTools.log("Could not parse string : " + timeCut);
-            string posCut = input.Substring(input.IndexOf('[') + 1, input.IndexOf(']') - input.IndexOf('[') -1);
-            string[] parts = posCut.Split(',');
-            if (!float.TryParse(parts[0], out pos.x)) CGTools.log("Could not parse string : " + parts[0]);
-            if (!float.TryParse(parts[1], out pos.y)) CGTools.log("Could not parse string : " + parts[1]);
-            if (!float.TryParse(parts[2], out pos.z)) CGTools.log("Could not parse string : " + parts[2]);
-
-
-            CGTools.log("Time = " + timeCut);
-            CGTools.log("parts0 = " + parts[0]);
-            CGTools.log("parts1 = " + parts[1]);
-            CGTools.log("parts2 = " + parts[2]);
         }
     }
 

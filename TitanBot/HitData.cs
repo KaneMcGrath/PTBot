@@ -86,14 +86,15 @@ namespace TitanBot
             {
                 foreach (MovesetData data in AllHitboxData[action])
                 {
-                    if (Mathf.Abs(data.titanLevel - titanLevel) < closestDataDistance)
+                    float dist = Mathf.Abs(data.titanLevel - titanLevel);
+                    if (dist < closestDataDistance)
                     {
                         closestData = data;
-                        closestDataDistance = data.titanLevel;
+                        closestDataDistance = dist;
                     }
                 }
             }
-            
+            //CGTools.log("ClosestData for size " + titanLevel.ToString() + " is titan size " + closestData.titanLevel.ToString());
             return closestData;
         }
 
@@ -130,11 +131,13 @@ namespace TitanBot
         {
             public Vector3 pos;
             public float time;
+            public float level;
 
-            public Hitbox(Vector3 pos, float time)
+            public Hitbox(Vector3 pos, float time, float level)
             {
                 this.pos = pos;
                 this.time = time;
+                this.level = level;
             }
 
             public virtual bool CheckTrigger(Vector3 target, Transform owner)
@@ -151,15 +154,32 @@ namespace TitanBot
         public class HitboxRectangle : Hitbox
         {
             public Vector3 RectangleDimentions;
+            private Vector3 HalfDimentions;
+            public Quaternion RectangleRotation;
 
-            public HitboxRectangle(Vector3 pos, float time, Vector3 RectangleDimentions) : base(pos, time)
+            public HitboxRectangle(Vector3 pos, float time, float level, Vector3 RectangleDimentions, Quaternion rectangleRotation) : base(pos, time, level)
             {
                 this.RectangleDimentions = RectangleDimentions;
+                RectangleRotation = rectangleRotation;
+                CGTools.log("RectangleRotation: " + rectangleRotation.ToString());
+                HalfDimentions = new Vector3(RectangleDimentions.x * level * 1.5f / 2f, RectangleDimentions.y * level * 1.5f / 2f, RectangleDimentions.z * level * 1.5f / 2f);
             }
 
+            
             public override bool CheckTrigger(Vector3 target, Transform owner)
             {
-                return false;
+                Vector3 center = CGTools.TransformPointUnscaled(owner, pos);
+                Vector3 dx = owner.TransformDirection(RectangleRotation * Vector3.right).normalized;
+                Vector3 dy = owner.TransformDirection(RectangleRotation * Vector3.up).normalized;
+                Vector3 dz = owner.TransformDirection(RectangleRotation * Vector3.forward).normalized;
+                Vector3 d = target - center;
+                bool b = Mathf.Abs(Vector3.Dot(d, dx)) <= HalfDimentions.x && Mathf.Abs(Vector3.Dot(d, dy)) <= HalfDimentions.y && Mathf.Abs(Vector3.Dot(d, dz)) <= HalfDimentions.z;
+                return b;
+            }
+
+            public override string GetDataString()
+            {
+                return "(Hrect{" + RectangleDimentions.x + "|" + RectangleDimentions.y + "|" + RectangleDimentions.z + "|" + RectangleRotation.x + "|" + RectangleRotation.y + "|" + RectangleRotation.z + "|" + RectangleRotation.w + "}," + time.ToString() + "[" + pos.x.ToString() + "," + pos.y.ToString() + "," + pos.z.ToString() + "])";
             }
         }
 
@@ -167,7 +187,7 @@ namespace TitanBot
         {
             public float radius;
 
-            public HitboxSphere(Vector3 pos, float time, float radius) : base(pos, time)
+            public HitboxSphere(Vector3 pos, float time, float level, float radius) : base(pos, time, level)
             {
                 this.radius = radius;
             }

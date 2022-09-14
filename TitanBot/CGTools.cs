@@ -63,6 +63,26 @@ namespace TitanBot
 
         }
 
+        public static void debugVectorDirection(Vector3 pos, Vector3 normal)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                CGTools.pointsToTrack.Add(pos + normal * i);
+            }
+        }
+        public static void debugVectorDirection(Vector3 pos, Vector3 normal, int colorIndex)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                if (colorIndex == 0)
+                    CGTools.pointsToTrack.Add(pos + normal * i);
+                if (colorIndex == 1)
+                    CGTools.redPointsToTrack.Add(pos + normal * i);
+                if (colorIndex == 2)
+                    CGTools.greenPointsToTrack.Add(pos + normal * i);
+            }
+        }
+
         //Thanks Bunny83.  that was easier than I expected
         //https://answers.unity.com/questions/1238142/version-of-transformtransformpoint-which-is-unaffe.html
         public static Vector3 TransformPointUnscaled(this Transform transform, Vector3 position)
@@ -99,6 +119,11 @@ namespace TitanBot
                 CGTools.log(e.Message);
                 return null;
             }
+        }
+
+        public static PhotonPlayer findByID(int id)
+        {
+            return PhotonPlayer.Find(id);
         }
 
         public static Texture2D applyColorToTexture(Texture2D tex, Color c)

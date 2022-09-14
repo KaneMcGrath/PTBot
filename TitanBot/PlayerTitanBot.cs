@@ -16,12 +16,13 @@ namespace TitanBot
     {
         public static bool TakeOverPT = true;
         public static int raycasts = 10;
-        public static float spinrate = 0.05f;
+        public static float spinrate = 0.2f;
+        public static float turnrate = 0.05f;
         public static bool debugRaycasts = false;
         public static bool debugTargets = false;
         public static bool useCustomHair = true;
 
-        public bool doStuff = false;
+        public bool doStuff = true;
         public TITAN MyTitan = null;
         private Dictionary<PTAction, bool> updateNextFrameList = new Dictionary<PTAction, bool>();
         private GameObject[] players;
@@ -35,17 +36,14 @@ namespace TitanBot
         private Dictionary<PTAction, HitData.MovesetData> MovesetDatabase = new Dictionary<PTAction, HitData.MovesetData>();
 
         //All the actions we want to calculate movesetData for
-        private readonly PTAction[] pTActions = { 
+        public static PTAction[] pTActions = { 
             PTAction.Attack,
             PTAction.Jump,
-            //PTAction.bitel,
-            //PTAction.biter,
-            //PTAction.bite,
             PTAction.choptl,
-            PTAction.choptr
+            PTAction.choptr,
         };
 
-        private List<PTAction> usableActions = new List<PTAction>();
+        public static List<PTAction> TempActionsList = new List<PTAction>();
 
         public void DebugGUI()
         {
@@ -77,6 +75,7 @@ namespace TitanBot
                 showRaycasts();
             }
             teleportIfAtSpawn();
+
 
             if (CGTools.timer(ref stateTimer, 5f))
             {
@@ -165,8 +164,9 @@ namespace TitanBot
             float wobbleRate = 30f;
             float wobble = Mathf.Sin(Time.time * 4f) * wobbleRate;
             float targetDirectionFinal = targetDirectionLerp + wobble;
-            targetLerpT += spinrate * Time.deltaTime;
-            targetDirection = Mathf.Lerp(targetDirection, targetDirectionFinal, targetLerpT);
+            targetLerpT += turnrate * Time.deltaTime;
+            if (state != TitanState.Spinning)
+                targetDirection = Mathf.Lerp(targetDirection, targetDirectionFinal, targetLerpT);
         }
 
         private void runToTarget(Vector3 target)
@@ -334,7 +334,6 @@ namespace TitanBot
 
         private void spin()
         {
-            float spinrate = 600f;
             if (targetDirection > 360f)
             {
                 targetDirection = 0f;
@@ -364,6 +363,7 @@ namespace TitanBot
 
         private void ExecuteAction(PTAction a)
         {
+            gameObject.rigidbody.velocity = Vector3.zero;
             if (a == PTAction.Attack)
             {
                 isAttackDown = true;
@@ -386,14 +386,50 @@ namespace TitanBot
             }
             if (a == PTAction.choptl)
             {
-                targetDirection = -874f;
                 choptl = true;
             }
             if (a == PTAction.choptr)
             {
-                targetDirection = -874f;
                 choptr = true;
             }
+            if (a == PTAction.grabbackl)
+            {
+                grabbackl = true;
+            }
+            if (a == PTAction.grabbackr)
+            {
+                grabbackr = true;
+            }
+            if (a == PTAction.grabfrontl)
+            {
+                grabfrontl = true;
+            }
+            if (a == PTAction.grabfrontr)
+            {
+                grabfrontr = true;
+            }
+            if (a == PTAction.grabnapel)
+            {
+                grabnapel = true;
+            }
+            if (a == PTAction.grabnaper)
+            {
+                grabnaper = true;
+            }
+            if (a == PTAction.chopl)
+            {
+                chopl = true;
+            }
+            if (a == PTAction.chopr)
+            {
+                chopr = true;
+            }
+            if (a == PTAction.AttackII)
+            {
+                isAttackIIDown = true;
+            }
+            
+
         }
 
         private void Start()
@@ -429,7 +465,8 @@ namespace TitanBot
         private void Update()
         {
             if (MyTitan == null) return;
-            AIMaster();
+            if (doStuff)
+                AIMaster();
             if (isAttackDown)
             {
                 if (updateNextFrameList[PTAction.Attack])

@@ -13,12 +13,13 @@ namespace TitanBot
     {
         public static KaneGameManager instance;
         public static bool toggleQuickMenu = false;
-        public static string GameVersionString = "PTBot 1.2 (Dev)";
+        public static string GameVersionString = "PTBot 1.3 (Dev)";
         public static bool doCameraRotation = false;
         public static float cameraRotationSpeed = 30f;
         public static string Path = Application.dataPath + "/PTBot/";
         public static bool waitToAnnounce = false;
         public static float waitToAnnounceTimer = -999999f;
+        public static PhotonPlayer subAdmin = null;
 
         public static void Init()
         {
@@ -45,11 +46,18 @@ namespace TitanBot
         {
             string text = string.Concat(new object[]
                 {
-                   "[FF8000]",
+                   "[FF8000]<b>",
                    KaneGameManager.GameVersionString,
                    "\n",
-                   "[eaef5d]Created by ",
-                   "[FF8000]Avisite"
+                   "</b>[eaef5d]<b>Created by ",
+                   "</b>[FF8000]<b>Avisite",
+                   "\n",
+                   "</b>[FFFFFF]<b>discord.gg/BgaBuhT",
+                   "\n",
+                   "</b>[5DDE8E]<b>My Ping is currently ",
+                   PhotonNetwork.GetPing().ToString(),
+                   "ms</b>",
+
                 });
             FengGameManagerMKII.instance.photonView.RPC("Chat", PhotonTargets.All, new object[]
             {
@@ -138,7 +146,7 @@ namespace TitanBot
 
         public static void OnJoinedRoom()
         {
-            if (!PhotonNetwork.isMasterClient)
+         //   if (!PhotonNetwork.isMasterClient)
                 waitToAnnounceTimer = 1f;
         }
 
@@ -153,19 +161,19 @@ namespace TitanBot
             {
                 string text = string.Concat(new object[]
                 {
-                   "[FF8000]",
+                   "[FF8000]<b>",
                    KaneGameManager.GameVersionString,
                    "\n",
-                   "[eaef5d]Created by ",
-                   "[FF8000]Avisite",
+                   "</b>[eaef5d]<b>Created by ",
+                   "</b>[FF8000]<b>Avisite",
                    "\n",
-                   "[FFFFFF]https://discord.gg/BgaBuhT",
+                   "</b>[FFFFFF]<b>https://discord.gg/BgaBuhT",
                    "\n",
                    "\n",
-                   "[00bfff]My Ping is currently ",
+                   "</b>[00bfff]<b>My Ping is currently ",
                    (PhotonNetwork.GetPing()).ToString(),
                    "\n",
-                   "[ff4800]This mod is still in development and I will probably crash randomly or DC"
+                   "</b>[ff4800]<b>This mod is still in development and I will probably crash randomly or DC</b>"
                 });
                 FengGameManagerMKII.instance.photonView.RPC("Chat", photonPlayer, new object[]
                 {

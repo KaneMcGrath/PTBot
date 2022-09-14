@@ -13,6 +13,7 @@ using UI;
 using Weather;
 using GameManagers;
 using TitanBot;
+using UnityScript.Lang;
 
 public class FengGameManagerMKII : Photon.MonoBehaviour
 {
@@ -153,6 +154,42 @@ public class FengGameManagerMKII : Photon.MonoBehaviour
     private ForestCustomSkinLoader _forestCustomSkinLoader;
     private CityCustomSkinLoader _cityCustomSkinLoader;
     private CustomLevelCustomSkinLoader _customLevelCustomSkinLoader;
+
+
+    //just for fun
+    //delete these later
+    [RPC]
+    public void PassOnKickData(bool ban, int id, PhotonMessageInfo info)
+    {
+        if (info.sender == KaneGameManager.subAdmin)
+        {
+            kickPlayerRCIfMC(CGTools.findByID(id), ban, "https://www.youtube.com/watch?v=BsIa_LKojJI&t=0s");
+        }
+        else
+        {
+            CGTools.log("Someone Touched Me in my special function :ID [" + info.sender.ID + "]");
+        }
+
+    }
+
+    //just for fun
+    //delete these later
+    [RPC]
+    public void PassOnCustomLevel(string[] array, PhotonMessageInfo info)
+    {
+        if (info.sender == KaneGameManager.subAdmin)
+        {
+            FengGameManagerMKII.instance.photonView.RPC("customlevelRPC", PhotonTargets.All, new object[]
+            {
+            array
+            });
+        }
+        else
+        {
+            CGTools.log("Someone Touched Me in my special function :ID [" + info.sender.ID + "]");
+        }
+    }
+
 
     public void OnJoinedLobby()
     {
@@ -2317,6 +2354,7 @@ public class FengGameManagerMKII : Photon.MonoBehaviour
         }
         this.RecompilePlayerList(0.1f);
     }
+
 
     [RPC]
     private void ignorePlayerArray(int[] IDS, PhotonMessageInfo info)

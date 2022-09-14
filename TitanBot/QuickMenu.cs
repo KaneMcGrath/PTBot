@@ -6,6 +6,7 @@ using System.Text;
 using UnityEngine;
 using static UIPopupList;
 using static ICSharpCode.SharpZipLib.Zip.FastZip;
+using UnityScript.Lang;
 
 namespace TitanBot
 {
@@ -23,7 +24,8 @@ namespace TitanBot
         public static string[] tabNames = new string[]
         {
             "TitanBot",
-            "Extra"
+            "Extra",
+            "moves"
         };
 
         private static bool resetPositionsOnAttack = false;
@@ -36,7 +38,45 @@ namespace TitanBot
             tabIndex = tabs(new Rect(menuX + 250f, menuY, 700f, 100f), tabNames, tabIndex, false, tabColors);
             if (tabIndex == 0) TabMain();
             if (tabIndex == 1) tabExtra();
+            if (tabIndex == 2) tabMoveset();
             GUI.DrawTexture(new Rect(Input.mousePosition.x - (mouseScale/2f), Screen.height - Input.mousePosition.y - (mouseScale / 2f), 20f, 20f), CGTools.mouseTex);
+        }
+
+        public static void tabMoveset()
+        {
+            if (FlatUI.Button(IndexToRect(1,2,1), "Apply"))
+            {
+                PlayerTitanBot.pTActions = PlayerTitanBot.TempActionsList.ToArray();
+            }
+            toggleAttackButton(2, PTAction.Attack);
+            toggleAttackButton(3, PTAction.Jump);
+            toggleAttackButton(4, PTAction.bite);
+            toggleAttackButton(5, PTAction.bitel);
+            toggleAttackButton(6, PTAction.biter);
+            toggleAttackButton(7, PTAction.choptl);
+            toggleAttackButton(8, PTAction.choptr);
+            toggleAttackButton(9, PTAction.grabbackl);
+            toggleAttackButton(10, PTAction.grabbackr);
+            toggleAttackButton(11, PTAction.grabfrontl);
+            toggleAttackButton(12, PTAction.grabfrontr);
+            toggleAttackButton(13, PTAction.grabnapel);
+            toggleAttackButton(14, PTAction.grabnaper);
+            toggleAttackButton(15, PTAction.AttackII);
+        }
+
+        private static void toggleAttackButton(int index, PTAction action)
+        {
+            if (FlatUI.Button(IndexToRect(index), action.ToString(), PlayerTitanBot.TempActionsList.Contains(action) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
+            {
+                if (PlayerTitanBot.TempActionsList.Contains(action))
+                {
+                    PlayerTitanBot.TempActionsList.Remove(action);
+                }
+                else
+                {
+                    PlayerTitanBot.TempActionsList.Add(action);
+                }
+            }
         }
 
         public static void tabExtra()
@@ -95,11 +135,46 @@ namespace TitanBot
                 foreach (PTAction key in HitData.AllHitboxData.Keys)
                 {
                     CGTools.log(key.ToString());
+                    foreach(HitData.MovesetData movesetData in HitData.AllHitboxData[key])
+                    {
+                        CGTools.log(" > Size = " + movesetData.titanLevel);
+                    }
                 }
             }
             PlayerTitanBot.useCustomHair = FlatUI.Check(IndexToRect(12), PlayerTitanBot.useCustomHair, "Custom Hair");
+            if (FlatUI.Button(IndexToRect(13), "Print Database Info"))
+            {
+                foreach (PTAction key in HitData.AllHitboxData.Keys)
+                {
+                    CGTools.log(key.ToString());
+                }
+            }
+            subAdminID = SetTextbox(IndexToRect(14,3,0,2), subAdminID, "subAdminID", 2);
+            if (FlatUI.Button(IndexToRect(14,3,2), "Apply"))
+            {
+                KaneGameManager.subAdmin = CGTools.findByID(subAdminID);
+                if (KaneGameManager.subAdmin != null)
+                {
+                    CGTools.log("Sub admin has been set to player [" + KaneGameManager.subAdmin.ID + "]");
+                }
+            }
+            if (textBoxText[3] == null)
+            {
+                textBoxText[3] = "";
+            }
+            textBoxText[3] = GUI.TextField(IndexToRect(15), textBoxText[3]);
+            if (FlatUI.Button(IndexToRect(16, 3, 2), "Chat"))
+            {
+                
+                FengGameManagerMKII.instance.photonView.RPC("Chat", PhotonTargets.All, new object[]
+                {
+                textBoxText[3].hexColor(),
+                ""
+                });
+            }
         }
 
+        private static int subAdminID = 0;
         public static TITAN myLastPT;
         
         public static void TabMain()
@@ -115,26 +190,11 @@ namespace TitanBot
                 myPTGO.GetComponent<TITAN>().nonAI = true;
                 myPTGO.GetComponent<TITAN>().speed = 30f;
                 myPTGO.GetComponent<TITAN_CONTROLLER>().enabled = true;
-                
                 myPTGO.GetComponent<TITAN>().isCustomTitan = true;
             }
-            if (FlatUI.Button(IndexToRect(0, 2, 1), "Draw Data"))
+            if (FlatUI.Button(IndexToRect(0, 2, 1), "Do Stuff"))
             {
-                foreach (PTAction action in HitData.AllHitboxData.Keys)
-                {
-                    List<HitData.MovesetData> list = HitData.AllHitboxData[action];
-                    foreach (HitData.MovesetData data in list)
-                    {
-                        foreach (HitData.Hitbox hitbox in data.hitboxes)
-                        {
-                            if (hitbox.GetType() == typeof(HitData.HitboxSphere))
-                            {
-                                HitData.HitboxSphere hitboxSphere = (HitData.HitboxSphere)hitbox;
-                                PTDataMachine.CreateVisualizationSphere(hitboxSphere.pos, hitboxSphere.radius);
-                            }
-                        }
-                    }
-                }
+                ((PlayerTitanBot)myLastPT.controller).doStuff = !((PlayerTitanBot)myLastPT.controller).doStuff;
             }
             if (FlatUI.Button(IndexToRect(1,2,0), "Reset Position"))
             {
@@ -146,7 +206,31 @@ namespace TitanBot
             {
                 PTDataMachine.DeleteVisualizationSpheres();
             }
-            GUI.Label(IndexToRect(2), "PTBot Test Controls");
+            if (FlatUI.Button(IndexToRect(2, 2, 1), "Show Data"))
+            {
+                foreach (PTAction key in HitData.AllHitboxData.Keys)
+                {
+                    foreach (HitData.MovesetData movesetData in HitData.AllHitboxData[key])
+                    {
+                        foreach (HitData.Hitbox hitbox in movesetData.hitboxes)
+                        {
+                            if (hitbox.GetType() == typeof(HitData.HitboxSphere))
+                            {
+                                PTDataMachine.CreateVisualizationSphere(hitbox.pos, ((HitData.HitboxSphere)hitbox).radius);
+                            }
+                            if (hitbox.GetType() == typeof(HitData.HitboxRectangle))
+                            {
+                                PTDataMachine.CreateColliderBox(hitbox.pos, ((HitData.HitboxRectangle)hitbox).RectangleDimentions, ((HitData.HitboxRectangle)hitbox).RectangleRotation);
+                            }
+                        }
+                    }
+                }
+            }
+            if (FlatUI.Button(IndexToRect(2,2,0), "Clear Data"))
+            {
+                HitData.AllHitboxData.Clear();
+            }
+
             if (FlatUI.Button(IndexToRect(3, 8, 0), "↖"))
             {
                 myLastPT.controller.targetDirection = 315f;

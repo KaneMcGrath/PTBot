@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using UnityEngine;
+using static TitanBot.HitData;
 
 namespace TitanBot
 {
@@ -52,15 +53,6 @@ namespace TitanBot
             GUI.Label(Bounds, "");
         }
 
-        private void teleportIfAtSpawn()
-        {
-            Vector3 spawnPos = new Vector3(0f, 0f, -530f);
-            Vector3 returnPos = new Vector3(0f, 0f, 530f);
-            if (Vector3.Distance(MyTitan.transform.position, spawnPos) < 200f)
-            {
-                MyTitan.transform.position = returnPos;
-            }
-        }
 
         private float stateTimer = 0f;
 
@@ -74,7 +66,6 @@ namespace TitanBot
             {
                 showRaycasts();
             }
-            teleportIfAtSpawn();
 
 
             if (CGTools.timer(ref stateTimer, 5f))
@@ -445,20 +436,44 @@ namespace TitanBot
 
         /// <summary>
         /// finds the closest movesetData from the database
-        /// if its not an exact match attempt to scale it
+        /// if its not an exact match create a scaled movesetData and keep it in the database
         /// </summary>
         /// <param name="titanLevel"></param>
         public void CalculateMovesetData(float titanLevel)
         {
             foreach (PTAction action in pTActions)
             {
-                HitData.MovesetData data = HitData.GetClosestData(action, titanLevel);
-                if (data != null)
-                    MovesetDatabase.Add(action, data);
+                HitData.MovesetData closestData = HitData.GetClosestData(action, titanLevel);
+                if (closestData.titanLevel == titanLevel)
+                {
+                    MovesetDatabase.Add(action, closestData);
+                }
                 else
                 {
-                    CGTools.log("CalculateMovesetData(float titanLevel) > Null Data for PTAction [" + action.ToString() + "]");
+                    MovesetData scaledData = new MovesetData(action, titanLevel);
+                    scaledData.scaledData = true;
+                    List<HitData.Hitbox> HitboxList = new List<HitData.Hitbox>();
+                    foreach (HitData.Hitbox h in closestData.hitboxes)
+                    {
+                        HitData.Hitbox newH = h.Copy();
+                        newH.scaledData = true;
+                        newH.Scale(titanLevel);
+                        HitboxList.Add(newH);
+                    }
+                    scaledData.hitboxes = HitboxList.ToArray();
+                    HitData.AddData(scaledData);
+                    MovesetDatabase.Add(action, scaledData);
                 }
+
+
+
+                //HitData.MovesetData data = HitData.GetClosestData(action, titanLevel);
+                //if (data != null)
+                //    MovesetDatabase.Add(action, data);
+                //else
+                //{
+                //    CGTools.log("CalculateMovesetData(float titanLevel) > Null Data for PTAction [" + action.ToString() + "]");
+                //}
             }
         }
 

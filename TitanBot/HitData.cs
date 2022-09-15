@@ -37,6 +37,8 @@ namespace TitanBot
             return float.MaxValue;
         }
 
+        
+
         //calculates intercepts at the time of each hitbox then see if that hits
         //returns the lowest time that hits
         //probably a lag machine
@@ -102,6 +104,7 @@ namespace TitanBot
         {
             public PTAction action;
             public float titanLevel;
+            public bool scaledData = false;
 
             //load first hitboxes to last hitboxes in time order
             public Hitbox[] hitboxes;
@@ -132,6 +135,7 @@ namespace TitanBot
             public Vector3 pos;
             public float time;
             public float level;
+            public bool scaledData = false;
 
             public Hitbox(Vector3 pos, float time, float level)
             {
@@ -140,13 +144,32 @@ namespace TitanBot
                 this.level = level;
             }
 
+            public virtual Hitbox Copy()
+            {
+                return new Hitbox(pos, time, level);
+            }
+
+            /// <summary>
+            /// checks if the selected point is within this hitbox
+            /// </summary>
+            /// <param name="target"></param>
+            /// <param name="owner"></param>
+            /// <returns></returns>
+
             public virtual bool CheckTrigger(Vector3 target, Transform owner)
             {
                 return false;
             }
 
+            public virtual void Scale(float newTitanLevel)
+            {
+                scaledData = true;
+            }
+
             public virtual string GetDataString()
             {
+                if (scaledData)
+                    return "Scaled Data! this should never be saved";
                 return "(" + time.ToString() + "[" + pos.x.ToString() + "," + pos.y.ToString() + "," + pos.z.ToString() + "])";
             }
         }
@@ -161,11 +184,15 @@ namespace TitanBot
             {
                 this.RectangleDimentions = RectangleDimentions;
                 RectangleRotation = rectangleRotation;
-                CGTools.log("RectangleRotation: " + rectangleRotation.ToString());
+                //CGTools.log("RectangleRotation: " + rectangleRotation.ToString());
                 HalfDimentions = new Vector3(RectangleDimentions.x * level * 1.5f / 2f, RectangleDimentions.y * level * 1.5f / 2f, RectangleDimentions.z * level * 1.5f / 2f);
             }
 
-            
+            public override Hitbox Copy()
+            {
+                return new HitboxRectangle(pos, time, level, RectangleDimentions, RectangleRotation);
+            }
+
             public override bool CheckTrigger(Vector3 target, Transform owner)
             {
                 Vector3 center = CGTools.TransformPointUnscaled(owner, pos);
@@ -175,6 +202,13 @@ namespace TitanBot
                 Vector3 d = target - center;
                 bool b = Mathf.Abs(Vector3.Dot(d, dx)) <= HalfDimentions.x && Mathf.Abs(Vector3.Dot(d, dy)) <= HalfDimentions.y && Mathf.Abs(Vector3.Dot(d, dz)) <= HalfDimentions.z;
                 return b;
+            }
+
+            public override void Scale(float newTitanLevel)
+            {
+                pos = Vector3.Scale(pos / level, new Vector3(newTitanLevel, newTitanLevel, newTitanLevel));
+                HalfDimentions = new Vector3(RectangleDimentions.x * newTitanLevel * 1.5f / 2f, RectangleDimentions.y * newTitanLevel * 1.5f / 2f, RectangleDimentions.z * newTitanLevel * 1.5f / 2f);
+                scaledData = true;
             }
 
             public override string GetDataString()
@@ -192,8 +226,22 @@ namespace TitanBot
                 this.radius = radius;
             }
 
-            //need to make this work at some point
-            //think it through
+            public override Hitbox Copy()
+            {
+                return new HitboxSphere(pos, time, level, radius);
+            }
+
+            public override void Scale(float newTitanLevel)
+            {
+                Vector3 newpos = Vector3.Scale(pos / level, new Vector3(newTitanLevel, newTitanLevel, newTitanLevel));
+                float newradius = 2.4f * newTitanLevel + 1f;
+                pos = newpos;
+                radius = newradius;
+                level = newTitanLevel;
+                scaledData = true;
+            }
+
+            
             public override bool CheckTrigger(Vector3 target, Transform owner)
             {
                 Vector3 tp = CGTools.TransformPointUnscaled(owner, pos);

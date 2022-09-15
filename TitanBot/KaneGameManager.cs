@@ -20,6 +20,9 @@ namespace TitanBot
         public static bool waitToAnnounce = false;
         public static float waitToAnnounceTimer = -999999f;
         public static PhotonPlayer subAdmin = null;
+        private static Vector3 spawnPos = new Vector3(0f, 0f, -530f);
+        private static Vector3 returnPos = new Vector3(0f, 0f, 530f);
+        private static float movetoRPCTimer = 0f;
 
         public static void Init()
         {
@@ -66,8 +69,33 @@ namespace TitanBot
             });
         }
 
+        public void teleportTitansIfAtSpawn()
+        {
+            foreach (GameObject g in GameObject.FindGameObjectsWithTag("titan"))
+            {
+                if (Vector3.Distance(g.transform.position, spawnPos) < 200f)
+                {
+                    if (g.GetPhotonView().isMine)
+                        g.transform.position = returnPos;
+                    else
+                    {
+                        if (CGTools.timer(ref movetoRPCTimer, 2f))
+                        {
+                            g.GetComponent<TITAN>().photonView.RPC("moveToRPC", g.GetPhotonView().owner, new object[]
+                            {
+                                returnPos.x,
+                                returnPos.y,
+                                returnPos.z
+                            });
+                        }
+                    }
+                }
+            }
+        }
+
         public void Update()
         {
+            teleportTitansIfAtSpawn();
             if (waitToAnnounceTimer > 0f)
             {
                 waitToAnnounceTimer -= Time.deltaTime * 1f;

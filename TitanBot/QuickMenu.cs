@@ -132,18 +132,27 @@ namespace TitanBot
             }
             if (FlatUI.Button(IndexToRect(11, 2, 1), "Check Data"))
             {
+                
                 foreach (PTAction key in HitData.AllHitboxData.Keys)
                 {
+                   
                     CGTools.log(key.ToString());
                     foreach(HitData.MovesetData movesetData in HitData.AllHitboxData[key])
                     {
+                        float realLevel = 0f;
                         CGTools.log(" > Size = " + movesetData.titanLevel);
+                        foreach(HitData.Hitbox hh in movesetData.hitboxes)
+                        {
+                            realLevel = hh.level;
+                        }
+                        CGTools.log("       > RealSize = " + realLevel);
                     }
                 }
             }
             PlayerTitanBot.useCustomHair = FlatUI.Check(IndexToRect(12), PlayerTitanBot.useCustomHair, "Custom Hair");
             if (FlatUI.Button(IndexToRect(13), "Print Database Info"))
             {
+                
                 foreach (PTAction key in HitData.AllHitboxData.Keys)
                 {
                     CGTools.log(key.ToString());
@@ -172,8 +181,33 @@ namespace TitanBot
                 ""
                 });
             }
+            checkDataLevel = SetTextbox(IndexToRect(17), checkDataLevel, "Titan Level", 55);
+            if (FlatUI.Button(IndexToRect(18,2,0), "Show Hitboxes"))
+            {
+                foreach (PTAction key in HitData.AllHitboxData.Keys)
+                {
+                    foreach (HitData.MovesetData movesetData in HitData.AllHitboxData[key])
+                    {
+                        if (movesetData.titanLevel == checkDataLevel)
+                        {
+                            foreach (HitData.Hitbox hitbox in movesetData.hitboxes)
+                            {
+                                if (hitbox.GetType() == typeof(HitData.HitboxSphere))
+                                {
+                                    PTDataMachine.CreateVisualizationSphere(hitbox.pos, ((HitData.HitboxSphere)hitbox).radius);
+                                }
+                                if (hitbox.GetType() == typeof(HitData.HitboxRectangle))
+                                {
+                                    PTDataMachine.CreateColliderBox(hitbox.pos, ((HitData.HitboxRectangle)hitbox).RectangleDimentions, ((HitData.HitboxRectangle)hitbox).RectangleRotation);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
+        private static float checkDataLevel = 0f;
         private static int subAdminID = 0;
         public static TITAN myLastPT;
         

@@ -19,6 +19,18 @@ namespace TitanBot
         public static List<Vector3> redPointsToTrack = new List<Vector3>();
         public static List<Vector3> greenPointsToTrack = new List<Vector3>();
 
+        /// <summary>
+        /// Estimates a players position after a given amount of time
+        /// dosent take acceleration, hooks, or collisions into account
+        /// </summary>
+        /// <param name="player"></param>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public static Vector3 PredictPlayerMotion(GameObject player, float t)
+        {
+            return player.transform.position + player.transform.rigidbody.velocity * t + new Vector3(0f, -20f * player.rigidbody.mass, 0f) * t * t * 0.5f;
+        }
+
         public static void OnGUI()
         {
             //GUI.DrawTexture(new Rect(0f, 0f, 50f, 50f), crosshairTex);
@@ -62,6 +74,34 @@ namespace TitanBot
             mouseTex = readTextureFromFile(KaneGameManager.Path + "MouseTex.png");
 
         }
+        /// <summary>
+        /// pass an array of integers each containing a weight for how likely that index of the array should occour
+        /// returns a random integer relative to the index of the table.
+        /// for example an input of [3,1] has a 75% chance to return 0 and a 25% chance to return 1
+        /// </summary>
+        /// <param name="weights"></param>
+        /// <returns></returns>
+        public static int WeightTable(int[] weights)
+        {
+            //find the sum of all weights
+            int sum = 0;
+            for (int i = 0; i < weights.Length; i++)
+            {
+                sum += weights[i];
+            }
+            //random number from 0 to sum
+            int choice = UnityEngine.Random.Range(0, sum);
+            sum = 0;
+            bool flag1 = false;
+            for (int i = 0; i < weights.Length; i++)
+            {
+                if (choice >= sum) flag1 = true;
+                sum += weights[i];
+                if (choice < sum && flag1) return i;
+            }
+            return -1;
+
+        }
 
         public static void debugVectorDirection(Vector3 pos, Vector3 normal)
         {
@@ -83,8 +123,6 @@ namespace TitanBot
             }
         }
 
-        //Thanks Bunny83.  that was easier than I expected
-        //https://answers.unity.com/questions/1238142/version-of-transformtransformpoint-which-is-unaffe.html
         public static Vector3 TransformPointUnscaled(this Transform transform, Vector3 position)
         {
             return transform.position + transform.rotation * position;

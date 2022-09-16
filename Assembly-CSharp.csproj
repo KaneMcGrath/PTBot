@@ -409,7 +409,6 @@
     <Compile Include="TitanBot\KaneGameManager.cs" />
     <Compile Include="TitanBot\PTAction.cs" />
     <Compile Include="TitanBot\PTDataMachine.cs" />
-    <Compile Include="TitanBot\PTMovementHandler.cs" />
     <Compile Include="TitanBot\PTTools.cs" />
     <Compile Include="TitanBot\QuickMenu.cs" />
     <Compile Include="TitanBot\HitData.cs" />

@@ -205,6 +205,28 @@ namespace TitanBot
                     }
                 }
             }
+            if (FlatUI.Button(IndexToRect(19), "Unit Test weight table"))
+            {
+                int[] table = new int[] { 8,6,9,44,2,7};
+                int[] tableOccurences = new int[table.Length];
+                for (int o = 0; o < table.Length; o++)
+                {
+                    tableOccurences[o] = 0;
+                }
+                int num = 10000;
+
+                for (int i = 0; i < num; i++)
+                {
+                    int r = CGTools.WeightTable(table);
+                    tableOccurences[r]++;
+                    
+                }
+                CGTools.log("Finished " + num + " cycles");
+                for (int i = 0; i < table.Length; i++)
+                {
+                    CGTools.log("index [" + i + "] weight {" + table[i] + "} occurences :" + tableOccurences[i]);
+                }
+            }
         }
 
         private static float checkDataLevel = 0f;

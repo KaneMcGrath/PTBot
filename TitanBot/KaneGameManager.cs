@@ -71,6 +71,7 @@ namespace TitanBot
 
         public void teleportTitansIfAtSpawn()
         {
+
             foreach (GameObject g in GameObject.FindGameObjectsWithTag("titan"))
             {
                 if (Vector3.Distance(g.transform.position, spawnPos) < 200f)
@@ -79,14 +80,17 @@ namespace TitanBot
                         g.transform.position = returnPos;
                     else
                     {
-                        if (CGTools.timer(ref movetoRPCTimer, 2f))
+                        if (PhotonNetwork.isMasterClient)
                         {
-                            g.GetComponent<TITAN>().photonView.RPC("moveToRPC", g.GetPhotonView().owner, new object[]
+                            if (CGTools.timer(ref movetoRPCTimer, 2f))
                             {
+                                g.GetComponent<TITAN>().photonView.RPC("moveToRPC", g.GetPhotonView().owner, new object[]
+                                {
                                 returnPos.x,
                                 returnPos.y,
                                 returnPos.z
-                            });
+                                });
+                            }
                         }
                     }
                 }

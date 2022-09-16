@@ -1,4 +1,5 @@
-﻿using Settings;
+﻿using Constants;
+using Settings;
 using System;
 using System.CodeDom;
 using System.Collections.Generic;
@@ -17,9 +18,10 @@ namespace TitanBot
     {
         public static bool TakeOverPT = true;
         public static int raycasts = 10;
-        public static float spinrate = 0.2f;
-        public static float turnrate = 0.05f;
+        public static float spinrate = 800f;
+        public static float turnrate = 0.005f;
         public static bool debugRaycasts = false;
+        private static bool debugRaycastsIsRun = false;
         public static bool debugTargets = false;
         public static bool useCustomHair = true;
 
@@ -29,6 +31,7 @@ namespace TitanBot
         private GameObject[] players;
         private GameObject closestPlayer;
         private TitanState state = TitanState.Running;
+
 
         // public float forsight = 4f;//how far into the future titan will predict player velocity
         // public int forsightSteps = 2;//how many steps not including the current position that the titan will predict
@@ -61,16 +64,32 @@ namespace TitanBot
         /// </summary>
         private void AIMaster()
         {
+            debugRaycastsIsRun = false;  //only used for debugRaycasts to not show when we dont use them
             players = GetPlayersToCalculate();
-            if (debugRaycasts)
-            {
-                showRaycasts();
-            }
 
+            //every half second there is a 10% chance that we walk for that period
+            //unless a function overrides the walk input every update
+            if (CGTools.timer(ref SpeedTimer, 0.5f))
+            {
+                if (CGTools.Chance(10f))
+                {
+                    isWALKDown = true;
+                }
+                else
+                {
+                    isWALKDown = false;
+                }
+            }
 
             if (CGTools.timer(ref stateTimer, 5f))
             {
-                int s = UnityEngine.Random.Range(0, 3);
+                int s = CGTools.WeightTable(new int[]
+                {
+                    2,
+                    1,
+                    4,
+                    1
+                });
                 
                 if (s == 0)
                 {
@@ -81,6 +100,7 @@ namespace TitanBot
                 if (s == 1)
                 {
                     state = TitanState.Running;
+                    stateTimer = Time.time + 2f;
                     //CGTools.log(state.ToString());
                 }
                 if (s == 2)
@@ -92,26 +112,24 @@ namespace TitanBot
                 {
                     state = TitanState.Spinning;
                     //CGTools.log(state.ToString());
-                    stateTimer = Time.time + 3f;
+                    stateTimer = Time.time + 1f;
                 }
             }
+            CGLog.track("TitanState", state.ToString());
 
 
             if (state == TitanState.Running)
             {
                 run();
-                letErRip();
             }
             else if(state == TitanState.Attacking)
             {
                 bool flag = false;
                 if (closestPlayer != null)
                 {
-                    if (Vector3.Distance(closestPlayer.transform.position, MyTitan.neck.position) < 100f)
+                    if (Vector3.Distance(closestPlayer.transform.position, MyTitan.transform.position) < 200f)
                     {
-
-
-                        if (Vector3.Distance(closestPlayer.transform.position, MyTitan.neck.position) < 30f)
+                        if (Vector3.Distance(closestPlayer.transform.position, MyTitan.neck.position) < 40f || Vector3.Distance(closestPlayer.transform.position, MyTitan.transform.position) < 40f)
                         {
                             flag = true;
                             reposition();
@@ -158,6 +176,47 @@ namespace TitanBot
             targetLerpT += turnrate * Time.deltaTime;
             if (state != TitanState.Spinning)
                 targetDirection = Mathf.Lerp(targetDirection, targetDirectionFinal, targetLerpT);
+            if (debugRaycasts)
+            {
+                showRaycasts();
+            }
+        }
+
+        private bool checkWalls()
+        {
+            Vector3 rayOrigin = MyTitan.transform.position + Vector3.up * 5f;
+            Vector3 rayOrigin2 = MyTitan.transform.position + (MyTitan.transform.right * (MyTitan.myLevel + 1f)) + Vector3.up * 5f;
+            Vector3 rayOrigin3 = MyTitan.transform.position + ((MyTitan.transform.right * (MyTitan.myLevel + 1f)) * -1f) + Vector3.up * 5f;
+            Vector3 rayDirection = MyTitan.transform.forward;
+            Ray ray = new Ray(rayOrigin, rayDirection);
+            Ray ray2 = new Ray(rayOrigin2, rayDirection);
+            Ray ray3 = new Ray(rayOrigin3, rayDirection);
+            LayerMask mask = ((int)1) << PhysicsLayer.Ground;
+            //CGTools.greenPointsToTrack.Add(MyTitan.transform.position + Quaternion.Euler(new Vector3(0f,targetDirectionLerp,0f)) * MyTitan.transform.forward * 50f);
+            bool flag = false;
+            if (Physics.Raycast(ray, out RaycastHit raycastHit, 50f, mask.value))
+            {
+                flag = true;
+            }
+            if (Physics.Raycast(ray2, out RaycastHit raycastHit2, 50f, mask.value))
+            {
+                flag = true;
+            }
+            if (Physics.Raycast(ray3, out RaycastHit raycastHit3, 50f, mask.value))
+            {
+                flag = true;
+            }
+            if (!flag)
+            {
+                RaycastDirectionChangeTimer = 0f;
+            }
+            if (debugRaycasts)
+            {
+                CGTools.redPointsToTrack.Add(raycastHit.point);
+                CGTools.redPointsToTrack.Add(raycastHit2.point);
+                CGTools.redPointsToTrack.Add(raycastHit3.point);
+            }
+            return flag;
         }
 
         private void runToTarget(Vector3 target)
@@ -180,6 +239,21 @@ namespace TitanBot
         {
             Vector3 d = closestPlayer.transform.position - MyTitan.transform.position;
             Quaternion r = Quaternion.LookRotation(d);
+
+            //if someone is on our ass check if we are running into a wall and if we are then start running real quick
+            if (Vector3.Distance(closestPlayer.transform.position, MyTitan.neck.position) < 20f) {
+                if (checkWalls())
+                {
+                    if (CGTools.timer(ref RaycastDirectionChangeTimer, 1f))
+                    {
+                        PickNewDirection();
+                        isWALKDown = false;
+                        state = TitanState.Running;
+                        stateTimer = Time.time + 1.5f;
+                    }
+                }        
+            }
+
             if (debugTargets)
                 CGTools.redPointsToTrack.Add(closestPlayer.transform.position);
             targetDirectionLerp = Quaternion.Inverse(r).eulerAngles.y;
@@ -198,50 +272,36 @@ namespace TitanBot
 
         private void run()
         {
-            //every half second there is a 10% chance that we walk for that period
-            if (CGTools.timer(ref SpeedTimer, 0.5f))
-            {
-                if (CGTools.Chance(10f))
-                {
-                    isWALKDown = true;
-                }
-                else
-                {
-                    isWALKDown = false;
-                }
-            }
+            
 
             //Raycast in 8 directions and only choose directions that dont have walls
             //If a wall is found while running, immediatly choose a new direction
-            Vector3 rayOrigin = MyTitan.transform.position + Vector3.up * 5f;
-            Vector3 rayDirection = MyTitan.transform.forward * 50f;
-            Ray ray = new Ray(rayOrigin, rayDirection);
-            //CGTools.greenPointsToTrack.Add(MyTitan.transform.position + Quaternion.Euler(new Vector3(0f,targetDirectionLerp,0f)) * MyTitan.transform.forward * 50f);
-            if (Physics.Raycast(ray, out RaycastHit raycastHit, 50f))
+            
+            //Vector3 rayOrigin = MyTitan.transform.position + Vector3.up * 5f;
+            //Vector3 rayDirection = MyTitan.transform.forward * 50f;
+            //Ray ray = new Ray(rayOrigin, rayDirection);
+            //LayerMask mask = ((int)1) << PhysicsLayer.Ground;
+
+            if (checkWalls())
             {
-                
                 if (CGTools.timer(ref RaycastDirectionChangeTimer, 1f))
                 {
-
                     PickNewDirection();
-
-
-
-
-
-                    //targetDirectionLerp = UnityEngine.Random.Range(0f, 359f);
-                    //targetLerpT = 0f;
-                    //changeTargetDirectionTimer = Time.time + 2f;
-
                 }
+            }
 
-            }
-            else
-            {
-                RaycastDirectionChangeTimer = 0f;
-            }
-            if (debugRaycasts)
-                CGTools.pointsToTrack.Add(raycastHit.point);
+
+            //CGTools.greenPointsToTrack.Add(MyTitan.transform.position + Quaternion.Euler(new Vector3(0f,targetDirectionLerp,0f)) * MyTitan.transform.forward * 50f);
+            //if (Physics.Raycast(ray, out RaycastHit raycastHit, 50f, mask.value))
+            //{
+            //    
+            //}
+            //else
+            //{
+            //    RaycastDirectionChangeTimer = 0f;
+            //}
+            //if (debugRaycasts)
+            //    CGTools.redPointsToTrack.Add(raycastHit.point);
 
             
             if (targetDirection > 360f)
@@ -258,7 +318,7 @@ namespace TitanBot
                 PickNewDirection();
             }
             if (debugRaycasts)
-                CGTools.redPointsToTrack.Add(lastFarthestPoint);
+                CGTools.greenPointsToTrack.Add(lastFarthestPoint);
             
             
         }
@@ -278,7 +338,8 @@ namespace TitanBot
 
                 Vector3 rayDirection2 = Quaternion.Euler(new Vector3(0f, i * (360 / raycasts), 0f)) * MyTitan.transform.forward;
                 Ray ray2 = new Ray(rayOrigin2, rayDirection2);
-                if (Physics.Raycast(ray2, out RaycastHit raycastHit2))
+                LayerMask mask = ((int)1) << PhysicsLayer.Ground;
+                if (Physics.Raycast(ray2, out RaycastHit raycastHit2, 10000f, mask.value))
                 {
                     if (raycastHit2.distance > lastFarthestDistance)
                     {
@@ -293,7 +354,7 @@ namespace TitanBot
             Vector3 direction = lastFarthestPoint - MyTitan.transform.position;
             Quaternion rotation = Quaternion.LookRotation(direction);
             targetDirectionLerp = rotation.eulerAngles.y;
-            targetLerpT = 0f;
+            //targetLerpT = 0f;
         }
 
         private void showRaycasts()
@@ -309,22 +370,16 @@ namespace TitanBot
                 //float angle = CGTools.Wrap(start + i * 18f, 0f, 360f);
                 Vector3 rayDirection2 = Quaternion.Euler(new Vector3(0f, i * (360 / raycasts), 0f)) * MyTitan.transform.forward;
                 Ray ray2 = new Ray(rayOrigin2, rayDirection2);
-                if (Physics.Raycast(ray2, out RaycastHit raycastHit2))
-                {
-                    if (raycastHit2.distance > lastFarthestDistance)
-                    {
-                        lastFarthestDistance = raycastHit2.distance;
-                        lastFarthestPoint = raycastHit2.point;
-                    }
-
-                }
+                Physics.Raycast(ray2, out RaycastHit raycastHit2);
                 CGTools.pointsToTrack.Add(raycastHit2.point);
-                CGTools.redPointsToTrack.Add(lastFarthestPoint);
+                
             }
+            
         }
 
         private void spin()
         {
+            isWALKDown = true;
             if (targetDirection > 360f)
             {
                 targetDirection = 0f;
@@ -728,8 +783,8 @@ namespace TitanBot
                 }
                 else
                 {
-                    Vector3 pos1 = PTTools.predictPlayerMotion(g, 1f);
-                    Vector3 pos2 = PTTools.predictPlayerMotion(g, 2f);
+                    Vector3 pos1 = PTTools.PredictPlayerMotion(g, 1f);
+                    Vector3 pos2 = PTTools.PredictPlayerMotion(g, 2f);
                     if (Vector3.Distance(pos1, MyTitan.transform.position) < 200f || Vector3.Distance(pos1, MyTitan.transform.position) < 200f)
                     {
                         list.Add(g);

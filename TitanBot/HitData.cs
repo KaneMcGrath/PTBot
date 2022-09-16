@@ -48,7 +48,7 @@ namespace TitanBot
             for (int i = 0; i < data.hitboxes.Length; i++)
             {
                 Hitbox h = data.hitboxes[i];
-                Vector3 future = PTTools.predictPlayerMotion(target, h.time);
+                Vector3 future = PTTools.PredictPlayerMotion(target, h.time);
                 //Vector3 future = PTTools.LonelySteelSheetFlyer(target, h.time);
                 
                 if (h.CheckTrigger(future, owner))

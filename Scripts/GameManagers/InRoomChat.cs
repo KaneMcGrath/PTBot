@@ -241,7 +241,7 @@ public class InRoomChat : Photon.MonoBehaviour
                     }
                     else if (this.inputLine.StartsWith("/timescale"))
                     {
-                        if (PhotonNetwork.isMasterClient)
+                        if (PhotonNetwork.isMasterClient || true)
                         {
                             if (float.TryParse(inputLine.Substring(11), out float f))
                             {

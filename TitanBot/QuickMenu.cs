@@ -21,7 +21,8 @@ namespace TitanBot
         public static string[] tabNames = new string[]
         {
             "PTBot Settings",
-            "Game Settings"
+            "Game Settings",
+            "more"
         };
         public static bool showHitboxs = false;
         public static bool doAttacks = true;
@@ -40,7 +41,14 @@ namespace TitanBot
             fontStyle = FontStyle.Bold,
             normal = { textColor = Color.white }
         };
-
+        private static GUIStyle titleStyle = new GUIStyle
+        {
+            border = new RectOffset(1, 1, 1, 1),
+            alignment = TextAnchor.MiddleCenter,
+            fontSize = 16,
+            fontStyle = FontStyle.Bold,
+            normal = { textColor = Color.white }
+        };
 
 
         public static void OnGUI()
@@ -50,33 +58,14 @@ namespace TitanBot
             tabIndex = tabs(new Rect(menuX + 250f, menuY, 700f, 100f), tabNames, tabIndex, false, tabColors);
             if (tabIndex == 0) tabPTBotSettings();
             if (tabIndex == 1) moreSettings();
+            if (tabIndex == 2) tabExtra();
             GUI.DrawTexture(new Rect(Input.mousePosition.x - (mouseScale / 2f), Screen.height - Input.mousePosition.y - (mouseScale / 2f), mouseScale, mouseScale), CGTools.mouseTex);
         }
 
         private static void moreSettings()
         {
+            KaneGameManager.sendJoinMessage = FlatUI.Check(IndexToRect(1),KaneGameManager.sendJoinMessage ,"Send Join Message");
 
-        }
-
-        private static void tabPTBotSettings()
-        {
-            Label(IndexToRect(0), "Spawn a PTBot under the camera");
-            if (FlatUI.Button(IndexToRect(1), "Spawn PTBot"))
-            {
-                Vector3 rayOrigin = Camera.main.transform.position;
-                Vector3 rayDirection = Camera.main.transform.forward;
-                Ray ray = new Ray(rayOrigin, rayDirection);
-                Physics.Raycast(ray, out RaycastHit raycastHit);
-                Quaternion rot = Quaternion.identity;
-                GameObject myPTGO = PhotonNetwork.Instantiate("TITAN_VER3.1", raycastHit.point, rot, 0);
-                TITAN MyPT = myPTGO.GetComponent<TITAN>();
-                myLastPT = MyPT;
-                GameObject.Destroy(myPTGO.GetComponent<TITAN_CONTROLLER>());
-                myPTGO.GetComponent<TITAN>().nonAI = true;
-                myPTGO.GetComponent<TITAN>().speed = 30f;
-                myPTGO.GetComponent<TITAN_CONTROLLER>().enabled = true;
-                myPTGO.GetComponent<TITAN>().isCustomTitan = true;
-            }
             Label(IndexToRect(2), "Endless Spawning");
             KaneGameManager.doInfiniteTitans = FlatUI.Check(IndexToRect(3), KaneGameManager.doInfiniteTitans, "Enable Endless Spawning");
             GUI.Label(IndexToRect(4, 3, 0), "Count");
@@ -93,50 +82,82 @@ namespace TitanBot
                     CGTools.log("Could not parse input!");
                 }
             }
+            PlayerTitanBot.ReplaceSpawnedTitans = FlatUI.Check(IndexToRect(6), PlayerTitanBot.ReplaceSpawnedTitans, "Replace Normal Titans");
+            KaneGameManager.doSpawnTeleporting = FlatUI.Check(IndexToRect(7), KaneGameManager.doSpawnTeleporting, "Teleport Titans Away from spawn");
+
+            Label(IndexToRect(8), "Debug");
+            PlayerTitanBot.debugRaycasts = FlatUI.Check(IndexToRect(9), PlayerTitanBot.debugRaycasts, "Debug Raycasts");
+            PlayerTitanBot.debugTargets = FlatUI.Check(IndexToRect(10), PlayerTitanBot.debugTargets, "Debug Targets");
+            PTTools.debugPlayerData = FlatUI.Check(IndexToRect(11), PTTools.debugPlayerData, "Debug Predictions");
+        }
+
+        private static void tabPTBotSettings()
+        {
+            Label(IndexToRect(0), "Spawn a PTBot under the camera");
+            if (FlatUI.Button(IndexToRect(1), "Spawn PTBot"))
+            {
+                if (FengGameManagerMKII.instance.gameStart && PhotonNetwork.isMasterClient)
+                {
+                    Vector3 rayOrigin = Camera.main.transform.position;
+                    Vector3 rayDirection = Camera.main.transform.forward;
+                    Ray ray = new Ray(rayOrigin, rayDirection);
+                    Physics.Raycast(ray, out RaycastHit raycastHit);
+                    Quaternion rot = Quaternion.identity;
+                    GameObject myPTGO = PhotonNetwork.Instantiate("TITAN_VER3.1", raycastHit.point, rot, 0);
+                    TITAN MyPT = myPTGO.GetComponent<TITAN>();
+                    myLastPT = MyPT;
+                    GameObject.Destroy(myPTGO.GetComponent<TITAN_CONTROLLER>());
+                    myPTGO.GetComponent<TITAN>().nonAI = true;
+                    myPTGO.GetComponent<TITAN>().speed = 30f;
+                    myPTGO.GetComponent<TITAN_CONTROLLER>().enabled = true;
+                    myPTGO.GetComponent<TITAN>().isCustomTitan = true;
+                }
+            }
+            
 
 
-            Label(IndexToRect(5), "Difficulty");
-            if (FlatUI.Button(IndexToRect(6), "Very Very Hard", (PTTools.difficulty == Difficulty.VeryVeryHard) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
+            Label(IndexToRect(3), "Difficulty");
+            if (FlatUI.Button(IndexToRect(4), "Very Very Hard", (PTTools.difficulty == Difficulty.VeryVeryHard) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
             {
                 PTTools.difficulty = Difficulty.VeryVeryHard;
             }
-            if (FlatUI.Button(IndexToRect(7), "Very Hard", (PTTools.difficulty == Difficulty.VeryHard) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
+            if (FlatUI.Button(IndexToRect(5), "Very Hard", (PTTools.difficulty == Difficulty.VeryHard) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
             {
                 PTTools.difficulty = Difficulty.VeryHard;
             }
-            if (FlatUI.Button(IndexToRect(8), "Hard", (PTTools.difficulty == Difficulty.Hard) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
+            if (FlatUI.Button(IndexToRect(6), "Hard", (PTTools.difficulty == Difficulty.Hard) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
             {
                 PTTools.difficulty = Difficulty.Hard;
             }
-            if (FlatUI.Button(IndexToRect(9), "Medium", (PTTools.difficulty == Difficulty.Medium) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
+            if (FlatUI.Button(IndexToRect(7), "Medium", (PTTools.difficulty == Difficulty.Medium) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
             {
                 PTTools.difficulty = Difficulty.Medium;
             }
-            if (FlatUI.Button(IndexToRect(10), "Easy", (PTTools.difficulty == Difficulty.Easy) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
+            if (FlatUI.Button(IndexToRect(8), "Easy", (PTTools.difficulty == Difficulty.Easy) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
             {
                 PTTools.difficulty = Difficulty.Easy;
             }
-            if (FlatUI.Button(IndexToRect(11), "Very Easy", (PTTools.difficulty == Difficulty.VeryEasy) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
+            if (FlatUI.Button(IndexToRect(9), "Very Easy", (PTTools.difficulty == Difficulty.VeryEasy) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
             {
                 PTTools.difficulty = Difficulty.VeryEasy;
             }
 
-            Label(IndexToRect(12), "Moves");
-            toggleAttackButton(13, 0, PTAction.Attack);
-            toggleAttackButton(13, 1, PTAction.Jump);
-            toggleAttackButton(14, 0, PTAction.bite);
-            toggleAttackButton(14, 1, PTAction.bitel);
-            toggleAttackButton(15, 0, PTAction.biter);
-            toggleAttackButton(15, 1, PTAction.choptl);
-            toggleAttackButton(16, 0, PTAction.choptr);
-            toggleAttackButton(16, 1, PTAction.grabbackl);
-            toggleAttackButton(17, 0, PTAction.grabbackr);
-            toggleAttackButton(17, 1, PTAction.grabfrontl);
-            toggleAttackButton(18, 0, PTAction.grabfrontr);
-            toggleAttackButton(18, 1, PTAction.grabnapel);
-            toggleAttackButton(19, 0, PTAction.grabnaper);
-            toggleAttackButton(19, 1, PTAction.AttackII);
-            if (FlatUI.Button(IndexToRect(20), "Apply"))
+            Label(IndexToRect(11), "Moves");
+            toggleAttackButton(12, 0, PTAction.Attack);
+            toggleAttackButton(12, 1, PTAction.Jump);
+            toggleAttackButton(13, 0, PTAction.bite);
+            toggleAttackButton(13, 1, PTAction.bitel);
+            toggleAttackButton(14, 0, PTAction.biter);
+            toggleAttackButton(14, 1, PTAction.choptl);
+            toggleAttackButton(15, 0, PTAction.choptr);
+            toggleAttackButton(15, 1, PTAction.grabbackl);
+            toggleAttackButton(16, 0, PTAction.grabbackr);
+            toggleAttackButton(16, 1, PTAction.grabfrontl);
+            toggleAttackButton(17, 0, PTAction.grabfrontr);
+            toggleAttackButton(17, 1, PTAction.grabnapel);
+            toggleAttackButton(18, 0, PTAction.grabnaper);
+            toggleAttackButton(18, 1, PTAction.AttackII);
+            if (FlatUI.Button(IndexToRect(19), "Apply"))
             {
                 PlayerTitanBot.pTActions = PlayerTitanBot.TempActionsList.ToArray();
                 foreach (GameObject t in GameObject.FindGameObjectsWithTag("titan"))

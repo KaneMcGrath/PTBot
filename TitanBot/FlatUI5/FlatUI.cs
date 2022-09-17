@@ -9,7 +9,7 @@ namespace TitanBot.FlatUI5
     /// </summary>
     public static class FlatUI
     {
-        public static readonly Color insideColor = new Color(0.2f, 0.2f, 0.2f);
+        public static readonly Color insideColor = new Color(0.3f, 0.3f, 0.3f);
         public static readonly Color outsideColor = new Color(0.1f, 0.1f, 0.1f);
         public static readonly Color defaultButtonColor = new Color(0.4f, 0.4f, 0.4f);
         public static Texture2D outsideColorTex;

@@ -3553,6 +3553,12 @@ public class TITAN : Photon.MonoBehaviour
                 }
                 this.hasSetLevel = true;
             }
+            if (PlayerTitanBot.ReplaceSpawnedTitans && PhotonNetwork.isMasterClient)
+            {
+                nonAI = true;
+                isCustomTitan = true;
+                speed = 30f;
+            }
             this.spawnPt = this.baseTransform.position;
             this.setmyLevel();
             this.setAbnormalType2(this.abnormalType, false);
@@ -3562,16 +3568,16 @@ public class TITAN : Photon.MonoBehaviour
             }
             if (isCustomTitan)
             {
-                this.gameObject.AddComponent<PlayerTitanBot>();
-                this.controller = base.gameObject.GetComponent<PlayerTitanBot>();
-                this.controller.targetDirection = -874f;
+                gameObject.AddComponent<PlayerTitanBot>();
+                controller = gameObject.GetComponent<PlayerTitanBot>();
+                controller.targetDirection = -874f;
                 ((PlayerTitanBot)controller).CalculateMovesetData(myLevel);
+                controller.enabled = true;
             }
             else
             {
                 this.controller = base.gameObject.GetComponent<TITAN_CONTROLLER>();
             }
-            QuickMenu.myLastPT = this;
             StartCoroutine(HandleSpawnCollisionCoroutine(2f, 20f));
         }
         if ((this.maxHealth == 0) && (SettingsManager.LegacyGameSettings.TitanHealthMode.Value > 0))

@@ -14,10 +14,11 @@ namespace TitanBot
     public class PlayerTitanBot : TITAN_CONTROLLER
     {
         public static bool TakeOverPT = false;
+        public static bool ReplaceSpawnedTitans = false;
         public static int raycasts = 10;
         public static float spinrate = 800f;
         public static float turnrate = 0.005f;
-        public static bool debugRaycasts = true;
+        public static bool debugRaycasts = false;
         public static bool debugTargets = false;
         public static bool useCustomHair = true;
         public static List<PTAction> TempActionsList = new List<PTAction>();

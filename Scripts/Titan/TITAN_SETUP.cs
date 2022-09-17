@@ -152,10 +152,6 @@ public class TITAN_SETUP : Photon.MonoBehaviour
             this.part_hair.transform.localScale = this.hair_go_ref.transform.localScale;
             this.part_hair.renderer.material = CharacterMaterials.materials[this.hair.texture];
             this.part_hair.renderer.material.color = HeroCostume.costume[UnityEngine.Random.Range(0, HeroCostume.costume.Length - 5)].hair_color;
-            if (gameObject.GetComponent<TITAN>().isCustomTitan && PlayerTitanBot.useCustomHair)
-            {
-                this.part_hair.renderer.material.color = new Color(1f, 0.5f, 0f);
-            }
             int id = UnityEngine.Random.Range(1, 8);
             this.setFacialTexture(this.eye, id);
             if ((IN_GAME_MAIN_CAMERA.gametype == GAMETYPE.MULTIPLAYER) && base.photonView.isMine)

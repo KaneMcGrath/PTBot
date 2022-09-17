@@ -1,5 +1,4 @@
-﻿using ICSharpCode.SharpZipLib.Tar;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace TitanBot
 {

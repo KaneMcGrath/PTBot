@@ -161,12 +161,13 @@ namespace Weather
 
         private void SetMainMenuWeather()
         {
-            _currentWeather.Rain.Value = 0.45f;
-            _currentWeather.Thunder.Value = 0.1f;
-            _currentWeather.Skybox.Value = "Storm";
+            _currentWeather.Rain.Value = 0.0f;
+            _currentWeather.Thunder.Value = 0.0f;
+            _currentWeather.Skybox.Value = "Dusk";
             _currentWeather.FogDensity.Value = 0.01f;
-            _currentWeather.Daylight.Value = new Color(0.1f, 0.1f, 0.1f);
-            _currentWeather.AmbientLight.Value = new Color(0.1f, 0.1f, 0.1f);
+            _currentWeather.Daylight.Value = new Color(0.4f, 0.3f, 0.1f);
+            _currentWeather.AmbientLight.Value = new Color(0.1f, 0.05f, 0.05f);
+            _currentWeather.Wind.Value = 0.3f;
         }
 
         private void CreateScheduleRunners(string schedule)

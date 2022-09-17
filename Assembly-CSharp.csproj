@@ -401,7 +401,6 @@
     <Compile Include="Scripts\Human\TriggerColliderWeapon.cs" />
     <Compile Include="Scripts\Human\UNIFORM_TYPE.cs" />
     <Compile Include="TitanBot\CGLog.cs" />
-    <Compile Include="TitanBot\hitboxData.cs" />
     <Compile Include="TitanBot\ParseMaster.cs" />
     <Compile Include="TitanBot\PlayerTitanBot.cs" />
     <Compile Include="TitanBot\CGTools.cs" />

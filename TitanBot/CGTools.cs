@@ -34,10 +34,6 @@ namespace TitanBot
 
         public static void OnGUI()
         {
-            //GUI.DrawTexture(new Rect(0f, 0f, 50f, 50f), crosshairTex);
-            //GUI.DrawTexture(new Rect(50f, 0f, 50f, 50f), redCrosshairTex);
-            //GUI.DrawTexture(new Rect(100f, 0f, 50f, 50f), greenCrosshairTex);
-            QuickMenu.drawHitboxes();
             if (pointsToTrack.Count > 0)
             {
                 foreach (Vector3 point in pointsToTrack)

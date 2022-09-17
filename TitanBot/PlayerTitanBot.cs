@@ -1,11 +1,6 @@
 ﻿using Constants;
-using Settings;
 using System;
-using System.CodeDom;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using UnityEngine;
 using static TitanBot.HitData;
 
@@ -22,9 +17,10 @@ namespace TitanBot
         public static int raycasts = 10;
         public static float spinrate = 800f;
         public static float turnrate = 0.005f;
-        public static bool debugRaycasts = false;
+        public static bool debugRaycasts = true;
         public static bool debugTargets = false;
         public static bool useCustomHair = true;
+        public static List<PTAction> TempActionsList = new List<PTAction>();
 
         public bool doStuff = true;
         public TITAN MyTitan = null;
@@ -51,17 +47,12 @@ namespace TitanBot
         private Dictionary<PTAction, HitData.MovesetData> MovesetDatabase = new Dictionary<PTAction, HitData.MovesetData>();
 
         //All the actions we want to calculate movesetData for
-        public static PTAction[] pTActions = { 
+        public static PTAction[] pTActions = {
             PTAction.Attack,
             PTAction.Jump,
             PTAction.choptl,
             PTAction.choptr,
         };
-
-        //list we can set in the settings to swap out moves to use
-        public static List<PTAction> TempActionsList = new List<PTAction>();
-
-
 
         /// <summary>
         /// Main AI Decision making function
@@ -94,7 +85,7 @@ namespace TitanBot
                     4,
                     1
                 });
-                
+
                 if (s == 0)
                 {
                     state = TitanState.Repositioning;
@@ -125,7 +116,7 @@ namespace TitanBot
                 run();
                 letErRip();
             }
-            else if(state == TitanState.Attacking)
+            else if (state == TitanState.Attacking)
             {
                 bool flag = false;
                 if (closestPlayer != null)
@@ -182,7 +173,8 @@ namespace TitanBot
                 targetDirection = Mathf.Lerp(targetDirection, targetDirectionFinal, targetLerpT);
             if (debugRaycasts)
             {
-                showRaycasts();
+                CGTools.pointsToTrack.AddRange(lastRaycasts);
+                //showRaycasts();
             }
         }
 
@@ -232,7 +224,7 @@ namespace TitanBot
                 CGTools.greenPointsToTrack.Add(closestPlayer.transform.position);
             targetDirectionLerp = r.eulerAngles.y;
         }
-        
+
         //run away from the closest player
         private void reposition()
         {
@@ -240,7 +232,8 @@ namespace TitanBot
             Quaternion r = Quaternion.LookRotation(d);
 
             //if someone is on our ass check if we are running into a wall and if we are then change are state to running to hopefully avoid an easy kill
-            if (Vector3.Distance(closestPlayer.transform.position, MyTitan.neck.position) < 20f) {
+            if (Vector3.Distance(closestPlayer.transform.position, MyTitan.neck.position) < 20f)
+            {
                 if (checkWalls())
                 {
                     if (CGTools.timer(ref RaycastDirectionChangeTimer, 1f))
@@ -250,17 +243,14 @@ namespace TitanBot
                         state = TitanState.Running;
                         stateTimer = Time.time + 1.5f;
                     }
-                }        
+                }
             }
 
             if (debugTargets)
                 CGTools.redPointsToTrack.Add(closestPlayer.transform.position);
             targetDirectionLerp = Quaternion.Inverse(r).eulerAngles.y;
         }
-
-
-        
-
+        //run to the furthest point around us
         private void run()
         {
             //check if there is a wall in front of us, if there is we pick a new direction
@@ -281,7 +271,7 @@ namespace TitanBot
             {
                 targetDirection = 360f;
             }
-            
+
             //every 2 seconds find a new direction to run
             if (CGTools.timer(ref changeTargetDirectionTimer, 2f))
             {
@@ -291,8 +281,8 @@ namespace TitanBot
             //lastFarthestPoint is set by PickNewDirection() and should be the point we are running to
             if (debugRaycasts)
                 CGTools.greenPointsToTrack.Add(lastFarthestPoint);
-            
-            
+
+
         }
 
 
@@ -300,10 +290,13 @@ namespace TitanBot
         //we can get stuck in a gap like this but the wobble helps us not be stuck forever
         private void PickNewDirection()
         {
-            
+
             int start = (int)UnityEngine.Random.Range(0f, 45f);
             float lastFarthestDistance = 0f;
-            
+            if (debugRaycasts)
+            {
+                lastRaycasts.Clear();
+            }
 
             Vector3 rayOrigin2 = MyTitan.transform.position + Vector3.up * 10f;
             for (int i = 0; i < raycasts; i++)
@@ -321,6 +314,10 @@ namespace TitanBot
                     }
 
                 }
+                if (debugRaycasts)
+                {
+                    lastRaycasts.Add(raycastHit2.point);
+                }
             }
 
 
@@ -331,9 +328,6 @@ namespace TitanBot
 
         private void showRaycasts()
         {
-            
-            float lastFarthestDistance = 0f;
-
             Vector3 rayOrigin2 = MyTitan.transform.position + Vector3.up * 10f;
             for (int i = 0; i < raycasts; i++)
             {
@@ -342,9 +336,7 @@ namespace TitanBot
                 Ray ray2 = new Ray(rayOrigin2, rayDirection2);
                 Physics.Raycast(ray2, out RaycastHit raycastHit2);
                 CGTools.pointsToTrack.Add(raycastHit2.point);
-                
             }
-            
         }
 
         //spin in a circle really quickly
@@ -446,7 +438,7 @@ namespace TitanBot
             {
                 isAttackIIDown = true;
             }
-            
+
 
         }
 
@@ -459,7 +451,12 @@ namespace TitanBot
             }
         }
 
-        
+        public void LiveUpdateMovesetData()
+        {
+            MovesetDatabase.Clear();
+
+            CalculateMovesetData(MyTitan.myLevel);
+        }
 
         /// <summary>
         /// finds the closest movesetData from the database
@@ -509,7 +506,7 @@ namespace TitanBot
             if (MyTitan == null) return;
             if (doStuff)
                 AIMaster();
-            
+
             //if something is set on one frame unset it the next frame to make my life easier
             if (isAttackDown)
             {
@@ -713,12 +710,12 @@ namespace TitanBot
         {
             PTAction result = PTAction.nothing;
             float lowestTime = float.MaxValue;
-            
+
             foreach (PTAction action in MovesetDatabase.Keys)
             {
                 foreach (GameObject p in PlayersToCheck)
                 {
-                
+
                     //float f = FloatingFire.checkMoveset(MovesetDatabase[action], PTTools.predictPlayerMotion(p, (forsight / forsightSteps) * i), (forsight / forsightSteps) * i);
                     float f = HitData.AdvanceMovesetCheck(MovesetDatabase[action], p, MyTitan.transform);
                     if (f < lowestTime)
@@ -726,8 +723,8 @@ namespace TitanBot
                         lowestTime = f;
                         result = action;
                     }
-                
-                
+
+
                 }
             }
 

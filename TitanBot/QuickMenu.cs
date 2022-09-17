@@ -1,33 +1,10 @@
 ﻿using System;
-using TitanBot.FlatUI5;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using TitanBot.FlatUI5;
 using UnityEngine;
-using static UIPopupList;
-using static ICSharpCode.SharpZipLib.Zip.FastZip;
-using UnityScript.Lang;
-using Constants;
-using static System.Collections.Specialized.BitVector32;
-using UI;
-using System.Reflection.Emit;
 
 namespace TitanBot
 {
-
-    //man what the actual fuck do I need to make this usable
-    //just want to spawn ptbots
-    //maybe just the random spawn will be enough
-    //but I could also add custom map spawnpoint recognition
-    /*
-
-    first menu will be ptbot settings and spawning
-
-    second menu will be ptbot move selection
-    
-    third menu will be game settings and others
-
-     */
     public static class QuickMenu
     {
         public static Texture2D PTButtonColor;
@@ -36,7 +13,7 @@ namespace TitanBot
         public static float menuY;
         public static int tabIndex = 0;
         public static List<GameObject> platforms = new List<GameObject>();
-        public static Vector3[] CameraPositions = new Vector3[10]; 
+        public static Vector3[] CameraPositions = new Vector3[10];
         public static Quaternion[] CameraRotations = new Quaternion[10];
         public static float mouseScale = 20f;
         public static TITAN myLastPT;
@@ -73,7 +50,7 @@ namespace TitanBot
             tabIndex = tabs(new Rect(menuX + 250f, menuY, 700f, 100f), tabNames, tabIndex, false, tabColors);
             if (tabIndex == 0) tabPTBotSettings();
             if (tabIndex == 1) moreSettings();
-            GUI.DrawTexture(new Rect(Input.mousePosition.x - (mouseScale/2f), Screen.height - Input.mousePosition.y - (mouseScale / 2f), mouseScale, mouseScale), CGTools.mouseTex);
+            GUI.DrawTexture(new Rect(Input.mousePosition.x - (mouseScale / 2f), Screen.height - Input.mousePosition.y - (mouseScale / 2f), mouseScale, mouseScale), CGTools.mouseTex);
         }
 
         private static void moreSettings()
@@ -104,9 +81,9 @@ namespace TitanBot
             KaneGameManager.doInfiniteTitans = FlatUI.Check(IndexToRect(3), KaneGameManager.doInfiniteTitans, "Enable Endless Spawning");
             GUI.Label(IndexToRect(4, 3, 0), "Count");
             infiniteTitanTextBox = GUI.TextField(IndexToRect(4, 3, 1), infiniteTitanTextBox);
-            if (FlatUI.Button(IndexToRect(4,3,2), "Apply"))
+            if (FlatUI.Button(IndexToRect(4, 3, 2), "Apply"))
             {
-                if(int.TryParse(infiniteTitanTextBox, out int i))
+                if (int.TryParse(infiniteTitanTextBox, out int i))
                 {
                     KaneGameManager.InfTitanCount = i;
                     CGTools.log("Infinite titan count updated to " + i);
@@ -119,7 +96,7 @@ namespace TitanBot
 
 
             Label(IndexToRect(5), "Difficulty");
-            if(FlatUI.Button(IndexToRect(6), "Very Very Hard", (PTTools.difficulty == Difficulty.VeryVeryHard) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
+            if (FlatUI.Button(IndexToRect(6), "Very Very Hard", (PTTools.difficulty == Difficulty.VeryVeryHard) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
             {
                 PTTools.difficulty = Difficulty.VeryVeryHard;
             }
@@ -162,9 +139,17 @@ namespace TitanBot
             if (FlatUI.Button(IndexToRect(20), "Apply"))
             {
                 PlayerTitanBot.pTActions = PlayerTitanBot.TempActionsList.ToArray();
-                CGTools.log("Moveset Updated for new Titans!");
+                foreach (GameObject t in GameObject.FindGameObjectsWithTag("titan"))
+                {
+                    TITAN titan = t.GetComponent<TITAN>();
+                    if (titan.isCustomTitan)
+                    {
+                        PlayerTitanBot b = (PlayerTitanBot)titan.controller;
+                        b.LiveUpdateMovesetData();
+                    }
+                }
+                CGTools.log("Moveset Updated for All Titans!");
             }
-            GUI.Label(IndexToRectMultiLine(21, 2), "Moves will be applied on newly spawned titans");
         }
 
         private static void Label(Rect rect, string text)
@@ -212,7 +197,7 @@ namespace TitanBot
                     spawnPosition = raycastHit.point;
                 }
 
-                GameObject myPTGO = PhotonNetwork.Instantiate("TITAN_VER3.1",spawnPosition, rot, 0);
+                GameObject myPTGO = PhotonNetwork.Instantiate("TITAN_VER3.1", spawnPosition, rot, 0);
                 TITAN MyPT = myPTGO.GetComponent<TITAN>();
                 myLastPT = MyPT;
                 GameObject.Destroy(myPTGO.GetComponent<TITAN_CONTROLLER>());
@@ -220,13 +205,15 @@ namespace TitanBot
                 myPTGO.GetComponent<TITAN>().speed = 30f;
                 myPTGO.GetComponent<TITAN_CONTROLLER>().enabled = true;
                 myPTGO.GetComponent<TITAN>().isCustomTitan = true;
-                
+
 
             }
-            if (FlatUI.Button(IndexToRect(2), "Print Camera Pos")){
+            if (FlatUI.Button(IndexToRect(2), "Print Camera Pos"))
+            {
                 CGTools.log(Camera.main.transform.position.ToString());
             }
-            if (FlatUI.Button(IndexToRect(3), "Test Connect me")){
+            if (FlatUI.Button(IndexToRect(3), "Test Connect me"))
+            {
                 KaneGameManager.OnPhotonPlayerConnected(PhotonNetwork.player);
             }
             PlayerTitanBot.TakeOverPT = FlatUI.Check(IndexToRect(4), PlayerTitanBot.TakeOverPT, "TakeOverPT");
@@ -245,16 +232,16 @@ namespace TitanBot
             }
             if (FlatUI.Button(IndexToRect(11, 2, 1), "Check Data"))
             {
-                
+
                 foreach (PTAction key in HitData.AllHitboxData.Keys)
                 {
-                   
+
                     CGTools.log(key.ToString());
-                    foreach(HitData.MovesetData movesetData in HitData.AllHitboxData[key])
+                    foreach (HitData.MovesetData movesetData in HitData.AllHitboxData[key])
                     {
                         float realLevel = 0f;
                         CGTools.log(" > Size = " + movesetData.titanLevel);
-                        foreach(HitData.Hitbox hh in movesetData.hitboxes)
+                        foreach (HitData.Hitbox hh in movesetData.hitboxes)
                         {
                             realLevel = hh.level;
                         }
@@ -265,7 +252,7 @@ namespace TitanBot
             PlayerTitanBot.useCustomHair = FlatUI.Check(IndexToRect(12), PlayerTitanBot.useCustomHair, "Custom Hair");
             if (FlatUI.Button(IndexToRect(13), "Print Database Info"))
             {
-                
+
                 foreach (PTAction key in HitData.AllHitboxData.Keys)
                 {
                     CGTools.log(key.ToString());
@@ -278,7 +265,7 @@ namespace TitanBot
             textBoxText[3] = GUI.TextField(IndexToRect(15), textBoxText[3]);
             if (FlatUI.Button(IndexToRect(16, 3, 2), "Chat"))
             {
-                
+
                 FengGameManagerMKII.instance.photonView.RPC("Chat", PhotonTargets.All, new object[]
                 {
                 textBoxText[3].hexColor(),
@@ -286,7 +273,7 @@ namespace TitanBot
                 });
             }
             checkDataLevel = SetTextbox(IndexToRect(17), checkDataLevel, "Titan Level", 55);
-            if (FlatUI.Button(IndexToRect(18,2,0), "Show Hitboxes"))
+            if (FlatUI.Button(IndexToRect(18, 2, 0), "Show Hitboxes"))
             {
                 foreach (PTAction key in HitData.AllHitboxData.Keys)
                 {
@@ -311,7 +298,7 @@ namespace TitanBot
             }
             if (FlatUI.Button(IndexToRect(19), "Unit Test weight table"))
             {
-                int[] table = new int[] { 8,6,9,44,2,7};
+                int[] table = new int[] { 8, 6, 9, 44, 2, 7 };
                 int[] tableOccurences = new int[table.Length];
                 for (int o = 0; o < table.Length; o++)
                 {
@@ -323,7 +310,7 @@ namespace TitanBot
                 {
                     int r = CGTools.WeightTable(table);
                     tableOccurences[r]++;
-                    
+
                 }
                 CGTools.log("Finished " + num + " cycles");
                 for (int i = 0; i < table.Length; i++)
@@ -334,14 +321,13 @@ namespace TitanBot
             PTTools.difficulty = (Difficulty)SetTextbox(IndexToRect(20), (int)PTTools.difficulty, "difficulty", 88);
             PTTools.debugPlayerData = FlatUI.Check(IndexToRect(21), PTTools.debugPlayerData, "Debug Predictions");
         }
-        
         public static void TabMain()
         {
-            if (FlatUI.Button(IndexToRect(0,2,0), "Spawn PTBot"))
+            if (FlatUI.Button(IndexToRect(0, 2, 0), "Spawn PTBot"))
             {
                 Vector3 pos = Camera.main.transform.position;
                 Quaternion rot = Quaternion.identity;
-                GameObject myPTGO = PhotonNetwork.Instantiate("TITAN_VER3.1", new Vector3(0f,0f,0f), rot, 0);
+                GameObject myPTGO = PhotonNetwork.Instantiate("TITAN_VER3.1", new Vector3(0f, 0f, 0f), rot, 0);
                 TITAN MyPT = myPTGO.GetComponent<TITAN>();
                 myLastPT = MyPT;
                 GameObject.Destroy(myPTGO.GetComponent<TITAN_CONTROLLER>());
@@ -354,7 +340,7 @@ namespace TitanBot
             {
                 ((PlayerTitanBot)myLastPT.controller).doStuff = !((PlayerTitanBot)myLastPT.controller).doStuff;
             }
-            if (FlatUI.Button(IndexToRect(1,2,0), "Reset Position"))
+            if (FlatUI.Button(IndexToRect(1, 2, 0), "Reset Position"))
             {
                 myLastPT.transform.position = Vector3.zero;
                 myLastPT.transform.rotation = Quaternion.identity;
@@ -384,7 +370,7 @@ namespace TitanBot
                     }
                 }
             }
-            if (FlatUI.Button(IndexToRect(2,2,0), "Clear Data"))
+            if (FlatUI.Button(IndexToRect(2, 2, 0), "Clear Data"))
             {
                 HitData.AllHitboxData.Clear();
             }
@@ -832,11 +818,11 @@ namespace TitanBot
                 Camera.main.transform.position = CameraPositions[id];
                 Camera.main.transform.rotation = CameraRotations[id];
             }
-            if (FlatUI.Button(IndexToRect(14,2,0), "Reset Cameras"))
+            if (FlatUI.Button(IndexToRect(14, 2, 0), "Reset Cameras"))
             {
                 CameraPositions = new Vector3[10];
             }
-            resetPositionsOnAttack = FlatUI.Check(IndexToRect(14,2,1), resetPositionsOnAttack, "Reset Position");
+            resetPositionsOnAttack = FlatUI.Check(IndexToRect(14, 2, 1), resetPositionsOnAttack, "Reset Position");
             if (FlatUI.Button(IndexToRect(15, 2, 0), "Save Data"))
             {
                 PTDataMachine.SaveHitboxData(true);
@@ -846,7 +832,7 @@ namespace TitanBot
                 PTDataMachine.LoadHitboxData();
             }
             KaneGameManager.doCameraRotation = FlatUI.Check(IndexToRect(16), KaneGameManager.doCameraRotation, "doCameraRotation");
-            if(FlatUI.Button(IndexToRect(17, 4, 0), "--"))
+            if (FlatUI.Button(IndexToRect(17, 4, 0), "--"))
             {
                 KaneGameManager.cameraRotationSpeed -= 10f;
             }
@@ -869,19 +855,6 @@ namespace TitanBot
 
             showHitboxs = FlatUI.Check(IndexToRect(22), PTDataMachine.DrawHitboxes, "showHitboxes");
         }
-
-
-        public static void drawHitboxes()
-        {
-            if (showHitboxs && PTDataMachine.hitBoxes != null && PTDataMachine.hitBoxes.Count > 0)
-            {
-                foreach (HitData.HitboxSphere hitboxTime in PTDataMachine.hitBoxes)
-                {
-                    CGTools.drawPoint(hitboxTime.pos);
-                }
-            }
-        }
-
         public static Rect IndexToRect(int i)
         {
             return new Rect(menuX + 4f, menuY + (float)(i * 30), 240f, 30f);
@@ -904,7 +877,6 @@ namespace TitanBot
             }
             return new Rect(menuX + 4f + num / (float)divisions * (float)j, menuY + (float)i * 30f, (float)n * (num / (float)divisions), 30f);
         }
-
         public static Rect IndexToRectMultiLine(int i, int rows)
         {
             return new Rect(menuX + 4f, menuY + (float)(i * 30), 240f, 30f * rows);
@@ -918,7 +890,6 @@ namespace TitanBot
             }
             return new Rect(menuX + 4f + num / (float)divisions * (float)j, menuY + (float)i * 30f, (float)n * (num / (float)divisions), 30f * rows);
         }
-
         public static int tabs(Rect pos, string[] tabs, int index, bool top, Texture2D[] tabColors)
         {
             int num = tabs.Length;
@@ -993,16 +964,15 @@ namespace TitanBot
                 return;
             }
         }
-
         public static void Init()
         {
             for (int i = 0; i < tabColors.Length; i++)
             {
                 tabColors[i] = CGTools.ColorTex(CGTools.randomColor());
             }
-            PTButtonColor = CGTools.ColorTex(new Color(1f,1f,1f));
+            PTButtonColor = CGTools.ColorTex(new Color(1f, 1f, 1f));
             menuX = (float)Screen.width / 2f - 350f + 1000f;
-            menuY = (float) Screen.height / 2f - 250f;
+            menuY = (float)Screen.height / 2f - 250f;
         }
         public static float SetTextbox(Rect position, float source, string label, int arrayID)
         {
@@ -1018,8 +988,6 @@ namespace TitanBot
             }
             return source;
         }
-
-        // Token: 0x060011C1 RID: 4545 RVA: 0x000C88DC File Offset: 0x000C6ADC
         public static int SetTextbox(Rect position, int source, string label, int arrayID)
         {
             if (textBoxText[arrayID] == null)

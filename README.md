@@ -1,2 +1,3 @@
-# RCMod
-Official repo for the Attack on Titan Tribute Game RC Mod
+# PTBot
+
+A Player Titan AI for the Attack on Titan Tribute Game

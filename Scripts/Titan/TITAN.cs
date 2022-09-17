@@ -3569,19 +3569,7 @@ public class TITAN : Photon.MonoBehaviour
             }
             else
             {
-                if (PlayerTitanBot.TakeOverPT)
-                {
-                    this.gameObject.AddComponent<PlayerTitanBot>();
-                    this.controller = base.gameObject.GetComponent<PlayerTitanBot>();
-                    this.controller.targetDirection = -874f;
-                    ((PlayerTitanBot)controller).CalculateMovesetData(myLevel);
-                }
-                else
-                {
-                    this.controller = base.gameObject.GetComponent<TITAN_CONTROLLER>();
-
-                }
-
+                this.controller = base.gameObject.GetComponent<TITAN_CONTROLLER>();
             }
             QuickMenu.myLastPT = this;
             StartCoroutine(HandleSpawnCollisionCoroutine(2f, 20f));

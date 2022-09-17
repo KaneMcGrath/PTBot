@@ -7,6 +7,7 @@ using System.Collections;
 using GameProgress;
 using Map;
 using CustomSkins;
+using TitanBot;
 
 namespace ApplicationManagers
 {

@@ -13,24 +13,35 @@ namespace TitanBot
 {
     /// <summary>
     /// Replacement for TITAN_CONTROLLER that tries to replicate PT gameplay
+    /// We replace the TITAN_CONTROLLER so that all of our movements and actions are constrained in the same way a normal PT would be
+    /// and only output to the variables that would be set by your keyboard inputs
     /// </summary>
     public class PlayerTitanBot : TITAN_CONTROLLER
     {
-        public static bool TakeOverPT = true;
+        public static bool TakeOverPT = false;
         public static int raycasts = 10;
         public static float spinrate = 800f;
         public static float turnrate = 0.005f;
         public static bool debugRaycasts = false;
-        private static bool debugRaycastsIsRun = false;
         public static bool debugTargets = false;
         public static bool useCustomHair = true;
 
         public bool doStuff = true;
         public TITAN MyTitan = null;
+
         private Dictionary<PTAction, bool> updateNextFrameList = new Dictionary<PTAction, bool>();
         private GameObject[] players;
         private GameObject closestPlayer;
         private TitanState state = TitanState.Running;
+        private List<Vector3> lastRaycasts = new List<Vector3>();
+        private float stateTimer = 0f;
+        private float targetDirectionLerp = 0f;
+        private float changeTargetDirectionTimer = 0f;
+        private float RaycastDirectionChangeTimer = 0f;
+        private float targetLerpT = 0f;
+        private float SpeedTimer = 0f;
+        private Vector3 lastFarthestPoint = Vector3.zero;
+        private Difficulty myDifficulty = Difficulty.VeryVeryHard;
 
 
         // public float forsight = 4f;//how far into the future titan will predict player velocity
@@ -47,28 +58,20 @@ namespace TitanBot
             PTAction.choptr,
         };
 
+        //list we can set in the settings to swap out moves to use
         public static List<PTAction> TempActionsList = new List<PTAction>();
 
-        public void DebugGUI()
-        {
-            Vector3 point = Camera.main.WorldToScreenPoint(MyTitan.transform.position);
-            Rect Bounds = new Rect(point.x, Screen.height - point.y, 200f, 500f);
-            GUI.Label(Bounds, "");
-        }
 
-
-        private float stateTimer = 0f;
 
         /// <summary>
         /// Main AI Decision making function
         /// </summary>
         private void AIMaster()
         {
-            debugRaycastsIsRun = false;  //only used for debugRaycasts to not show when we dont use them
             players = GetPlayersToCalculate();
 
             //every half second there is a 10% chance that we walk for that period
-            //unless a function overrides the walk input every update
+            //unless a function overrides the walk input
             if (CGTools.timer(ref SpeedTimer, 0.5f))
             {
                 if (CGTools.Chance(10f))
@@ -81,6 +84,7 @@ namespace TitanBot
                 }
             }
 
+            //every 5 seconds we change state
             if (CGTools.timer(ref stateTimer, 5f))
             {
                 int s = CGTools.WeightTable(new int[]
@@ -115,12 +119,11 @@ namespace TitanBot
                     stateTimer = Time.time + 1f;
                 }
             }
-            CGLog.track("TitanState", state.ToString());
-
 
             if (state == TitanState.Running)
             {
                 run();
+                letErRip();
             }
             else if(state == TitanState.Attacking)
             {
@@ -169,7 +172,8 @@ namespace TitanBot
                 letErRip();
             }
 
-
+            //turn left and right on a sin wave to keep our movements a bit sparratic
+            //also convinently helps our raycasting
             float wobbleRate = 30f;
             float wobble = Mathf.Sin(Time.time * 4f) * wobbleRate;
             float targetDirectionFinal = targetDirectionLerp + wobble;
@@ -219,13 +223,7 @@ namespace TitanBot
             return flag;
         }
 
-        private void runToTarget(Vector3 target)
-        {
-            Vector3 direction = target - MyTitan.transform.position;
-            Quaternion rotation = Quaternion.LookRotation(direction);
-            targetDirection = rotation.eulerAngles.y;
-        }
-
+        //run towards the closest player
         private void Agro()
         {
             Vector3 d = closestPlayer.transform.position - MyTitan.transform.position;
@@ -235,12 +233,13 @@ namespace TitanBot
             targetDirectionLerp = r.eulerAngles.y;
         }
         
+        //run away from the closest player
         private void reposition()
         {
             Vector3 d = closestPlayer.transform.position - MyTitan.transform.position;
             Quaternion r = Quaternion.LookRotation(d);
 
-            //if someone is on our ass check if we are running into a wall and if we are then start running real quick
+            //if someone is on our ass check if we are running into a wall and if we are then change are state to running to hopefully avoid an easy kill
             if (Vector3.Distance(closestPlayer.transform.position, MyTitan.neck.position) < 20f) {
                 if (checkWalls())
                 {
@@ -259,29 +258,12 @@ namespace TitanBot
             targetDirectionLerp = Quaternion.Inverse(r).eulerAngles.y;
         }
 
-        private float targetDirectionLerp = 0f;
-        private float changeTargetDirectionTimer = 0f;
-        private float RaycastDirectionChangeTimer = 0f;
-        private float targetLerpT = 0f;
-
-        private float SpeedTimer = 0f;
-
-        private Vector3 lastFarthestPoint = Vector3.zero;
 
         
 
         private void run()
         {
-            
-
-            //Raycast in 8 directions and only choose directions that dont have walls
-            //If a wall is found while running, immediatly choose a new direction
-            
-            //Vector3 rayOrigin = MyTitan.transform.position + Vector3.up * 5f;
-            //Vector3 rayDirection = MyTitan.transform.forward * 50f;
-            //Ray ray = new Ray(rayOrigin, rayDirection);
-            //LayerMask mask = ((int)1) << PhysicsLayer.Ground;
-
+            //check if there is a wall in front of us, if there is we pick a new direction
             if (checkWalls())
             {
                 if (CGTools.timer(ref RaycastDirectionChangeTimer, 1f))
@@ -290,20 +272,7 @@ namespace TitanBot
                 }
             }
 
-
-            //CGTools.greenPointsToTrack.Add(MyTitan.transform.position + Quaternion.Euler(new Vector3(0f,targetDirectionLerp,0f)) * MyTitan.transform.forward * 50f);
-            //if (Physics.Raycast(ray, out RaycastHit raycastHit, 50f, mask.value))
-            //{
-            //    
-            //}
-            //else
-            //{
-            //    RaycastDirectionChangeTimer = 0f;
-            //}
-            //if (debugRaycasts)
-            //    CGTools.redPointsToTrack.Add(raycastHit.point);
-
-            
+            //not really sure if this is neccessary but why not
             if (targetDirection > 360f)
             {
                 targetDirection = 0f;
@@ -313,21 +282,25 @@ namespace TitanBot
                 targetDirection = 360f;
             }
             
+            //every 2 seconds find a new direction to run
             if (CGTools.timer(ref changeTargetDirectionTimer, 2f))
             {
                 PickNewDirection();
             }
+
+            //lastFarthestPoint is set by PickNewDirection() and should be the point we are running to
             if (debugRaycasts)
                 CGTools.greenPointsToTrack.Add(lastFarthestPoint);
             
             
         }
 
-        
 
+        //raycast 360 degrees starting at set intervals and find the point that goes the farthest
+        //we can get stuck in a gap like this but the wobble helps us not be stuck forever
         private void PickNewDirection()
         {
-            //raycast 360 degrees starting at a random rotation and find the point that goes the farthest
+            
             int start = (int)UnityEngine.Random.Range(0f, 45f);
             float lastFarthestDistance = 0f;
             
@@ -354,14 +327,11 @@ namespace TitanBot
             Vector3 direction = lastFarthestPoint - MyTitan.transform.position;
             Quaternion rotation = Quaternion.LookRotation(direction);
             targetDirectionLerp = rotation.eulerAngles.y;
-            //targetLerpT = 0f;
         }
 
         private void showRaycasts()
         {
-            //raycast 360 degrees starting at a random rotation and find the point that goes the farthest
-            //int start = (int)UnityEngine.Random.Range(0f, 90f);
-            //int start = (int)UnityEngine.Random.Range(0f, 20f);
+            
             float lastFarthestDistance = 0f;
 
             Vector3 rayOrigin2 = MyTitan.transform.position + Vector3.up * 10f;
@@ -377,6 +347,7 @@ namespace TitanBot
             
         }
 
+        //spin in a circle really quickly
         private void spin()
         {
             isWALKDown = true;
@@ -391,9 +362,9 @@ namespace TitanBot
             targetDirection += spinrate * Time.deltaTime;
         }
 
+        //check for players that will run into a hitbox and attack if they do
         private bool letErRip()
         {
-            
             if (players.Length == 0)
             {
                 return false;
@@ -406,6 +377,7 @@ namespace TitanBot
             }
             return false;
         }
+
 
         private void ExecuteAction(PTAction a)
         {
@@ -537,6 +509,8 @@ namespace TitanBot
             if (MyTitan == null) return;
             if (doStuff)
                 AIMaster();
+            
+            //if something is set on one frame unset it the next frame to make my life easier
             if (isAttackDown)
             {
                 if (updateNextFrameList[PTAction.Attack])
@@ -811,12 +785,5 @@ namespace TitanBot
         Spinning
     }
 
-    public enum Difficulty
-    {
-        easy,
-        medium,
-        Hard,
-        VeryHard,
-        VeryVeryHard
-    }
+
 }

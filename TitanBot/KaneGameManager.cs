@@ -13,16 +13,18 @@ namespace TitanBot
     {
         public static KaneGameManager instance;
         public static bool toggleQuickMenu = false;
-        public static string GameVersionString = "PTBot 1.3 (Dev)";
+        public static string GameVersionString = "PTBot 1.4 (Dev)";
         public static bool doCameraRotation = false;
         public static float cameraRotationSpeed = 30f;
         public static string Path = Application.dataPath + "/PTBot/";
         public static bool waitToAnnounce = false;
         public static float waitToAnnounceTimer = -999999f;
-        public static PhotonPlayer subAdmin = null;
         private static Vector3 spawnPos = new Vector3(0f, 0f, -530f);
         private static Vector3 returnPos = new Vector3(0f, 0f, 530f);
         private static float movetoRPCTimer = 0f;
+        public static bool doSpawnTeleporting = false;
+        public static int InfTitanCount = 5;
+        public static bool doInfiniteTitans = false;
 
         public static void Init()
         {
@@ -31,8 +33,10 @@ namespace TitanBot
             FlatUI.Init();
             CGLog.Start();
             CGTools.Init();
+            PTDataMachine.LoadHitboxData();
             CGTools.log(GameVersionString);
         }
+
 
         public void OnGUI()
         {
@@ -69,27 +73,30 @@ namespace TitanBot
             });
         }
 
+
         public void teleportTitansIfAtSpawn()
         {
-
-            foreach (GameObject g in GameObject.FindGameObjectsWithTag("titan"))
+            if (doSpawnTeleporting)
             {
-                if (Vector3.Distance(g.transform.position, spawnPos) < 200f)
+                foreach (GameObject g in GameObject.FindGameObjectsWithTag("titan"))
                 {
-                    if (g.GetPhotonView().isMine)
-                        g.transform.position = returnPos;
-                    else
+                    if (Vector3.Distance(g.transform.position, spawnPos) < 200f)
                     {
-                        if (PhotonNetwork.isMasterClient)
+                        if (g.GetPhotonView().isMine)
+                            g.transform.position = returnPos;
+                        else
                         {
-                            if (CGTools.timer(ref movetoRPCTimer, 2f))
+                            if (PhotonNetwork.isMasterClient)
                             {
-                                g.GetComponent<TITAN>().photonView.RPC("moveToRPC", g.GetPhotonView().owner, new object[]
+                                if (CGTools.timer(ref movetoRPCTimer, 2f))
                                 {
+                                    g.GetComponent<TITAN>().photonView.RPC("moveToRPC", g.GetPhotonView().owner, new object[]
+                                    {
                                 returnPos.x,
                                 returnPos.y,
                                 returnPos.z
-                                });
+                                    });
+                                }
                             }
                         }
                     }
@@ -99,16 +106,6 @@ namespace TitanBot
 
         public void Update()
         {
-            teleportTitansIfAtSpawn();
-            if (waitToAnnounceTimer > 0f)
-            {
-                waitToAnnounceTimer -= Time.deltaTime * 1f;
-            }
-            if (waitToAnnounceTimer <= 0f && waitToAnnounceTimer > -999f)
-            {
-                Announce();
-                waitToAnnounceTimer = -999999f;
-            }
             InfiniteTitanHandler();
             CGTools.Update();
             if (doCameraRotation)
@@ -178,8 +175,7 @@ namespace TitanBot
 
         public static void OnJoinedRoom()
         {
-         //   if (!PhotonNetwork.isMasterClient)
-                waitToAnnounceTimer = 1f;
+
         }
 
         public static void OnInstantiate(PhotonPlayer player, string key, GameObject GO)
@@ -209,44 +205,46 @@ namespace TitanBot
                 });
                 FengGameManagerMKII.instance.photonView.RPC("Chat", photonPlayer, new object[]
                 {
-                text.hexColor(),
-                ""
+                    text.hexColor(),
+                    ""
                 });
                 
             }
         }
 
-        public static int InfTitanCount = 10;
-        public static bool doInfiniteTitans = false;
+
 
 
         public static void InfiniteTitanHandler()
         {
-            if (GameObject.FindGameObjectsWithTag("titan").Length < InfTitanCount && doInfiniteTitans && FengGameManagerMKII.instance.gameStart && PhotonNetwork.isMasterClient)
+            if (FengGameManagerMKII.instance.gameStart)
             {
-                Vector3 pos = Camera.main.transform.position;
-                Quaternion rot = Quaternion.identity;
-                float x = UnityEngine.Random.Range(-400f, 400f);
-                float z = UnityEngine.Random.Range(-400f, 400f);
-
-                Vector3 rayOrigin = new Vector3(x, 200f, z);
-                Vector3 rayDirection = Vector3.down;
-                Ray ray = new Ray(rayOrigin, rayDirection);
-
-                Vector3 spawnPosition = rayOrigin;
-
-                if (Physics.Raycast(ray, out RaycastHit raycastHit))
+                if (GameObject.FindGameObjectsWithTag("titan").Length < InfTitanCount && doInfiniteTitans && FengGameManagerMKII.instance.gameStart && PhotonNetwork.isMasterClient)
                 {
-                    spawnPosition = raycastHit.point;
-                }
+                    Vector3 pos = Camera.main.transform.position;
+                    Quaternion rot = Quaternion.identity;
+                    float x = UnityEngine.Random.Range(-400f, 400f);
+                    float z = UnityEngine.Random.Range(-400f, 400f);
 
-                GameObject myPTGO = PhotonNetwork.Instantiate("TITAN_VER3.1", spawnPosition, rot, 0);
-                TITAN MyPT = myPTGO.GetComponent<TITAN>();
-                GameObject.Destroy(myPTGO.GetComponent<TITAN_CONTROLLER>());
-                myPTGO.GetComponent<TITAN>().nonAI = true;
-                myPTGO.GetComponent<TITAN>().speed = 30f;
-                myPTGO.GetComponent<TITAN_CONTROLLER>().enabled = true;
-                myPTGO.GetComponent<TITAN>().isCustomTitan = true;
+                    Vector3 rayOrigin = new Vector3(x, 200f, z);
+                    Vector3 rayDirection = Vector3.down;
+                    Ray ray = new Ray(rayOrigin, rayDirection);
+
+                    Vector3 spawnPosition = rayOrigin;
+
+                    if (Physics.Raycast(ray, out RaycastHit raycastHit))
+                    {
+                        spawnPosition = raycastHit.point;
+                    }
+
+                    GameObject myPTGO = PhotonNetwork.Instantiate("TITAN_VER3.1", spawnPosition, rot, 0);
+                    TITAN MyPT = myPTGO.GetComponent<TITAN>();
+                    GameObject.Destroy(myPTGO.GetComponent<TITAN_CONTROLLER>());
+                    myPTGO.GetComponent<TITAN>().nonAI = true;
+                    myPTGO.GetComponent<TITAN>().speed = 30f;
+                    myPTGO.GetComponent<TITAN_CONTROLLER>().enabled = true;
+                    myPTGO.GetComponent<TITAN>().isCustomTitan = true;
+                }
             }
         }
     }

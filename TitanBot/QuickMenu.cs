@@ -7,9 +7,27 @@ using UnityEngine;
 using static UIPopupList;
 using static ICSharpCode.SharpZipLib.Zip.FastZip;
 using UnityScript.Lang;
+using Constants;
+using static System.Collections.Specialized.BitVector32;
+using UI;
+using System.Reflection.Emit;
 
 namespace TitanBot
 {
+
+    //man what the actual fuck do I need to make this usable
+    //just want to spawn ptbots
+    //maybe just the random spawn will be enough
+    //but I could also add custom map spawnpoint recognition
+    /*
+
+    first menu will be ptbot settings and spawning
+
+    second menu will be ptbot move selection
+    
+    third menu will be game settings and others
+
+     */
     public static class QuickMenu
     {
         public static Texture2D PTButtonColor;
@@ -20,53 +38,148 @@ namespace TitanBot
         public static List<GameObject> platforms = new List<GameObject>();
         public static Vector3[] CameraPositions = new Vector3[10]; 
         public static Quaternion[] CameraRotations = new Quaternion[10];
-        public static float mouseScale = 30f;
+        public static float mouseScale = 20f;
+        public static TITAN myLastPT;
+        public static string[] textBoxText = new string[100];
         public static string[] tabNames = new string[]
         {
-            "TitanBot",
-            "Extra",
-            "moves"
+            "PTBot Settings",
+            "Game Settings"
         };
+        public static bool showHitboxs = false;
+        public static bool doAttacks = true;
 
+        private static float checkDataLevel = 0f;
+        private static int subAdminID = 0;
         private static bool resetPositionsOnAttack = false;
         private static bool clearHitboxesOnAttack = false;
+
+        private static string infiniteTitanTextBox = "5";
+        private static GUIStyle labelStyle = new GUIStyle
+        {
+            border = new RectOffset(1, 1, 1, 1),
+            alignment = TextAnchor.LowerCenter,
+            fontSize = 14,
+            fontStyle = FontStyle.Bold,
+            normal = { textColor = Color.white }
+        };
+
+
 
         public static void OnGUI()
         {
             menuX = Screen.width - 450f;
             FlatUI.Box(new Rect(menuX, menuY, 250f, 700f), tabColors[tabIndex], FengGameManagerMKII.instance.textureBackgroundBlack);
             tabIndex = tabs(new Rect(menuX + 250f, menuY, 700f, 100f), tabNames, tabIndex, false, tabColors);
-            if (tabIndex == 0) TabMain();
-            if (tabIndex == 1) tabExtra();
-            if (tabIndex == 2) tabMoveset();
-            GUI.DrawTexture(new Rect(Input.mousePosition.x - (mouseScale/2f), Screen.height - Input.mousePosition.y - (mouseScale / 2f), 20f, 20f), CGTools.mouseTex);
+            if (tabIndex == 0) tabPTBotSettings();
+            if (tabIndex == 1) moreSettings();
+            GUI.DrawTexture(new Rect(Input.mousePosition.x - (mouseScale/2f), Screen.height - Input.mousePosition.y - (mouseScale / 2f), mouseScale, mouseScale), CGTools.mouseTex);
+        }
+
+        private static void moreSettings()
+        {
+
+        }
+
+        private static void tabPTBotSettings()
+        {
+            Label(IndexToRect(0), "Spawn a PTBot under the camera");
+            if (FlatUI.Button(IndexToRect(1), "Spawn PTBot"))
+            {
+                Vector3 rayOrigin = Camera.main.transform.position;
+                Vector3 rayDirection = Camera.main.transform.forward;
+                Ray ray = new Ray(rayOrigin, rayDirection);
+                Physics.Raycast(ray, out RaycastHit raycastHit);
+                Quaternion rot = Quaternion.identity;
+                GameObject myPTGO = PhotonNetwork.Instantiate("TITAN_VER3.1", raycastHit.point, rot, 0);
+                TITAN MyPT = myPTGO.GetComponent<TITAN>();
+                myLastPT = MyPT;
+                GameObject.Destroy(myPTGO.GetComponent<TITAN_CONTROLLER>());
+                myPTGO.GetComponent<TITAN>().nonAI = true;
+                myPTGO.GetComponent<TITAN>().speed = 30f;
+                myPTGO.GetComponent<TITAN_CONTROLLER>().enabled = true;
+                myPTGO.GetComponent<TITAN>().isCustomTitan = true;
+            }
+            Label(IndexToRect(2), "Endless Spawning");
+            KaneGameManager.doInfiniteTitans = FlatUI.Check(IndexToRect(3), KaneGameManager.doInfiniteTitans, "Enable Endless Spawning");
+            GUI.Label(IndexToRect(4, 3, 0), "Count");
+            infiniteTitanTextBox = GUI.TextField(IndexToRect(4, 3, 1), infiniteTitanTextBox);
+            if (FlatUI.Button(IndexToRect(4,3,2), "Apply"))
+            {
+                if(int.TryParse(infiniteTitanTextBox, out int i))
+                {
+                    KaneGameManager.InfTitanCount = i;
+                    CGTools.log("Infinite titan count updated to " + i);
+                }
+                else
+                {
+                    CGTools.log("Could not parse input!");
+                }
+            }
+
+
+            Label(IndexToRect(5), "Difficulty");
+            if(FlatUI.Button(IndexToRect(6), "Very Very Hard", (PTTools.difficulty == Difficulty.VeryVeryHard) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
+            {
+                PTTools.difficulty = Difficulty.VeryVeryHard;
+            }
+            if (FlatUI.Button(IndexToRect(7), "Very Hard", (PTTools.difficulty == Difficulty.VeryHard) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
+            {
+                PTTools.difficulty = Difficulty.VeryHard;
+            }
+            if (FlatUI.Button(IndexToRect(8), "Hard", (PTTools.difficulty == Difficulty.Hard) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
+            {
+                PTTools.difficulty = Difficulty.Hard;
+            }
+            if (FlatUI.Button(IndexToRect(9), "Medium", (PTTools.difficulty == Difficulty.Medium) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
+            {
+                PTTools.difficulty = Difficulty.Medium;
+            }
+            if (FlatUI.Button(IndexToRect(10), "Easy", (PTTools.difficulty == Difficulty.Easy) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
+            {
+                PTTools.difficulty = Difficulty.Easy;
+            }
+            if (FlatUI.Button(IndexToRect(11), "Very Easy", (PTTools.difficulty == Difficulty.VeryEasy) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
+            {
+                PTTools.difficulty = Difficulty.VeryEasy;
+            }
+
+            Label(IndexToRect(12), "Moves");
+            toggleAttackButton(13, 0, PTAction.Attack);
+            toggleAttackButton(13, 1, PTAction.Jump);
+            toggleAttackButton(14, 0, PTAction.bite);
+            toggleAttackButton(14, 1, PTAction.bitel);
+            toggleAttackButton(15, 0, PTAction.biter);
+            toggleAttackButton(15, 1, PTAction.choptl);
+            toggleAttackButton(16, 0, PTAction.choptr);
+            toggleAttackButton(16, 1, PTAction.grabbackl);
+            toggleAttackButton(17, 0, PTAction.grabbackr);
+            toggleAttackButton(17, 1, PTAction.grabfrontl);
+            toggleAttackButton(18, 0, PTAction.grabfrontr);
+            toggleAttackButton(18, 1, PTAction.grabnapel);
+            toggleAttackButton(19, 0, PTAction.grabnaper);
+            toggleAttackButton(19, 1, PTAction.AttackII);
+            if (FlatUI.Button(IndexToRect(20), "Apply"))
+            {
+                PlayerTitanBot.pTActions = PlayerTitanBot.TempActionsList.ToArray();
+                CGTools.log("Moveset Updated for new Titans!");
+            }
+            GUI.Label(IndexToRectMultiLine(21, 2), "Moves will be applied on newly spawned titans");
+        }
+
+        private static void Label(Rect rect, string text)
+        {
+            GUI.Label(rect, text, labelStyle);
         }
 
         public static void tabMoveset()
         {
-            if (FlatUI.Button(IndexToRect(1,2,1), "Apply"))
-            {
-                PlayerTitanBot.pTActions = PlayerTitanBot.TempActionsList.ToArray();
-            }
-            toggleAttackButton(2, PTAction.Attack);
-            toggleAttackButton(3, PTAction.Jump);
-            toggleAttackButton(4, PTAction.bite);
-            toggleAttackButton(5, PTAction.bitel);
-            toggleAttackButton(6, PTAction.biter);
-            toggleAttackButton(7, PTAction.choptl);
-            toggleAttackButton(8, PTAction.choptr);
-            toggleAttackButton(9, PTAction.grabbackl);
-            toggleAttackButton(10, PTAction.grabbackr);
-            toggleAttackButton(11, PTAction.grabfrontl);
-            toggleAttackButton(12, PTAction.grabfrontr);
-            toggleAttackButton(13, PTAction.grabnapel);
-            toggleAttackButton(14, PTAction.grabnaper);
-            toggleAttackButton(15, PTAction.AttackII);
+
         }
 
-        private static void toggleAttackButton(int index, PTAction action)
+        private static void toggleAttackButton(int index, int halfIndex, PTAction action)
         {
-            if (FlatUI.Button(IndexToRect(index), action.ToString(), PlayerTitanBot.TempActionsList.Contains(action) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
+            if (FlatUI.Button(IndexToRect(index, 2, halfIndex), action.ToString(), PlayerTitanBot.TempActionsList.Contains(action) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
             {
                 if (PlayerTitanBot.TempActionsList.Contains(action))
                 {
@@ -158,15 +271,6 @@ namespace TitanBot
                     CGTools.log(key.ToString());
                 }
             }
-            subAdminID = SetTextbox(IndexToRect(14,3,0,2), subAdminID, "subAdminID", 2);
-            if (FlatUI.Button(IndexToRect(14,3,2), "Apply"))
-            {
-                KaneGameManager.subAdmin = CGTools.findByID(subAdminID);
-                if (KaneGameManager.subAdmin != null)
-                {
-                    CGTools.log("Sub admin has been set to player [" + KaneGameManager.subAdmin.ID + "]");
-                }
-            }
             if (textBoxText[3] == null)
             {
                 textBoxText[3] = "";
@@ -227,11 +331,9 @@ namespace TitanBot
                     CGTools.log("index [" + i + "] weight {" + table[i] + "} occurences :" + tableOccurences[i]);
                 }
             }
+            PTTools.difficulty = (Difficulty)SetTextbox(IndexToRect(20), (int)PTTools.difficulty, "difficulty", 88);
+            PTTools.debugPlayerData = FlatUI.Check(IndexToRect(21), PTTools.debugPlayerData, "Debug Predictions");
         }
-
-        private static float checkDataLevel = 0f;
-        private static int subAdminID = 0;
-        public static TITAN myLastPT;
         
         public static void TabMain()
         {
@@ -765,10 +867,9 @@ namespace TitanBot
                 CGTools.log("Do stuff = " + ((PlayerTitanBot)myLastPT.controller).doStuff.ToString());
             }
 
-            showHitboxs = FlatUI.Check(IndexToRect(22), showHitboxs, "showHitboxes");
+            showHitboxs = FlatUI.Check(IndexToRect(22), PTDataMachine.DrawHitboxes, "showHitboxes");
         }
 
-        public static bool showHitboxs = false;
 
         public static void drawHitboxes()
         {
@@ -802,6 +903,20 @@ namespace TitanBot
                 divisions = 1;
             }
             return new Rect(menuX + 4f + num / (float)divisions * (float)j, menuY + (float)i * 30f, (float)n * (num / (float)divisions), 30f);
+        }
+
+        public static Rect IndexToRectMultiLine(int i, int rows)
+        {
+            return new Rect(menuX + 4f, menuY + (float)(i * 30), 240f, 30f * rows);
+        }
+        public static Rect IndexToRectMultiLine(int i, int divisions, int j, int n, int rows)
+        {
+            float num = 240f;
+            if (divisions < 1)
+            {
+                divisions = 1;
+            }
+            return new Rect(menuX + 4f + num / (float)divisions * (float)j, menuY + (float)i * 30f, (float)n * (num / (float)divisions), 30f * rows);
         }
 
         public static int tabs(Rect pos, string[] tabs, int index, bool top, Texture2D[] tabColors)
@@ -889,7 +1004,6 @@ namespace TitanBot
             menuX = (float)Screen.width / 2f - 350f + 1000f;
             menuY = (float) Screen.height / 2f - 250f;
         }
-        public static string[] textBoxText = new string[100];
         public static float SetTextbox(Rect position, float source, string label, int arrayID)
         {
             if (textBoxText[arrayID] == null)

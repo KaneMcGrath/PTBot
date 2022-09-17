@@ -114,6 +114,22 @@ namespace TitanBot
                 this.action = action;
                 this.titanLevel = titanLevel;
             }
+            
+            //although Im not running into performance issues, this will take out a certain number of hitboxes from the middle
+            //so they wont be calculated.  most are overlapping and close together anyway.
+            //this will save a lot of performance especially with large playercounts
+            public void pruneData(int pruningLevel)
+            {
+                List<Hitbox> hitboxes = new List<Hitbox>();
+                for (int i = 0; i < hitboxes.Count; i++)
+                {
+                    //the starts and ends of hitData tend to be important
+                    if (i > 4 && i < hitboxes.Count - 4)
+                    {
+
+                    }
+                }
+            }
 
             public string[] GetDataString()
             {

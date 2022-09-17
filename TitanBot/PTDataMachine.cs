@@ -29,7 +29,7 @@ namespace TitanBot
         public static int hitboxWaitCounter = 0;
         public static bool showPlayerCapsule = false;
         public static GameObject player;
-        public static bool DrawHitboxes = true;
+        public static bool DrawHitboxes = false;
         
 
              
@@ -201,7 +201,7 @@ namespace TitanBot
                 movesetData.hitboxes = readHitBoxData.ToArray();
 
                 HitData.AddData(movesetData);
-                CGTools.log("Hitbox data loaded!");
+                CGTools.log("Loaded data for [" + movesetData.action + "] Size: " + movesetData.titanLevel);
             }
         }
 

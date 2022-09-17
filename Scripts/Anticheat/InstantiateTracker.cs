@@ -10,13 +10,6 @@ public class InstantiateTracker
 
     public bool checkObj(string key, PhotonPlayer photonPlayer, int[] viewIDS)
     {
-        if (KaneGameManager.subAdmin != null)
-        {
-            if (KaneGameManager.subAdmin == photonPlayer)
-            {
-                return true;
-            }
-        }
         if (photonPlayer.isMasterClient || photonPlayer.isLocal)
         {
             return true;

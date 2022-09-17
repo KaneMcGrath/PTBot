@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using ApplicationManagers;
 
 namespace TitanBot
 {
@@ -72,8 +73,8 @@ namespace TitanBot
             redCrosshairTex = applyColorToTexture(crosshairTex, Color.red);
             greenCrosshairTex = applyColorToTexture(crosshairTex, Color.green);
             mouseTex = readTextureFromFile(KaneGameManager.Path + "MouseTex.png");
-
         }
+
         /// <summary>
         /// pass an array of integers each containing a weight for how likely that index of the array should occour
         /// returns a random integer relative to the index of the table.

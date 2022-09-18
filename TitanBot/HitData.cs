@@ -114,20 +114,54 @@ namespace TitanBot
                 this.action = action;
                 this.titanLevel = titanLevel;
             }
+
+            public MovesetData Copy()
+            {
+                MovesetData copy = new MovesetData(action, titanLevel);
+                List<Hitbox> hitboxCopies = new List<Hitbox>();
+                foreach(Hitbox hitbox in hitboxes)
+                {
+                    hitboxCopies.Add(hitbox.Copy());
+                }
+                copy.hitboxes = hitboxCopies.ToArray();
+                return copy;
+            }
             
             //although Im not running into performance issues, this will take out a certain number of hitboxes from the middle
             //so they wont be calculated.  most are overlapping and close together anyway.
             //this will save a lot of performance especially with large playercounts
             public void pruneData(int pruningLevel)
             {
-                List<Hitbox> hitboxes = new List<Hitbox>();
-                for (int i = 0; i < hitboxes.Count; i++)
-                {
-                    //the starts and ends of hitData tend to be important
-                    if (i > 4 && i < hitboxes.Count - 4)
-                    {
+                if (hitboxes == null || hitboxes.Length == 0) return;
 
+                List<Hitbox> newHitboxes = new List<Hitbox>();
+                if (hitboxes.Length > 4) //ignore the 1 frame hitboxes like the bite and slam
+                {                        //we want those
+                    CGTools.log("Pruning Data from {" + action + "," + titanLevel + "}");
+                    for (int i = 0; i < hitboxes.Length; i++)
+                    {
+                        //the starts and ends of hitData tend to be more important
+                        if (i > 4 && i < hitboxes.Length - 4)
+                        {
+                            if (i % pruningLevel == 0)
+                            {
+                                newHitboxes.Add(hitboxes[i]);
+                            }
+                            else
+                            {
+                                CGTools.log("Index: " + i + " pruned from hitboxes");
+                            }
+                        }
+                        else
+                        {
+                            CGTools.log("Index: " + i + " Kept at edges");
+                            newHitboxes.Add(hitboxes[i]);
+                        }
                     }
+                }
+                if (newHitboxes.Count > 0)
+                {
+                    hitboxes = newHitboxes.ToArray();
                 }
             }
 

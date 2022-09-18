@@ -22,7 +22,8 @@ namespace TitanBot
         {
             "PTBot Settings",
             "Game Settings",
-            "more"
+            "more",
+            "Titan Remote"
         };
         public static bool showHitboxs = false;
         public static bool doAttacks = true;
@@ -59,6 +60,7 @@ namespace TitanBot
             if (tabIndex == 0) tabPTBotSettings();
             if (tabIndex == 1) moreSettings();
             if (tabIndex == 2) tabExtra();
+            if (tabIndex == 3) TabMain();
             GUI.DrawTexture(new Rect(Input.mousePosition.x - (mouseScale / 2f), Screen.height - Input.mousePosition.y - (mouseScale / 2f), mouseScale, mouseScale), CGTools.mouseTex);
         }
 
@@ -116,48 +118,48 @@ namespace TitanBot
             
 
 
-            Label(IndexToRect(3), "Difficulty");
-            if (FlatUI.Button(IndexToRect(4), "Very Very Hard", (PTTools.difficulty == Difficulty.VeryVeryHard) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
+            Label(IndexToRect(2), "Difficulty");
+            if (FlatUI.Button(IndexToRect(3), "Very Very Hard", (PTTools.difficulty == Difficulty.VeryVeryHard) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
             {
                 PTTools.difficulty = Difficulty.VeryVeryHard;
             }
-            if (FlatUI.Button(IndexToRect(5), "Very Hard", (PTTools.difficulty == Difficulty.VeryHard) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
+            if (FlatUI.Button(IndexToRect(4), "Very Hard", (PTTools.difficulty == Difficulty.VeryHard) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
             {
                 PTTools.difficulty = Difficulty.VeryHard;
             }
-            if (FlatUI.Button(IndexToRect(6), "Hard", (PTTools.difficulty == Difficulty.Hard) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
+            if (FlatUI.Button(IndexToRect(5), "Hard", (PTTools.difficulty == Difficulty.Hard) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
             {
                 PTTools.difficulty = Difficulty.Hard;
             }
-            if (FlatUI.Button(IndexToRect(7), "Medium", (PTTools.difficulty == Difficulty.Medium) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
+            if (FlatUI.Button(IndexToRect(6), "Medium", (PTTools.difficulty == Difficulty.Medium) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
             {
                 PTTools.difficulty = Difficulty.Medium;
             }
-            if (FlatUI.Button(IndexToRect(8), "Easy", (PTTools.difficulty == Difficulty.Easy) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
+            if (FlatUI.Button(IndexToRect(7), "Easy", (PTTools.difficulty == Difficulty.Easy) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
             {
                 PTTools.difficulty = Difficulty.Easy;
             }
-            if (FlatUI.Button(IndexToRect(9), "Very Easy", (PTTools.difficulty == Difficulty.VeryEasy) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
+            if (FlatUI.Button(IndexToRect(8), "Very Easy", (PTTools.difficulty == Difficulty.VeryEasy) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
             {
                 PTTools.difficulty = Difficulty.VeryEasy;
             }
 
-            Label(IndexToRect(11), "Moves");
-            toggleAttackButton(12, 0, PTAction.Attack);
-            toggleAttackButton(12, 1, PTAction.Jump);
-            toggleAttackButton(13, 0, PTAction.bite);
-            toggleAttackButton(13, 1, PTAction.bitel);
-            toggleAttackButton(14, 0, PTAction.biter);
-            toggleAttackButton(14, 1, PTAction.choptl);
-            toggleAttackButton(15, 0, PTAction.choptr);
-            toggleAttackButton(15, 1, PTAction.grabbackl);
-            toggleAttackButton(16, 0, PTAction.grabbackr);
-            toggleAttackButton(16, 1, PTAction.grabfrontl);
-            toggleAttackButton(17, 0, PTAction.grabfrontr);
-            toggleAttackButton(17, 1, PTAction.grabnapel);
-            toggleAttackButton(18, 0, PTAction.grabnaper);
-            toggleAttackButton(18, 1, PTAction.AttackII);
-            if (FlatUI.Button(IndexToRect(19), "Apply"))
+            Label(IndexToRect(9), "Moves");
+            toggleAttackButton(10, 0, PTAction.Attack);
+            toggleAttackButton(10, 1, PTAction.Jump);
+            toggleAttackButton(11, 0, PTAction.bite);
+            toggleAttackButton(11, 1, PTAction.bitel);
+            toggleAttackButton(12, 0, PTAction.biter);
+            toggleAttackButton(12, 1, PTAction.choptl);
+            toggleAttackButton(13, 0, PTAction.choptr);
+            toggleAttackButton(13, 1, PTAction.grabbackl);
+            toggleAttackButton(14, 0, PTAction.grabbackr);
+            toggleAttackButton(14, 1, PTAction.grabfrontl);
+            toggleAttackButton(15, 0, PTAction.grabfrontr);
+            toggleAttackButton(15, 1, PTAction.grabnapel);
+            toggleAttackButton(16, 0, PTAction.grabnaper);
+            toggleAttackButton(16, 1, PTAction.AttackII);
+            if (FlatUI.Button(IndexToRect(17), "Apply"))
             {
                 PlayerTitanBot.pTActions = PlayerTitanBot.TempActionsList.ToArray();
                 foreach (GameObject t in GameObject.FindGameObjectsWithTag("titan"))
@@ -171,7 +173,24 @@ namespace TitanBot
                 }
                 CGTools.log("Moveset Updated for All Titans!");
             }
+            Label(IndexToRect(18), "Pruning");
+            GUI.Label(IndexToRect(19, 4, 0, 2), "Pruning Level");
+            prunningSettingTextbox = GUI.TextField(IndexToRect(19, 4, 2), prunningSettingTextbox);
+            if (FlatUI.Button(IndexToRect(19,4,3), "Apply"))
+            {
+                if (int.TryParse(prunningSettingTextbox, out int p)) {
+                    PlayerTitanBot.dataPruningLevel = p;
+                }
+                else
+                {
+                    CGTools.log("Unable to parse input");
+                }
+            }
+            GUI.Label(IndexToRectMultiLine(20, 2), "*Remove every n number of hitboxes so they dont have to be calculated.  Most of them ovelap so it dosent hurt that much");
         }
+
+        private static string prunningSettingTextbox = "2";
+
 
         private static void Label(Rect rect, string text)
         {
@@ -862,19 +881,37 @@ namespace TitanBot
             {
                 KaneGameManager.cameraRotationSpeed += 10f;
             }
-            clearHitboxesOnAttack = FlatUI.Check(IndexToRect(18), clearHitboxesOnAttack, "clearHitboxesOnAttack");
-            PTDataMachine.KeepHitboxes = FlatUI.Check(IndexToRect(19), PTDataMachine.KeepHitboxes, "HitboxHistory");
-            if (FlatUI.Button(IndexToRect(20), "setup stuff"))
+            clearHitboxesOnAttack = FlatUI.Check(IndexToRect(18,2,0), clearHitboxesOnAttack, "clearHitboxes");
+            PTDataMachine.KeepHitboxes = FlatUI.Check(IndexToRect(18,2,1), PTDataMachine.KeepHitboxes, "HitboxHistory");
+            if (FlatUI.Button(IndexToRect(19,2,0), "setup stuff"))
             {
-                ((PlayerTitanBot)myLastPT.controller).CalculateMovesetData(myLastPT.myLevel);
+                ((PlayerTitanBot)myLastPT.controller).CalculateMovesetData();
             }
-            if (FlatUI.Button(IndexToRect(21), "enable stuff"))
+            if (FlatUI.Button(IndexToRect(19,2,1), "enable stuff"))
             {
                 ((PlayerTitanBot)myLastPT.controller).doStuff = !((PlayerTitanBot)myLastPT.controller).doStuff;
                 CGTools.log("Do stuff = " + ((PlayerTitanBot)myLastPT.controller).doStuff.ToString());
             }
-
-            showHitboxs = FlatUI.Check(IndexToRect(22), PTDataMachine.DrawHitboxes, "showHitboxes");
+            PTDataMachine.DrawHitboxes = FlatUI.Check(IndexToRect(20), PTDataMachine.DrawHitboxes, "DrawHitboxes");
+            GUI.Label(IndexToRect(21, 4, 0, 2), "Prune Hitboxes");
+            if (FlatUI.Button(IndexToRect(22), "Show Calculated Data"))
+            {
+                PlayerTitanBot pt = (PlayerTitanBot)myLastPT.controller;
+                foreach (PTAction key in pt.MovesetDatabase.Keys)
+                {
+                    foreach (HitData.Hitbox hitbox in pt.MovesetDatabase[key].hitboxes)
+                    {
+                        if (hitbox.GetType() == typeof(HitData.HitboxSphere))
+                        {
+                            PTDataMachine.CreateVisualizationSphere(hitbox.pos, ((HitData.HitboxSphere)hitbox).radius);
+                        }
+                        if (hitbox.GetType() == typeof(HitData.HitboxRectangle))
+                        {
+                            PTDataMachine.CreateColliderBox(hitbox.pos, ((HitData.HitboxRectangle)hitbox).RectangleDimentions, ((HitData.HitboxRectangle)hitbox).RectangleRotation);
+                        }
+                    }
+                }
+            }
         }
         public static Rect IndexToRect(int i)
         {

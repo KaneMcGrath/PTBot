@@ -42,6 +42,18 @@ namespace TitanBot
         public static List<HitData.Hitbox> hitBoxes = new List<HitData.Hitbox>();
         private static Vector3 RecordingPosOffset;
         
+        public static void PruneHitboxData(int pruningLevel)
+        {
+            foreach (PTAction action in HitData.AllHitboxData.Keys)
+            {
+                List<HitData.MovesetData> list = HitData.AllHitboxData[action];
+                foreach (HitData.MovesetData data in list)
+                {
+                    data.pruneData(pruningLevel);
+                }
+            }
+        }
+
         public static void SaveHitboxData(bool overwrite = false)
         {
             string dataPath = KaneGameManager.Path + "/HitboxData/";

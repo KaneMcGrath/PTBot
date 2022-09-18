@@ -22,6 +22,7 @@ namespace TitanBot
         public static bool debugTargets = false;
         public static bool useCustomHair = true;
         public static List<PTAction> TempActionsList = new List<PTAction>();
+        public static int dataPruningLevel = 2;
 
         public bool doStuff = true;
         public TITAN MyTitan = null;
@@ -45,7 +46,7 @@ namespace TitanBot
         // public int forsightSteps = 2;//how many steps not including the current position that the titan will predict
 
         //calculated moveset data for this titan to use
-        private Dictionary<PTAction, HitData.MovesetData> MovesetDatabase = new Dictionary<PTAction, HitData.MovesetData>();
+        public Dictionary<PTAction, HitData.MovesetData> MovesetDatabase = new Dictionary<PTAction, HitData.MovesetData>();
 
         //All the actions we want to calculate movesetData for
         public static PTAction[] pTActions = {
@@ -439,8 +440,6 @@ namespace TitanBot
             {
                 isAttackIIDown = true;
             }
-
-
         }
 
         private void Start()
@@ -450,28 +449,37 @@ namespace TitanBot
             {
                 updateNextFrameList.Add(action, false);
             }
+            CalculateMovesetData();
         }
 
         public void LiveUpdateMovesetData()
         {
             MovesetDatabase.Clear();
-
-            CalculateMovesetData(MyTitan.myLevel);
+            CalculateMovesetData();
         }
 
         /// <summary>
         /// finds the closest movesetData from the database
         /// if its not an exact match create a scaled movesetData and keep it in the database
+        /// Also apply pruning here as it takes no time to calculate and we dont want to reload the data
+        /// so we just make a copy here, and we can recalculate pruning on the fly
         /// </summary>
         /// <param name="titanLevel"></param>
-        public void CalculateMovesetData(float titanLevel)
+        public void CalculateMovesetData()
         {
+            float titanLevel = MyTitan.myLevel;
+            
             foreach (PTAction action in pTActions)
             {
+                CGTools.log("Calculating action " + action);
                 HitData.MovesetData closestData = HitData.GetClosestData(action, titanLevel);
                 if (closestData.titanLevel == titanLevel)
                 {
-                    MovesetDatabase.Add(action, closestData);
+                    HitData.MovesetData copy = closestData.Copy();
+                    CGTools.log("Copied Moveset data");
+                    copy.pruneData(dataPruningLevel);
+                    CGTools.log("Pruned Data");
+                    MovesetDatabase.Add(action, copy);
                 }
                 else
                 {
@@ -486,12 +494,12 @@ namespace TitanBot
                         HitboxList.Add(newH);
                     }
                     scaledData.hitboxes = HitboxList.ToArray();
+                    
                     HitData.AddData(scaledData);
+                    HitData.MovesetData scaledDataCopy = scaledData.Copy();
+                    scaledDataCopy.pruneData(dataPruningLevel);
                     MovesetDatabase.Add(action, scaledData);
                 }
-
-
-
                 //HitData.MovesetData data = HitData.GetClosestData(action, titanLevel);
                 //if (data != null)
                 //    MovesetDatabase.Add(action, data);

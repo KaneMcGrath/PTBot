@@ -133,13 +133,11 @@ namespace TitanBot
             {
                 Camera.main.transform.RotateAround(Vector3.zero, Vector3.up, cameraRotationSpeed * Time.deltaTime);
             }
-            if (Input.GetKeyDown(KeyCode.Mouse3) || Input.GetKeyDown(KeyCode.KeypadPeriod))
+            if (Input.GetKeyDown(KeyCode.Equals))
             {
                 if (!toggleQuickMenu)
                 {
-                    
                     CGLog.showLogGui = true;
-                    
                     toggleQuickMenu = true;
                     if (!Camera.main.GetComponent<IN_GAME_MAIN_CAMERA>().enabled)
                     {

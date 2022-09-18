@@ -3571,7 +3571,6 @@ public class TITAN : Photon.MonoBehaviour
                 gameObject.AddComponent<PlayerTitanBot>();
                 controller = gameObject.GetComponent<PlayerTitanBot>();
                 controller.targetDirection = -874f;
-                ((PlayerTitanBot)controller).CalculateMovesetData(myLevel);
                 controller.enabled = true;
             }
             else

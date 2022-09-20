@@ -11,7 +11,7 @@ namespace TitanBot
     {
         public static KaneGameManager instance;
         public static bool toggleQuickMenu = false;
-        public static string GameVersionString = "PTBot 1.6";
+        public static string GameVersionString = "PTBot 1.61";
         public static bool doCameraRotation = false;
         public static float cameraRotationSpeed = 30f;
         public static string Path = Application.dataPath + "/PTBot/";
@@ -19,11 +19,23 @@ namespace TitanBot
         public static float waitToAnnounceTimer = -999999f;
         public static KeyCode QuickMenuKey = KeyCode.I;
 
+        public static float TagWidth = 200f;
+        public static float TagHeight = 40f;
+
         private static float movetoRPCTimer = 0f;
         public static bool doSpawnTeleporting = false;
         public static int InfTitanCount = 5;
         public static bool doInfiniteTitans = false;
         public static bool sendJoinMessage = true;
+
+        private static GUIStyle TagStyle = new GUIStyle
+        {
+            border = new RectOffset(1, 1, 1, 1),
+            alignment = TextAnchor.LowerRight,
+            fontSize = 14,
+            fontStyle = FontStyle.Bold,
+            normal = { textColor = Color.white }
+        };
 
         public static void Init()
         {
@@ -44,6 +56,13 @@ namespace TitanBot
             if (toggleQuickMenu)
             {
                 QuickMenu.OnGUI();
+            }
+            else
+            {
+                if (FengGameManagerMKII.instance.gameStart)
+                {
+                    GUI.Label(new Rect(Screen.width - TagWidth - 10f, Screen.height - TagHeight - 10f, TagWidth, TagHeight), GameVersionString + Environment.NewLine + "Press \"" + QuickMenuKey.ToString() + "\" to Open Quick Menu", TagStyle);
+                }
             }
             //GUI.Label(new Rect(200f, 200f, 200f, 30f), Time.deltaTime.ToString() + ":" + cameraRotationSpeed.ToString());
         }

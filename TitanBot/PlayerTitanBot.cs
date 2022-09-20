@@ -39,7 +39,6 @@ namespace TitanBot
         private float targetLerpT = 0f;
         private float SpeedTimer = 0f;
         private Vector3 lastFarthestPoint = Vector3.zero;
-        private Difficulty myDifficulty = Difficulty.VeryVeryHard;
 
 
         // public float forsight = 4f;//how far into the future titan will predict player velocity

@@ -28,7 +28,6 @@ namespace TitanBot
         public static bool doAttacks = true;
 
         private static float checkDataLevel = 0f;
-        private static int subAdminID = 0;
         private static bool resetPositionsOnAttack = false;
         private static bool clearHitboxesOnAttack = false;
         public static string prunningSettingTextbox = "2";
@@ -38,14 +37,6 @@ namespace TitanBot
             border = new RectOffset(1, 1, 1, 1),
             alignment = TextAnchor.LowerCenter,
             fontSize = 14,
-            fontStyle = FontStyle.Bold,
-            normal = { textColor = Color.white }
-        };
-        private static GUIStyle titleStyle = new GUIStyle
-        {
-            border = new RectOffset(1, 1, 1, 1),
-            alignment = TextAnchor.MiddleCenter,
-            fontSize = 16,
             fontStyle = FontStyle.Bold,
             normal = { textColor = Color.white }
         };
@@ -74,8 +65,7 @@ namespace TitanBot
             if (tabIndex == 0) tabPTBotSettings();
             if (tabIndex == 1) moreSettings();
             if (tabIndex == 2) TabConfig();
-            //if (tabIndex == 3) tabExtra();
-            //if (tabIndex == 4) TabMain();
+            //if (tabIndex == 3) TabMain();
             GUI.DrawTexture(new Rect(Input.mousePosition.x - (mouseScale / 2f), Screen.height - Input.mousePosition.y - (mouseScale / 2f), mouseScale, mouseScale), CGTools.mouseTex);
         }
 

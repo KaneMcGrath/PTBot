@@ -204,7 +204,7 @@ namespace TitanBot
             try
             {
                 File.WriteAllLines(Path + "Config.txt", lines.ToArray());
-                CGTools.log("Saveed config to " + Path + "\"Config.txt\"");
+                CGTools.log("Saved config to " + Path + "\"Config.txt\"");
             }
             catch (Exception e)
             {
@@ -219,7 +219,7 @@ namespace TitanBot
             PlayerTitanBot.ReplaceSpawnedTitans = false;
             doSpawnTeleporting = false;
             PTTools.difficulty = Difficulty.VeryVeryHard;
-            PlayerTitanBot.dataPruningLevel = 3;
+            PlayerTitanBot.dataPruningLevel = 2;
             PlayerTitanBot.pTActions = new PTAction[] { PTAction.Attack, PTAction.Jump, PTAction.choptl, PTAction.choptr };
             PlayerTitanBot.TempActionsList.Clear();
             PlayerTitanBot.TempActionsList.AddRange(PlayerTitanBot.pTActions);

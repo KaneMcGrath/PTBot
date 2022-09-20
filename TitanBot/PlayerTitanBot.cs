@@ -15,7 +15,7 @@ namespace TitanBot
     {
         public static bool TakeOverPT = false;
         public static bool ReplaceSpawnedTitans = false;
-        public static int raycasts = 10;
+        public static int raycasts = 16;
         public static float spinrate = 800f;
         public static float turnrate = 0.005f;
         public static bool debugRaycasts = false;
@@ -468,17 +468,14 @@ namespace TitanBot
         public void CalculateMovesetData()
         {
             float titanLevel = MyTitan.myLevel;
-            
+
             foreach (PTAction action in pTActions)
             {
-                CGTools.log("Calculating action " + action);
                 HitData.MovesetData closestData = HitData.GetClosestData(action, titanLevel);
                 if (closestData.titanLevel == titanLevel)
                 {
                     HitData.MovesetData copy = closestData.Copy();
-                    CGTools.log("Copied Moveset data");
                     copy.pruneData(dataPruningLevel);
-                    CGTools.log("Pruned Data");
                     MovesetDatabase.Add(action, copy);
                 }
                 else
@@ -494,7 +491,7 @@ namespace TitanBot
                         HitboxList.Add(newH);
                     }
                     scaledData.hitboxes = HitboxList.ToArray();
-                    
+
                     HitData.AddData(scaledData);
                     HitData.MovesetData scaledDataCopy = scaledData.Copy();
                     scaledDataCopy.pruneData(dataPruningLevel);

@@ -167,7 +167,7 @@ namespace Weather
             _currentWeather.FogDensity.Value = 0.01f;
             _currentWeather.Daylight.Value = new Color(0.4f, 0.3f, 0.1f);
             _currentWeather.AmbientLight.Value = new Color(0.1f, 0.05f, 0.05f);
-            _currentWeather.Wind.Value = 0.3f;
+            _currentWeather.FogColor.Value = new Color(0.89f, 0.55f, 0.48f);
         }
 
         private void CreateScheduleRunners(string schedule)

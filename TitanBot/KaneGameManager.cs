@@ -1,11 +1,9 @@
-﻿using TitanBot.FlatUI5;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.IO;
+using TitanBot.FlatUI5;
 using UnityEngine;
 using Utility;
-using System.IO;
 
 namespace TitanBot
 {
@@ -13,12 +11,13 @@ namespace TitanBot
     {
         public static KaneGameManager instance;
         public static bool toggleQuickMenu = false;
-        public static string GameVersionString = "PTBot 1.4 (Dev)";
+        public static string GameVersionString = "PTBot 1.6";
         public static bool doCameraRotation = false;
         public static float cameraRotationSpeed = 30f;
         public static string Path = Application.dataPath + "/PTBot/";
         public static bool waitToAnnounce = false;
         public static float waitToAnnounceTimer = -999999f;
+        public static KeyCode QuickMenuKey = KeyCode.I;
 
         private static float movetoRPCTimer = 0f;
         public static bool doSpawnTeleporting = false;
@@ -34,9 +33,9 @@ namespace TitanBot
             CGLog.Start();
             CGTools.Init();
             PTDataMachine.LoadHitboxData();
+            LoadConfig();
             CGTools.log(GameVersionString);
         }
-
 
         public void OnGUI()
         {
@@ -49,23 +48,201 @@ namespace TitanBot
             //GUI.Label(new Rect(200f, 200f, 200f, 30f), Time.deltaTime.ToString() + ":" + cameraRotationSpeed.ToString());
         }
 
+
+        public static void LoadConfig()
+        {
+            if (File.Exists(Path + "Config.txt"))
+            {
+                Dictionary<string, string> config = new Dictionary<string, string>();
+                string[] lines = File.ReadAllLines(Path + "Config.txt");
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    string line = lines[i];
+
+                    string[] parts = line.Split(':');
+                    if (parts.Length == 2)
+                    {
+                        config.Add(parts[0], parts[1]);
+                    }
+                    else
+                        CGTools.log("Error on line " + i + ".  Makes sure each setting is on a seperate line");
+                }
+                if (config.ContainsKey("QuickMenuHotkey"))
+                {
+                    try
+                    {
+                        QuickMenuKey = (KeyCode)Enum.Parse(typeof(KeyCode), config["QuickMenuHotkey"]);
+                    }
+                    catch (Exception e)
+                    {
+                        CGTools.log("Could not parse Setting [QuickMenuHotkey] : " + e.Message);
+                    }
+                }
+                if (config.ContainsKey("SendJoinMessage"))
+                {
+                    if (bool.TryParse(config["SendJoinMessage"], out bool b))
+                    {
+                        sendJoinMessage = b;
+                    }
+                    else
+                    {
+                        CGTools.log("Could not parse Setting [SendJoinMessage]");
+                    }
+                }
+                if (config.ContainsKey("InfiniteTitanCount"))
+                {
+                    if (int.TryParse(config["InfiniteTitanCount"], out int i))
+                    {
+                        QuickMenu.infiniteTitanTextBox = i.ToString();
+                        InfTitanCount = i;
+                    }
+                    else
+                    {
+                        CGTools.log("Could not parse Setting [InfiniteTitanCount]");
+                    }
+                }
+                if (config.ContainsKey("ReplaceSpawnedTitans"))
+                {
+                    if (bool.TryParse(config["ReplaceSpawnedTitans"], out bool b))
+                    {
+                        PlayerTitanBot.ReplaceSpawnedTitans = b;
+                    }
+                    else
+                    {
+                        CGTools.log("Could not parse Setting [ReplaceSpawnedTitans]");
+                    }
+                }
+                if (config.ContainsKey("doSpawnTeleporting"))
+                {
+                    if (bool.TryParse(config["doSpawnTeleporting"], out bool b))
+                    {
+                        KaneGameManager.doSpawnTeleporting = b;
+                    }
+                    else
+                    {
+                        CGTools.log("Could not parse Setting [doSpawnTeleporting]");
+                    }
+                }
+                if (config.ContainsKey("Difficulty"))
+                {
+                    try
+                    {
+                        PTTools.difficulty = (Difficulty)Enum.Parse(typeof(Difficulty), config["Difficulty"]);
+                    }
+                    catch (Exception e)
+                    {
+                        CGTools.log("Could not parse Setting [Difficulty] : " + e.Message);
+                    }
+                }
+                if (config.ContainsKey("Moves"))
+                {
+                    try
+                    {
+                        PlayerTitanBot.TempActionsList.Clear();
+                        if (config["Moves"].IsNullOrEmpty())
+                        {
+
+                        }
+                        else
+                        {
+                            string[] moves = config["Moves"].Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                            foreach (string move in moves)
+                            {
+                                PlayerTitanBot.TempActionsList.Add((PTAction)Enum.Parse(typeof(PTAction), move));
+                            }
+                        }
+                        PlayerTitanBot.pTActions = PlayerTitanBot.TempActionsList.ToArray();
+                    }
+                    catch (Exception e)
+                    {
+                        CGTools.log("Could not parse Setting [Moves] : " + e.Message);
+                    }
+                }
+                if (config.ContainsKey("PruningLevel"))
+                {
+                    if (int.TryParse(config["PruningLevel"], out int i))
+                    {
+                        QuickMenu.prunningSettingTextbox = i.ToString();
+                        PlayerTitanBot.dataPruningLevel = i;
+                    }
+                    else
+                    {
+                        CGTools.log("Could not parse Setting [PruningLevel]");
+                    }
+                }
+                CGTools.log("Loaded config from " + Path + "\"Config.txt\"");
+            }
+        }
+
+        public static void SaveConfig()
+        {
+            Dictionary<string, string> config = new Dictionary<string, string>();
+            config.Add("QuickMenuHotkey", QuickMenuKey.ToString());
+            config.Add("SendJoinMessage", sendJoinMessage.ToString());
+            config.Add("InfiniteTitanCount", InfTitanCount.ToString());
+            config.Add("ReplaceSpawnedTitans", PlayerTitanBot.ReplaceSpawnedTitans.ToString());
+            config.Add("doSpawnTeleporting", doSpawnTeleporting.ToString());
+            config.Add("Difficulty", PTTools.difficulty.ToString());
+            config.Add("PruningLevel", PlayerTitanBot.dataPruningLevel.ToString());
+            string moves = "";
+            if (PlayerTitanBot.pTActions.Length > 0)
+            {
+                for (int i = 0; i < PlayerTitanBot.pTActions.Length; i++)
+                {
+                    PTAction action = PlayerTitanBot.pTActions[i];
+                    moves += action.ToString();
+                    if (i != PlayerTitanBot.pTActions.Length - 1)
+                        moves += ',';
+                }
+            }
+            config.Add("Moves", moves);
+            List<string> lines = new List<string>();
+            foreach (string key in config.Keys)
+            {
+                lines.Add(key + ":" + config[key]);
+            }
+            try
+            {
+                File.WriteAllLines(Path + "Config.txt", lines.ToArray());
+                CGTools.log("Saveed config to " + Path + "\"Config.txt\"");
+            }
+            catch (Exception e)
+            {
+                CGTools.log(e.Message);
+            }
+        }
+
+        public static void ResetDefaults()
+        {
+            sendJoinMessage = true;
+            InfTitanCount = 5;
+            PlayerTitanBot.ReplaceSpawnedTitans = false;
+            doSpawnTeleporting = false;
+            PTTools.difficulty = Difficulty.VeryVeryHard;
+            PlayerTitanBot.dataPruningLevel = 3;
+            PlayerTitanBot.pTActions = new PTAction[] { PTAction.Attack, PTAction.Jump, PTAction.choptl, PTAction.choptr };
+            PlayerTitanBot.TempActionsList.Clear();
+            PlayerTitanBot.TempActionsList.AddRange(PlayerTitanBot.pTActions);
+            CGTools.log("Reset settings to default values");
+        }
+
         private void Announce()
         {
             string text = string.Concat(new object[]
-                {
-                   "[FF8000]<b>",
-                   KaneGameManager.GameVersionString,
-                   "\n",
-                   "</b>[eaef5d]<b>Created by ",
-                   "</b>[FF8000]<b>Avisite",
-                   "\n",
-                   "</b>[FFFFFF]<b>discord.gg/BgaBuhT",
-                   "\n",
-                   "</b>[5DDE8E]<b>My Ping is currently ",
-                   PhotonNetwork.GetPing().ToString(),
-                   "ms</b>",
+            {
+               "[FF8000]<b>",
+               KaneGameManager.GameVersionString,
+               "\n",
+               "</b>[eaef5d]<b>Created by ",
+               "</b>[FF8000]<b>Avisite",
+               "\n",
+               "</b>[FFFFFF]<b>discord.gg/BgaBuhT",
+               "\n",
+               "</b>[5DDE8E]<b>My Ping is currently ",
+               PhotonNetwork.GetPing().ToString(),
+               "ms</b>",
 
-                });
+            });
             FengGameManagerMKII.instance.photonView.RPC("Chat", PhotonTargets.All, new object[]
             {
                 text.hexColor(),
@@ -76,19 +253,19 @@ namespace TitanBot
 
         public void teleportTitansIfAtSpawn()
         {
-            if (doSpawnTeleporting)
+            if (doSpawnTeleporting && FengGameManagerMKII.instance.gameStart && PhotonNetwork.isMasterClient)
             {
                 Vector3 spawnPos = new Vector3(0f, 0f, -530f);
                 Vector3 returnPos = new Vector3(0f, 0f, 530f);
                 float rad = 200f;
                 bool flag = false;
-                if (LevelInfo.getInfo(FengGameManagerMKII.currentLevel).mapName == "The City I")
+                if (FengGameManagerMKII.level == "The City")
                 {
                     spawnPos = new Vector3(0f, 0f, -530f);
                     returnPos = new Vector3(0f, 0f, 530f);
                     flag = true;
                 }
-                if (LevelInfo.getInfo(FengGameManagerMKII.currentLevel).mapName == "The Forest")
+                if (FengGameManagerMKII.level == "The Forest")
                 {
                     spawnPos = new Vector3(-50f, 0f, -510f);
                     returnPos = new Vector3(-30f, 0f, 500f);
@@ -133,7 +310,7 @@ namespace TitanBot
             {
                 Camera.main.transform.RotateAround(Vector3.zero, Vector3.up, cameraRotationSpeed * Time.deltaTime);
             }
-            if (Input.GetKeyDown(KeyCode.Equals))
+            if (Input.GetKeyDown(QuickMenuKey))
             {
                 if (!toggleQuickMenu)
                 {
@@ -178,12 +355,12 @@ namespace TitanBot
             if (!PTDataMachine.KeepHitboxes)
             {
                 if (PTDataMachine.hitboxWaitCounter < 0)
-                { 
+                {
                     if (PTDataMachine.hitSphere != null)
                         PTDataMachine.hitSphere.transform.position = new Vector3(0f, -999f, 0f);
                     if (PTDataMachine.hitBox != null)
                         PTDataMachine.hitBox.transform.position = new Vector3(0f, -999f, 0f);
-                    
+
                 }
                 else
                 {
@@ -194,7 +371,6 @@ namespace TitanBot
 
         public static void OnJoinedRoom()
         {
-
         }
 
         public static void OnInstantiate(PhotonPlayer player, string key, GameObject GO)
@@ -214,20 +390,20 @@ namespace TitanBot
                    "</b>[eaef5d]<b>Created by ",
                    "</b>[FF8000]<b>Avisite",
                    "\n",
-                   "</b>[FFFFFF]<b>https://discord.gg/BgaBuhT",
+                   "</b>[FFFFFF]<b>github.com/KaneMcGrath/PTBot",
                    "\n",
+                   "</b>[FFFFFF]<b>discord.gg/BgaBuhT",
                    "\n",
                    "</b>[00bfff]<b>My Ping is currently ",
                    (PhotonNetwork.GetPing()).ToString(),
-                   "\n",
-                   "</b>[ff4800]<b>This mod is still in development and I will probably crash randomly or DC</b>"
+                   "</b>"
                 });
                 FengGameManagerMKII.instance.photonView.RPC("Chat", photonPlayer, new object[]
                 {
                     text.hexColor(),
                     ""
                 });
-                
+
             }
         }
 
@@ -262,7 +438,7 @@ namespace TitanBot
                 myPTGO.GetComponent<TITAN_CONTROLLER>().enabled = true;
                 myPTGO.GetComponent<TITAN>().isCustomTitan = true;
             }
-            
+
         }
     }
 }

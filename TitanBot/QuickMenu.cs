@@ -22,8 +22,7 @@ namespace TitanBot
         {
             "PTBot Settings",
             "Game Settings",
-            "more",
-            "Titan Remote"
+            "Config"
         };
         public static bool showHitboxs = false;
         public static bool doAttacks = true;
@@ -32,8 +31,8 @@ namespace TitanBot
         private static int subAdminID = 0;
         private static bool resetPositionsOnAttack = false;
         private static bool clearHitboxesOnAttack = false;
-
-        private static string infiniteTitanTextBox = "5";
+        public static string prunningSettingTextbox = "2";
+        public static string infiniteTitanTextBox = "5";
         private static GUIStyle labelStyle = new GUIStyle
         {
             border = new RectOffset(1, 1, 1, 1),
@@ -51,6 +50,21 @@ namespace TitanBot
             normal = { textColor = Color.white }
         };
 
+        public static void TabConfig()
+        {
+            if (FlatUI.Button(IndexToRect(1), "Save"))
+            {
+                KaneGameManager.SaveConfig();
+            }
+            if (FlatUI.Button(IndexToRect(2), "Load"))
+            {
+                KaneGameManager.LoadConfig();
+            }
+            if (FlatUI.Button(IndexToRect(3), "Default"))
+            {
+                KaneGameManager.ResetDefaults();
+            }
+        }
 
         public static void OnGUI()
         {
@@ -59,14 +73,15 @@ namespace TitanBot
             tabIndex = tabs(new Rect(menuX + 250f, menuY, 700f, 100f), tabNames, tabIndex, false, tabColors);
             if (tabIndex == 0) tabPTBotSettings();
             if (tabIndex == 1) moreSettings();
-            if (tabIndex == 2) tabExtra();
-            if (tabIndex == 3) TabMain();
+            if (tabIndex == 2) TabConfig();
+            //if (tabIndex == 3) tabExtra();
+            //if (tabIndex == 4) TabMain();
             GUI.DrawTexture(new Rect(Input.mousePosition.x - (mouseScale / 2f), Screen.height - Input.mousePosition.y - (mouseScale / 2f), mouseScale, mouseScale), CGTools.mouseTex);
         }
 
         private static void moreSettings()
         {
-            KaneGameManager.sendJoinMessage = FlatUI.Check(IndexToRect(1),KaneGameManager.sendJoinMessage ,"Send Join Message");
+            KaneGameManager.sendJoinMessage = FlatUI.Check(IndexToRect(1), KaneGameManager.sendJoinMessage, "Send Join Message");
 
             Label(IndexToRect(2), "Endless Spawning");
             KaneGameManager.doInfiniteTitans = FlatUI.Check(IndexToRect(3), KaneGameManager.doInfiniteTitans, "Enable Endless Spawning");
@@ -115,7 +130,7 @@ namespace TitanBot
                     myPTGO.GetComponent<TITAN>().isCustomTitan = true;
                 }
             }
-            
+
 
 
             Label(IndexToRect(2), "Difficulty");
@@ -162,13 +177,16 @@ namespace TitanBot
             if (FlatUI.Button(IndexToRect(17), "Apply"))
             {
                 PlayerTitanBot.pTActions = PlayerTitanBot.TempActionsList.ToArray();
-                foreach (GameObject t in GameObject.FindGameObjectsWithTag("titan"))
+                if (FengGameManagerMKII.instance.gameStart)
                 {
-                    TITAN titan = t.GetComponent<TITAN>();
-                    if (titan.isCustomTitan)
+                    foreach (GameObject t in GameObject.FindGameObjectsWithTag("titan"))
                     {
-                        PlayerTitanBot b = (PlayerTitanBot)titan.controller;
-                        b.LiveUpdateMovesetData();
+                        TITAN titan = t.GetComponent<TITAN>();
+                        if (titan.isCustomTitan)
+                        {
+                            PlayerTitanBot b = (PlayerTitanBot)titan.controller;
+                            b.LiveUpdateMovesetData();
+                        }
                     }
                 }
                 CGTools.log("Moveset Updated for All Titans!");
@@ -176,20 +194,33 @@ namespace TitanBot
             Label(IndexToRect(18), "Pruning");
             GUI.Label(IndexToRect(19, 4, 0, 2), "Pruning Level");
             prunningSettingTextbox = GUI.TextField(IndexToRect(19, 4, 2), prunningSettingTextbox);
-            if (FlatUI.Button(IndexToRect(19,4,3), "Apply"))
+            if (FlatUI.Button(IndexToRect(19, 4, 3), "Apply"))
             {
-                if (int.TryParse(prunningSettingTextbox, out int p)) {
+                if (int.TryParse(prunningSettingTextbox, out int p))
+                {
                     PlayerTitanBot.dataPruningLevel = p;
+                    if (FengGameManagerMKII.instance.gameStart)
+                    {
+                        foreach (GameObject t in GameObject.FindGameObjectsWithTag("titan"))
+                        {
+                            TITAN titan = t.GetComponent<TITAN>();
+                            if (titan.isCustomTitan)
+                            {
+                                PlayerTitanBot b = (PlayerTitanBot)titan.controller;
+                                b.LiveUpdateMovesetData();
+                            }
+                        }
+                    }
                 }
                 else
                 {
                     CGTools.log("Unable to parse input");
                 }
             }
-            GUI.Label(IndexToRectMultiLine(20, 2), "*Remove every n number of hitboxes so they dont have to be calculated.  Most of them ovelap so it dosent hurt that much");
+            GUI.Label(IndexToRectMultiLine(20, 3), "*only keep 1 of every n number of hitboxes so the rest dont have to be calculated.  Most of them overlap so it is highly reccomended on large player or titan counts");
         }
 
-        private static string prunningSettingTextbox = "2";
+
 
 
         private static void Label(Rect rect, string text)
@@ -881,13 +912,13 @@ namespace TitanBot
             {
                 KaneGameManager.cameraRotationSpeed += 10f;
             }
-            clearHitboxesOnAttack = FlatUI.Check(IndexToRect(18,2,0), clearHitboxesOnAttack, "clearHitboxes");
-            PTDataMachine.KeepHitboxes = FlatUI.Check(IndexToRect(18,2,1), PTDataMachine.KeepHitboxes, "HitboxHistory");
-            if (FlatUI.Button(IndexToRect(19,2,0), "setup stuff"))
+            clearHitboxesOnAttack = FlatUI.Check(IndexToRect(18, 2, 0), clearHitboxesOnAttack, "clearHitboxes");
+            PTDataMachine.KeepHitboxes = FlatUI.Check(IndexToRect(18, 2, 1), PTDataMachine.KeepHitboxes, "HitboxHistory");
+            if (FlatUI.Button(IndexToRect(19, 2, 0), "setup stuff"))
             {
                 ((PlayerTitanBot)myLastPT.controller).CalculateMovesetData();
             }
-            if (FlatUI.Button(IndexToRect(19,2,1), "enable stuff"))
+            if (FlatUI.Button(IndexToRect(19, 2, 1), "enable stuff"))
             {
                 ((PlayerTitanBot)myLastPT.controller).doStuff = !((PlayerTitanBot)myLastPT.controller).doStuff;
                 CGTools.log("Do stuff = " + ((PlayerTitanBot)myLastPT.controller).doStuff.ToString());

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using TitanBot.FlatUI5;
 using UnityEngine;
 
@@ -27,21 +25,21 @@ namespace TitanBot
         }
 
 
-  //      public static void log(string message, Color color)
-  //      {
-  //          CGLog.fullLog.Add(new logMessage(message, color));
-  //          CGLog.logTimer = Time.time + CGLog.waitTime;
-  //      }
-  //      public static void log(string message, int severity)
-  //      {
-  //          CGLog.fullLog.Add(new logMessage(message, severity));
-  //          CGLog.logTimer = Time.time + CGLog.waitTime;
-  //      }
-  //      public static void log(string message, Color color, int severity)
-  //      {
-  //          CGLog.fullLog.Add(message);
-  //          CGLog.logTimer = Time.time + CGLog.waitTime;
-  //      }
+        //      public static void log(string message, Color color)
+        //      {
+        //          CGLog.fullLog.Add(new logMessage(message, color));
+        //          CGLog.logTimer = Time.time + CGLog.waitTime;
+        //      }
+        //      public static void log(string message, int severity)
+        //      {
+        //          CGLog.fullLog.Add(new logMessage(message, severity));
+        //          CGLog.logTimer = Time.time + CGLog.waitTime;
+        //      }
+        //      public static void log(string message, Color color, int severity)
+        //      {
+        //          CGLog.fullLog.Add(message);
+        //          CGLog.logTimer = Time.time + CGLog.waitTime;
+        //      }
 
         public static void OnGUI()
         {

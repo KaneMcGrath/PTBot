@@ -1,10 +1,7 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.IO;
 using UnityEngine;
-using ApplicationManagers;
 
 namespace TitanBot
 {
@@ -130,7 +127,7 @@ namespace TitanBot
             return (((input - min) % (max - min)) + (max - min)) % (max - min) + min;
         }
 
-        
+
 
         public static Texture2D readTextureFromFile(string path)
         {
@@ -155,6 +152,8 @@ namespace TitanBot
                 return null;
             }
         }
+
+
 
         public static PhotonPlayer findByID(int id)
         {
@@ -194,7 +193,7 @@ namespace TitanBot
             return UnityEngine.Random.Range(min, max);
         }
 
-        
+
         /// <summary>
         /// has a percent chance off returning true
         /// </summary>
@@ -212,7 +211,7 @@ namespace TitanBot
         {
             Vector3 screenPosition = Camera.main.camera.WorldToScreenPoint(point);
             float distance = Vector3.Distance(Camera.main.transform.position, point);
-            float scale = Mathf.Clamp(((1/distance) * 1000f) + crosshairSize, 5f, 200f);
+            float scale = Mathf.Clamp(((1 / distance) * 1000f) + crosshairSize, 5f, 200f);
             if (screenPosition.z >= 0f)
             {
                 GUI.DrawTexture(new Rect(screenPosition.x - (scale / 2f), ((float)Screen.height - screenPosition.y) - (scale / 2f), scale, scale), crosshairTex);

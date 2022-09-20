@@ -1,11 +1,7 @@
 ﻿using System;
-using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.ComponentModel;
 using System.IO;
-using Mono.Security.X509.Extensions;
+using UnityEngine;
 
 namespace TitanBot
 {
@@ -30,18 +26,18 @@ namespace TitanBot
         public static bool showPlayerCapsule = false;
         public static GameObject player;
         public static bool DrawHitboxes = false;
-        
 
-             
+
+
         //public static Dictionary<PTAction, List<hitboxData>> Database = new Dictionary<PTAction, List<hitboxData>>();
-        
+
         public static bool RecordData = true;
         public static bool isRecording = false;
         public static float recordingStartTime = 0f;
         public static HitData.MovesetData currentlyRecordingHitboxData;
         public static List<HitData.Hitbox> hitBoxes = new List<HitData.Hitbox>();
         private static Vector3 RecordingPosOffset;
-        
+
         public static void PruneHitboxData(int pruningLevel)
         {
             foreach (PTAction action in HitData.AllHitboxData.Keys)
@@ -86,11 +82,11 @@ namespace TitanBot
 
                 List<HitData.Hitbox> readHitBoxData = new List<HitData.Hitbox>();
 
-                
+
 
                 //ex. Attack:5
                 string preData = text.Substring(0, text.IndexOf('{'));
-                
+
                 string body = ParseMaster.FirstEncapsulatedString(text, '{', '}');
 
                 PTAction action = PTAction.nothing;
@@ -201,12 +197,11 @@ namespace TitanBot
                             CGTools.log("Failed to parse file \"" + file + "\" > rotz");
                             return;
                         }
-
                         readHitBoxData.Add(new HitData.HitboxRectangle(new Vector3(x, y, z), time, titanLevel, new Vector3(sizex, sizey, sizez), new Quaternion(rotw, rotx, roty, rotz)));
                     }
                 }
 
-                
+
 
 
                 HitData.MovesetData movesetData = new HitData.MovesetData(action, titanLevel);
@@ -232,7 +227,7 @@ namespace TitanBot
             currentlyRecordingHitboxData.hitboxes = hitBoxes.ToArray();
             isRecording = false;
             HitData.AddData(currentlyRecordingHitboxData);
-            
+
         }
 
         public static void CreateVisualizationSphere(Vector3 pos, float radius)
@@ -457,7 +452,7 @@ namespace TitanBot
             s.GetComponent<MeshFilter>().mesh = mesh;
             s.AddComponent<MeshRenderer>();
             s.GetComponent<MeshRenderer>().material = (Material)FengGameManagerMKII.RCassets.Load("killMaterial");
-            
+
             VisualizationSpheres.Add(s);
             s.transform.position = pos;
         }
@@ -473,5 +468,5 @@ namespace TitanBot
     }
 
 
-    
+
 }

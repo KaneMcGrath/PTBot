@@ -39,7 +39,7 @@ namespace TitanBot
             float time = t + tRand;
             Vector3 difficultyAdjusted = new Vector3(xRand, yRand, zRand);
             Vector3 point = (player.transform.position + (difficultyAdjusted * 5f)) + (player.transform.rigidbody.velocity + difficultyAdjusted) * time + new Vector3(0f, -20f * player.rigidbody.mass, 0f) * time * time * 0.5f;
-            
+
             if (debugPlayerData) CGTools.pointsToTrack.Add(point);
             return point;
         }

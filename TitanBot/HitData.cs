@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using static StyledItemButtonImageText;
-using static UIPopupList;
 
 namespace TitanBot
 {
@@ -24,7 +19,7 @@ namespace TitanBot
         {
             for (int i = 0; i < data.hitboxes.Length; i++)
             {
-                
+
                 Hitbox h = data.hitboxes[i];
                 if (h.time > timeOffset - HitboxTimeGrace && h.time < timeOffset + HitboxTimeGrace)
                 {
@@ -37,7 +32,7 @@ namespace TitanBot
             return float.MaxValue;
         }
 
-        
+
 
         //calculates intercepts at the time of each hitbox then see if that hits
         //returns the lowest time that hits
@@ -50,7 +45,7 @@ namespace TitanBot
                 Hitbox h = data.hitboxes[i];
                 Vector3 future = PTTools.PredictPlayerMotion(target, h.time);
                 //Vector3 future = PTTools.LonelySteelSheetFlyer(target, h.time);
-                
+
                 if (h.CheckTrigger(future, owner))
                 {
                     if (PlayerTitanBot.debugTargets)
@@ -67,8 +62,8 @@ namespace TitanBot
             {
                 AllHitboxData[data.action].Add(data);
             }
-            else 
-            { 
+            else
+            {
                 AllHitboxData.Add(data.action, new List<MovesetData>());
                 AllHitboxData[data.action].Add(data);
             }
@@ -119,25 +114,24 @@ namespace TitanBot
             {
                 MovesetData copy = new MovesetData(action, titanLevel);
                 List<Hitbox> hitboxCopies = new List<Hitbox>();
-                foreach(Hitbox hitbox in hitboxes)
+                foreach (Hitbox hitbox in hitboxes)
                 {
                     hitboxCopies.Add(hitbox.Copy());
                 }
                 copy.hitboxes = hitboxCopies.ToArray();
                 return copy;
             }
-            
+
             //although Im not running into performance issues, this will take out a certain number of hitboxes from the middle
             //so they wont be calculated.  most are overlapping and close together anyway.
             //this will save a lot of performance especially with large playercounts
             public void pruneData(int pruningLevel)
             {
-                if (hitboxes == null || hitboxes.Length == 0) return;
+                if (hitboxes == null || hitboxes.Length == 0 || pruningLevel <= 1) return;
 
                 List<Hitbox> newHitboxes = new List<Hitbox>();
                 if (hitboxes.Length > 4) //ignore the 1 frame hitboxes like the bite and slam
                 {                        //we want those
-                    CGTools.log("Pruning Data from {" + action + "," + titanLevel + "}");
                     for (int i = 0; i < hitboxes.Length; i++)
                     {
                         //the starts and ends of hitData tend to be more important
@@ -147,14 +141,9 @@ namespace TitanBot
                             {
                                 newHitboxes.Add(hitboxes[i]);
                             }
-                            else
-                            {
-                                CGTools.log("Index: " + i + " pruned from hitboxes");
-                            }
                         }
                         else
                         {
-                            CGTools.log("Index: " + i + " Kept at edges");
                             newHitboxes.Add(hitboxes[i]);
                         }
                     }
@@ -291,7 +280,7 @@ namespace TitanBot
                 scaledData = true;
             }
 
-            
+
             public override bool CheckTrigger(Vector3 target, Transform owner)
             {
                 Vector3 tp = CGTools.TransformPointUnscaled(owner, pos);

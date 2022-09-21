@@ -10,11 +10,9 @@ PTBot is a mod that adds a custom titan that behavies like a player titan.  You 
 
 To get started host a room on a multiplayer server or in offline mode.  Then press the quick menu hotkey (Default is "L") to bring up the quick menu where you will have accsess to all of the settings of this mod.
 
-## Settings
+## PTBot Settings
 
-press the quick menu hotkey (Default is "L") to bring up the quick menu.
-
-On the first page you will find
+On the first page you will find the most important settings for configuring PTBot
 
 ### Spawn PTBot
 
@@ -31,4 +29,47 @@ these are the internal names that the titan controller uses, just know that **At
 
 ### Pruning Level
 
-This Setting is to help with performance, every players movement is predicted for each hitbox.  
+This Setting is to help with performance, every players movement is predicted for each sampled hitbox.  These hitboxes were sampled at a high framerate and overlap eachother.  Pruning removes a number of hitboxes from the sampled data so they dont have to be calculated.  A pruning level of 2 will keep 1 out of every 2 hitboxes, A pruning level of 3 will keep 11 out of every 3 hitboxes and so on.
+Once a prunning level is input make sure to hit "Apply" to the right of it.
+
+## Game Settings
+
+This page contains more general settings related to hosting a room with PTBots
+
+### Send Join Message
+
+When a player joins your room they are sent a message with a link to the mod and what your current ping is.  This setting enables or disables sending that message.
+
+### Endless Spawning
+
+This will spawn a certain amount of PTBots. when one dies another will immediatly spawn.  Set the amount you want spawned in the field below and click "Apply".
+Titans will only respawn when the number of total titans including other types is below the count.
+
+### Replace Normal Titans
+
+This will replace any titan spawned by your game with a PTBot.  You can use this for wave modes or on custom maps.
+
+### Teleport Titans Away From Spawn
+
+This only works on The Forest and The City.  When a titan gets too close to the spawn position, it is teleported to the other side of the map.
+This will also teleport Player Titans.
+
+### Debug Raycasts
+
+Shows the raycast points that PTBot uses for pathing.
+
+### Debug Targets
+
+Shows the player a PTBot is targeting when running towards or away from a player
+
+### Debug Predictions
+
+Shows the Prediction of each player a PTBot is targeting for each hitbox.  you can use this to see what affect difficulty has on predictions
+
+## Config
+
+use this menu to save and load your settings.  Settings are stored in "PTBot_Data\PTBot\Config.txt".  At the top of this config file you can change the default Quickmenu hotkey.  you can set the hotkey to any key from this list https://docs.unity3d.com/ScriptReference/KeyCode.html
+
+# Source Code
+This mod is open source and you are welcome to include or improve any parts of it in your own mods. As long as credit is given.  I didnt use any external dependancies and everything is fairly self contained, so if you know how to mod the game, it should not be too difficult to implement.
+

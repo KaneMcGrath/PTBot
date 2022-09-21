@@ -10,6 +10,8 @@ PTBot is a mod that adds a custom titan that behavies like a player titan.  You 
 
 To get started host a room on a multiplayer server or in offline mode.  Then press the quick menu hotkey (Default is "L") to bring up the quick menu where you will have accsess to all of the settings of this mod.
 
+I would reccomend a titan size of 1.0,2.0,3.0,4.0, or 5.0.  This mod uses sampled hitbox data form each of these titan sizes, different sizes will have this data scaled to match.  The scaling is suprisingly close but can mess up certain moves more than others(Especially Jump).
+
 ## PTBot Settings
 
 On the first page you will find the most important settings for configuring PTBot

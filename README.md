@@ -16,7 +16,7 @@ On the first page you will find the most important settings for configuring PTBo
 
 ### Spawn PTBot
 
-this will spawn a PTBot whereber the camera is pointing
+this will spawn a PTBot where the camera is pointing
 
 ### Difficulty
 

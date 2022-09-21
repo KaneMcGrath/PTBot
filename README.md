@@ -71,5 +71,9 @@ Shows the Prediction of each player a PTBot is targeting for each hitbox.  you c
 use this menu to save and load your settings.  Settings are stored in "PTBot_Data\PTBot\Config.txt".  At the top of this config file you can change the default Quickmenu hotkey.  you can set the hotkey to any key from this list https://docs.unity3d.com/ScriptReference/KeyCode.html
 
 # Source Code
+This mod is forked from the RCMod 5/5/2022 Update https://github.com/rc174945/RCMod By Ricecake
+
+Almoast all of my changes are under the PTBot namespace
+
 This mod is open source and you are welcome to include or improve any parts of it in your own mods. As long as credit is given.  I didnt use any external dependancies and everything is fairly self contained, so if you know how to mod the game, it should not be too difficult to implement.
 

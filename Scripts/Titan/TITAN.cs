@@ -2324,7 +2324,7 @@ public class TITAN : Photon.MonoBehaviour
                 if (!target.GetComponent<HERO>().HasDied())
                 {
                     target.GetComponent<HERO>().markDie();
-                    if (this.nonAI)
+                    if (this.nonAI && !isCustomTitan)
                     {
                         object[] parameters = new object[] { base.photonView.viewID, base.name };
                         target.GetComponent<HERO>().photonView.RPC("netDie2", PhotonTargets.All, parameters);
@@ -2790,10 +2790,6 @@ public class TITAN : Photon.MonoBehaviour
             this.runAnimation = "run_abnormal_1";
             base.GetComponent<TITAN_SETUP>().setHair2();
         }
-        if (isCustomTitan)
-        {
-            base.name = "PTBot";
-        }
         if (((this.abnormalType == AbnormalType.TYPE_I) || (this.abnormalType == AbnormalType.TYPE_JUMPER)) || (this.abnormalType == AbnormalType.TYPE_PUNK))
         {
             this.speed = 18f;
@@ -3138,6 +3134,7 @@ public class TITAN : Photon.MonoBehaviour
         {
             object[] parameters = new object[] { num };
             base.photonView.RPC("netSetAbnormalType", PhotonTargets.AllBuffered, parameters);
+            base.name = PlayerTitanBot.TitanName;
         }
         else if (IN_GAME_MAIN_CAMERA.gametype == GAMETYPE.SINGLE)
         {
@@ -3257,6 +3254,7 @@ public class TITAN : Photon.MonoBehaviour
         {
             object[] parameters = new object[] { num };
             base.photonView.RPC("netSetAbnormalType", PhotonTargets.AllBuffered, parameters);
+            base.name = PlayerTitanBot.TitanName;
         }
         else if (IN_GAME_MAIN_CAMERA.gametype == GAMETYPE.SINGLE)
         {
@@ -4200,7 +4198,7 @@ public class TITAN : Photon.MonoBehaviour
                         {
                             obj9 = (GameObject) UnityEngine.Object.Instantiate(Resources.Load("FX/" + this.fxName), this.fxPosition, this.fxRotation);
                         }
-                        if (this.nonAI)
+                        if (this.nonAI && !isCustomTitan)
                         {
                             obj9.transform.localScale = (Vector3) (this.baseTransform.localScale * 1.5f);
                             if (obj9.GetComponent<EnemyfxIDcontainer>() != null)
@@ -4239,7 +4237,7 @@ public class TITAN : Photon.MonoBehaviour
                             transform1.position -= (Vector3) ((this.throwRock.transform.forward * 2.5f) * this.myLevel);
                             if (this.throwRock.GetComponent<EnemyfxIDcontainer>() != null)
                             {
-                                if (this.nonAI)
+                                if (this.nonAI && !isCustomTitan)
                                 {
                                     this.throwRock.GetComponent<EnemyfxIDcontainer>().myOwnerViewID = base.photonView.viewID;
                                 }

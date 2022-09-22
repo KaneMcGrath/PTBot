@@ -11,14 +11,13 @@ namespace TitanBot
     {
         public static KaneGameManager instance;
         public static bool toggleQuickMenu = false;
-        public static string GameVersionString = "PTBot 1.61";
+        public static string GameVersionString = "PTBot 1.62 (Dev)";
         public static bool doCameraRotation = false;
         public static float cameraRotationSpeed = 30f;
         public static string Path = Application.dataPath + "/PTBot/";
         public static bool waitToAnnounce = false;
         public static float waitToAnnounceTimer = -999999f;
         public static KeyCode QuickMenuKey = KeyCode.I;
-
         public static float TagWidth = 200f;
         public static float TagHeight = 40f;
 
@@ -36,6 +35,12 @@ namespace TitanBot
             fontStyle = FontStyle.Bold,
             normal = { textColor = Color.white }
         };
+
+        //every function that should be deleted or modified before release should call this fuction so it can be found through the references
+        public static void MarkDevFunction()
+        {
+           
+        }
 
         public static void Init()
         {
@@ -189,6 +194,11 @@ namespace TitanBot
                         CGTools.log("Could not parse Setting [PruningLevel]");
                     }
                 }
+                if (config.ContainsKey("TitanName"))
+                {
+                    PlayerTitanBot.TitanName = config["TitanName"];
+                    QuickMenu.titanNameTextBox = config["TitanName"];
+                }
                 CGTools.log("Loaded config from " + Path + "\"Config.txt\"");
             }
         }
@@ -203,6 +213,7 @@ namespace TitanBot
             config.Add("doSpawnTeleporting", doSpawnTeleporting.ToString());
             config.Add("Difficulty", PTTools.difficulty.ToString());
             config.Add("PruningLevel", PlayerTitanBot.dataPruningLevel.ToString());
+            config.Add("TitanName", PlayerTitanBot.TitanName);
             string moves = "";
             if (PlayerTitanBot.pTActions.Length > 0)
             {
@@ -235,13 +246,17 @@ namespace TitanBot
         {
             sendJoinMessage = true;
             InfTitanCount = 5;
+            QuickMenu.infiniteTitanTextBox = "5";
             PlayerTitanBot.ReplaceSpawnedTitans = false;
             doSpawnTeleporting = false;
             PTTools.difficulty = Difficulty.VeryVeryHard;
             PlayerTitanBot.dataPruningLevel = 2;
+            QuickMenu.prunningSettingTextbox = "2";
             PlayerTitanBot.pTActions = new PTAction[] { PTAction.Attack, PTAction.Jump, PTAction.choptl, PTAction.choptr };
             PlayerTitanBot.TempActionsList.Clear();
             PlayerTitanBot.TempActionsList.AddRange(PlayerTitanBot.pTActions);
+            PlayerTitanBot.TitanName = "PTBot";
+            QuickMenu.titanNameTextBox = "PTBot";
             CGTools.log("Reset settings to default values");
         }
 

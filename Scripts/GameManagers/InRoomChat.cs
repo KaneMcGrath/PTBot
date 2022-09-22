@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UI;
+using TitanBot;
 
 public class InRoomChat : Photon.MonoBehaviour
 {
@@ -241,7 +242,7 @@ public class InRoomChat : Photon.MonoBehaviour
                     }
                     else if (this.inputLine.StartsWith("/timescale"))
                     {
-                        if (PhotonNetwork.isMasterClient || true)
+                        if (PhotonNetwork.isMasterClient)
                         {
                             if (float.TryParse(inputLine.Substring(11), out float f))
                             {

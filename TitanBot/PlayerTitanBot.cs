@@ -23,6 +23,7 @@ namespace TitanBot
         public static bool useCustomHair = true;
         public static List<PTAction> TempActionsList = new List<PTAction>();
         public static int dataPruningLevel = 2;
+        public static string TitanName = "Test Name";
 
         public bool doStuff = true;
         public TITAN MyTitan = null;
@@ -40,7 +41,6 @@ namespace TitanBot
         private float SpeedTimer = 0f;
         private Vector3 lastFarthestPoint = Vector3.zero;
 
-
         // public float forsight = 4f;//how far into the future titan will predict player velocity
         // public int forsightSteps = 2;//how many steps not including the current position that the titan will predict
 
@@ -48,11 +48,12 @@ namespace TitanBot
         public Dictionary<PTAction, HitData.MovesetData> MovesetDatabase = new Dictionary<PTAction, HitData.MovesetData>();
 
         //All the actions we want to calculate movesetData for
-        public static PTAction[] pTActions = {
-            PTAction.Attack,
-            PTAction.Jump,
-            PTAction.choptl,
-            PTAction.choptr,
+        public static PTAction[] pTActions = 
+        {
+            PTAction.Attack, 
+            PTAction.Jump,   
+            PTAction.choptl, 
+            PTAction.choptr  
         };
 
         /// <summary>
@@ -86,7 +87,6 @@ namespace TitanBot
                     4,
                     1
                 });
-
                 if (s == 0)
                 {
                     state = TitanState.Repositioning;
@@ -111,7 +111,6 @@ namespace TitanBot
                     stateTimer = Time.time + 1f;
                 }
             }
-
             if (state == TitanState.Running)
             {
                 run();
@@ -188,7 +187,7 @@ namespace TitanBot
             Ray ray = new Ray(rayOrigin, rayDirection);
             Ray ray2 = new Ray(rayOrigin2, rayDirection);
             Ray ray3 = new Ray(rayOrigin3, rayDirection);
-            LayerMask mask = ((int)1) << PhysicsLayer.Ground;
+            LayerMask mask = 1 << PhysicsLayer.Ground;
             //CGTools.greenPointsToTrack.Add(MyTitan.transform.position + Quaternion.Euler(new Vector3(0f,targetDirectionLerp,0f)) * MyTitan.transform.forward * 50f);
             bool flag = false;
             if (Physics.Raycast(ray, out RaycastHit raycastHit, 50f, mask.value))

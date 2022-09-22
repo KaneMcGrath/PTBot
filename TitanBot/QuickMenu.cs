@@ -32,6 +32,7 @@ namespace TitanBot
         private static bool clearHitboxesOnAttack = false;
         public static string prunningSettingTextbox = "2";
         public static string infiniteTitanTextBox = "5";
+        public static string titanNameTextBox = "PTBot";
         private static GUIStyle labelStyle = new GUIStyle
         {
             border = new RectOffset(1, 1, 1, 1),
@@ -100,28 +101,12 @@ namespace TitanBot
 
         private static void tabPTBotSettings()
         {
-            Label(IndexToRect(0), "Spawn a PTBot under the camera");
-            if (FlatUI.Button(IndexToRect(1), "Spawn PTBot"))
+            Label(IndexToRect(0), "Titan Name");
+            titanNameTextBox = GUI.TextField(IndexToRect(1, 4, 0, 3), titanNameTextBox);
+            if (FlatUI.Button(IndexToRect(1,4,3), "Apply"))
             {
-                if (FengGameManagerMKII.instance.gameStart && PhotonNetwork.isMasterClient)
-                {
-                    Vector3 rayOrigin = Camera.main.transform.position;
-                    Vector3 rayDirection = Camera.main.transform.forward;
-                    Ray ray = new Ray(rayOrigin, rayDirection);
-                    Physics.Raycast(ray, out RaycastHit raycastHit);
-                    Quaternion rot = Quaternion.identity;
-                    GameObject myPTGO = PhotonNetwork.Instantiate("TITAN_VER3.1", raycastHit.point, rot, 0);
-                    TITAN MyPT = myPTGO.GetComponent<TITAN>();
-                    myLastPT = MyPT;
-                    GameObject.Destroy(myPTGO.GetComponent<TITAN_CONTROLLER>());
-                    myPTGO.GetComponent<TITAN>().nonAI = true;
-                    myPTGO.GetComponent<TITAN>().speed = 30f;
-                    myPTGO.GetComponent<TITAN_CONTROLLER>().enabled = true;
-                    myPTGO.GetComponent<TITAN>().isCustomTitan = true;
-                }
+                PlayerTitanBot.TitanName = titanNameTextBox;
             }
-
-
 
             Label(IndexToRect(2), "Difficulty");
             if (FlatUI.Button(IndexToRect(3), "Very Very Hard", (PTTools.difficulty == Difficulty.VeryVeryHard) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))

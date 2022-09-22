@@ -37,9 +37,12 @@ namespace TitanBot
         };
 
         //every function that should be deleted or modified before release should call this fuction so it can be found through the references
-        public static void MarkDevFunction()
+        public static void MarkDevFunction(string message = "")
         {
-           
+            if (message != "")
+            {
+                CGLog.log(message);
+            }
         }
 
         public static void Init()

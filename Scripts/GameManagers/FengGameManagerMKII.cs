@@ -14,6 +14,7 @@ using Weather;
 using GameManagers;
 using TitanBot;
 using UnityScript.Lang;
+using System.IO;
 
 public class FengGameManagerMKII : Photon.MonoBehaviour
 {
@@ -5581,7 +5582,7 @@ public class FengGameManagerMKII : Photon.MonoBehaviour
                 }
                 if (SettingsManager.LegacyGameSettings.TitanSizeEnabled.Value)
                 {
-                    hashtable.Add("sizeMode", SettingsManager.LegacyGameSettings.TitanSizeEnabled.Value);
+                    hashtable.Add("sizeMode", SettingsManager.LegacyGameSettings.TitanSizeEnabled.Value ? 1 : 0);
                     hashtable.Add("sizeLower", SettingsManager.LegacyGameSettings.TitanSizeMin.Value);
                     hashtable.Add("sizeUpper", SettingsManager.LegacyGameSettings.TitanSizeMax.Value);
                 }

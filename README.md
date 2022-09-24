@@ -31,7 +31,7 @@ these are the internal names that the titan controller uses, just know that **At
 
 ### Pruning Level
 
-This Setting is to help with performance, every players movement is predicted for each sampled hitbox.  These hitboxes were sampled at a high framerate and overlap eachother.  Pruning removes a number of hitboxes from the sampled data so they dont have to be calculated.  A pruning level of 2 will keep 1 out of every 2 hitboxes, A pruning level of 3 will keep 11 out of every 3 hitboxes and so on.
+This Setting is to help with performance, every players movement is predicted for each sampled hitbox.  These hitboxes were sampled at a high framerate and overlap eachother.  Pruning removes a number of hitboxes from the sampled data so they dont have to be calculated.  A pruning level of 2 will keep 1 out of every 2 hitboxes, A pruning level of 3 will keep 1 out of every 3 hitboxes and so on.
 Once a prunning level is input make sure to hit "Apply" to the right of it.
 
 ## Game Settings

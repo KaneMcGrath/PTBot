@@ -24,7 +24,7 @@ namespace TitanBot
         public static bool useCustomHair = true;
         public static List<PTAction> TempActionsList = new List<PTAction>();
         public static int dataPruningLevel = 2;
-        public static string TitanName = "Test Name";
+        public static string TitanName = "PTBot";
 
         public bool doStuff = true;
         public TITAN MyTitan = null;

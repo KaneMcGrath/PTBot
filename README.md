@@ -2,7 +2,7 @@
 
 A Custom Titan AI for the Attack on Titan Tribute Game
 
-[Download Latest Version](https://github.com/KaneMcGrath/PTBot/releases/download/1.61/PTBot1.61.zip)
+[Download Latest Version](https://github.com/KaneMcGrath/PTBot/releases/download/1.62/PTBot1.62.zip)
 
 ## About
 

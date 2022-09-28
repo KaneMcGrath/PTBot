@@ -1,4 +1,4 @@
-# PTBot
+# PTBot 1.62
 
 A Custom Titan AI for the Attack on Titan Tribute Game
 

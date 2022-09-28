@@ -1,6 +1,7 @@
 ﻿using Constants;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 using static TitanBot.HitData;
 
@@ -40,6 +41,7 @@ namespace TitanBot
         private float targetLerpT = 0f;
         private float SpeedTimer = 0f;
         private Vector3 lastFarthestPoint = Vector3.zero;
+        private Vector3 cityGate = new Vector3(0f, 0f, 900f);
 
         // public float forsight = 4f;//how far into the future titan will predict player velocity
         // public int forsightSteps = 2;//how many steps not including the current position that the titan will predict
@@ -304,9 +306,14 @@ namespace TitanBot
 
                 Vector3 rayDirection2 = Quaternion.Euler(new Vector3(0f, i * (360 / raycasts), 0f)) * MyTitan.transform.forward;
                 Ray ray2 = new Ray(rayOrigin2, rayDirection2);
+                bool isCity = (FengGameManagerMKII.level == "The City");
                 LayerMask mask = ((int)1) << PhysicsLayer.Ground;
                 if (Physics.Raycast(ray2, out RaycastHit raycastHit2, 10000f, mask.value))
                 {
+                    if (isCity && Vector3.Distance(raycastHit2.point, cityGate) < 300f)
+                    {
+
+                    }
                     if (raycastHit2.distance > lastFarthestDistance)
                     {
                         lastFarthestDistance = raycastHit2.distance;

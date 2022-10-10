@@ -101,9 +101,12 @@ namespace TitanBot
             {
                 foreach (GameObject t in GameObject.FindGameObjectsWithTag("titan"))
                 {
-                    float x = UnityEngine.Random.Range(-300f, 300f);
-                    float z = UnityEngine.Random.Range(-300f, 300f);
-                    t.transform.position = new Vector3(x, 10f, z);
+                    if (t.GetPhotonView().isMine)
+                    {
+                        float x = UnityEngine.Random.Range(-300f, 300f);
+                        float z = UnityEngine.Random.Range(-300f, 300f);
+                        t.transform.position = new Vector3(x, 10f, z);
+                    }
                 }
             }
         }

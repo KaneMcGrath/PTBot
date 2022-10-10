@@ -16,7 +16,7 @@ namespace TitanBot
     {
         public static bool TakeOverPT = false;
         public static bool ReplaceSpawnedTitans = false;
-        public static int raycasts = 16;
+        public static int raycasts = 10;
         public static float spinrate = 800f;
         public static float turnrate = 0.005f;
         public static bool debugRaycasts = false;
@@ -314,7 +314,7 @@ namespace TitanBot
                     {
 
                     }
-                    if (raycastHit2.distance > lastFarthestDistance)
+                    else if (raycastHit2.distance > lastFarthestDistance)
                     {
                         lastFarthestDistance = raycastHit2.distance;
                         lastFarthestPoint = raycastHit2.point;

@@ -97,6 +97,15 @@ namespace TitanBot
             PlayerTitanBot.debugRaycasts = FlatUI.Check(IndexToRect(9), PlayerTitanBot.debugRaycasts, "Debug Raycasts");
             PlayerTitanBot.debugTargets = FlatUI.Check(IndexToRect(10), PlayerTitanBot.debugTargets, "Debug Targets");
             PTTools.debugPlayerData = FlatUI.Check(IndexToRect(11), PTTools.debugPlayerData, "Debug Predictions");
+            if (FlatUI.Button(IndexToRect(12), "Teleport titans back inside"))
+            {
+                foreach (GameObject t in GameObject.FindGameObjectsWithTag("titan"))
+                {
+                    float x = UnityEngine.Random.Range(-300f, 300f);
+                    float z = UnityEngine.Random.Range(-300f, 300f);
+                    t.transform.position = new Vector3(x, 10f, z);
+                }
+            }
         }
 
         private static void tabPTBotSettings()
@@ -107,7 +116,6 @@ namespace TitanBot
             {
                 PlayerTitanBot.TitanName = titanNameTextBox;
             }
-
             Label(IndexToRect(2), "Difficulty");
             if (FlatUI.Button(IndexToRect(3), "Very Very Hard", (PTTools.difficulty == Difficulty.VeryVeryHard) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
             {

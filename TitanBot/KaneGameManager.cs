@@ -11,7 +11,7 @@ namespace TitanBot
     {
         public static KaneGameManager instance;
         public static bool toggleQuickMenu = false;
-        public static string GameVersionString = "PTBot 1.62";
+        public static string GameVersionString = "PTBot 1.64";
         public static bool doCameraRotation = false;
         public static float cameraRotationSpeed = 30f;
         public static string Path = Application.dataPath + "/PTBot/";
@@ -287,48 +287,52 @@ namespace TitanBot
             });
         }
 
+        private float checkSpawnsTimer = 0f;
 
         public void teleportTitansIfAtSpawn()
         {
-            if (doSpawnTeleporting && FengGameManagerMKII.instance.gameStart && PhotonNetwork.isMasterClient)
+            if (!CGTools.timer(ref checkSpawnsTimer, 0.2f)) return;
+            if (PhotonNetwork.isMasterClient)
             {
-                Vector3 spawnPos = new Vector3(0f, 0f, -530f);
-                Vector3 returnPos = new Vector3(0f, 0f, 530f);
-                float rad = 200f;
-                bool flag = false;
-                if (FengGameManagerMKII.level == "The City")
+                if (doSpawnTeleporting && FengGameManagerMKII.instance.gameStart)
                 {
-                    spawnPos = new Vector3(0f, 0f, -530f);
-                    returnPos = new Vector3(0f, 0f, 530f);
-                    flag = true;
-                }
-                if (FengGameManagerMKII.level == "The Forest")
-                {
-                    spawnPos = new Vector3(-50f, 0f, -510f);
-                    returnPos = new Vector3(-30f, 0f, 500f);
-                    rad = 100f;
-                    flag = true;
-                }
-                if (flag)
-                {
-                    foreach (GameObject g in GameObject.FindGameObjectsWithTag("titan"))
+                    Vector3 spawnPos = new Vector3(0f, 0f, -530f);
+                    Vector3 GatePos = new Vector3(0f, 0f, 750f);
+                    float spawnRad = 200f;
+                    float gateRad = 60f;
+                    bool flag = false;
+                    if (FengGameManagerMKII.level == "The City")
                     {
-                        if (Vector3.Distance(g.transform.position, spawnPos) < rad)
+                        spawnPos = new Vector3(0f, 0f, -530f);
+                        GatePos = new Vector3(0f, 0f, 750f);
+                        flag = true;
+                    }
+                    if (flag)
+                    {
+                        foreach (GameObject g in GameObject.FindGameObjectsWithTag("titan"))
                         {
-                            if (g.GetPhotonView().isMine)
-                                g.transform.position = returnPos;
-                            else
+                            if (Vector3.Distance(g.transform.position, spawnPos) < spawnRad || Vector3.Distance(g.transform.position, GatePos) < gateRad)
                             {
-                                if (PhotonNetwork.isMasterClient)
+                                float x = UnityEngine.Random.Range(-360f, 360f);
+                                float z = UnityEngine.Random.Range(-360f, 360f);
+                                Vector3 returnPos = new Vector3(x, 10f, z);
+                                if (g.GetPhotonView().isMine)
                                 {
-                                    if (CGTools.timer(ref movetoRPCTimer, 2f))
+                                    g.transform.position = returnPos;
+                                }
+                                else
+                                {
+                                    if (PhotonNetwork.isMasterClient)
                                     {
-                                        g.GetComponent<TITAN>().photonView.RPC("moveToRPC", g.GetPhotonView().owner, new object[]
+                                        if (CGTools.timer(ref movetoRPCTimer, 2f))
                                         {
-                                        returnPos.x,
-                                        returnPos.y,
-                                        returnPos.z
-                                        });
+                                            g.GetComponent<TITAN>().photonView.RPC("moveToRPC", g.GetPhotonView().owner, new object[]
+                                            {
+                                                returnPos.x,
+                                                returnPos.y,
+                                                returnPos.z
+                                            });
+                                        }
                                     }
                                 }
                             }
@@ -336,6 +340,42 @@ namespace TitanBot
                     }
                 }
             }
+            //else
+            //{
+            //    Vector3 spawnPos = new Vector3(0f, 0f, -530f);
+            //    Vector3 GatePos = new Vector3(0f, 0f, 750f);
+            //    float spawnRad = 200f;
+            //    float gateRad = 60f;
+            //    bool flag = false;
+            //    if (FengGameManagerMKII.level == "The City")
+            //    {
+            //        spawnPos = new Vector3(0f, 0f, -530f);
+            //        GatePos = new Vector3(0f, 0f, 750f);
+            //        flag = true;
+            //    }
+            //    if (FengGameManagerMKII.level == "The Forest")
+            //    {
+            //        spawnPos = new Vector3(-50f, 0f, -510f);
+            //        GatePos = new Vector3(-30f, 0f, 500f);
+            //        spawnRad = 100f;
+            //        flag = true;
+            //    }
+            //    if (flag)
+            //    {
+            //        foreach (GameObject g in GameObject.FindGameObjectsWithTag("titan"))
+            //        {
+            //            if (Vector3.Distance(g.transform.position, spawnPos) < spawnRad || Vector3.Distance(g.transform.position, GatePos) < gateRad)
+            //            {
+            //                if (g.GetPhotonView().isMine)
+            //                {
+            //                    float x = UnityEngine.Random.Range(-360f, 360f);
+            //                    float z = UnityEngine.Random.Range(-360f, 360f);
+            //                    g.transform.position = new Vector3(x, 10f, z);
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
         }
 
         public void Update()
@@ -453,8 +493,8 @@ namespace TitanBot
             {
                 Vector3 pos = Camera.main.transform.position;
                 Quaternion rot = Quaternion.identity;
-                float x = UnityEngine.Random.Range(-400f, 400f);
-                float z = UnityEngine.Random.Range(-400f, 400f);
+                float x = UnityEngine.Random.Range(-360f, 360f);
+                float z = UnityEngine.Random.Range(-360f, 360f);
 
                 Vector3 rayOrigin = new Vector3(x, 200f, z);
                 Vector3 rayDirection = Vector3.down;

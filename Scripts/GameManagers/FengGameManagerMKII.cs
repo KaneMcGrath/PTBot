@@ -8189,10 +8189,10 @@ public class FengGameManagerMKII : Photon.MonoBehaviour
         obj3.GetComponent<TITAN>().nonAI = true;
         obj3.GetComponent<TITAN>().speed = 30f;
         obj3.GetComponent<TITAN_CONTROLLER>().enabled = true;
-        if ((id == "RANDOM") && (UnityEngine.Random.Range(0, 100) < 7))
-        {
-            obj3.GetComponent<TITAN>().setAbnormalType2(AbnormalType.TYPE_CRAWLER, true);
-        }
+        //if ((id == "RANDOM") && (UnityEngine.Random.Range(0, 100) < 7))
+        //{
+        //    obj3.GetComponent<TITAN>().setAbnormalType2(AbnormalType.TYPE_CRAWLER, true);
+        //}
         GameObject.Find("MainCamera").GetComponent<IN_GAME_MAIN_CAMERA>().enabled = true;
         GameObject.Find("MainCamera").GetComponent<SpectatorMovement>().disable = true;
         GameObject.Find("MainCamera").GetComponent<MouseLook>().disable = true;
@@ -8233,10 +8233,10 @@ public class FengGameManagerMKII : Photon.MonoBehaviour
             obj3.GetComponent<TITAN>().nonAI = true;
             obj3.GetComponent<TITAN>().speed = 30f;
             obj3.GetComponent<TITAN_CONTROLLER>().enabled = true;
-            if ((id == "RANDOM") && (UnityEngine.Random.Range(0, 100) < 7))
-            {
-                obj3.GetComponent<TITAN>().setAbnormalType2(AbnormalType.TYPE_CRAWLER, true);
-            }
+            //if ((id == "RANDOM") && (UnityEngine.Random.Range(0, 100) < 7))
+            //{
+            //    obj3.GetComponent<TITAN>().setAbnormalType2(AbnormalType.TYPE_CRAWLER, true);
+            //}
             GameObject.Find("MainCamera").GetComponent<IN_GAME_MAIN_CAMERA>().enabled = true;
             GameObject.Find("MainCamera").GetComponent<SpectatorMovement>().disable = true;
             GameObject.Find("MainCamera").GetComponent<MouseLook>().disable = true;

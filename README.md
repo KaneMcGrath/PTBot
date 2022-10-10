@@ -1,8 +1,8 @@
-# PTBot 1.62
+# PTBot 1.64
 
 A Custom Titan AI for the Attack on Titan Tribute Game
 
-[Download Latest Version](https://github.com/KaneMcGrath/PTBot/releases/download/1.62/PTBot1.62.zip)
+[Download Latest Version](https://github.com/KaneMcGrath/PTBot/releases/download/1.64/PTBot.1.64.zip)
 
 ## About
 

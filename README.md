@@ -1,8 +1,8 @@
-# PTBot
+# PTBot 1.64
 
 A Custom Titan AI for the Attack on Titan Tribute Game
 
-[Download Latest Version](https://github.com/KaneMcGrath/PTBot/releases/download/1.61/PTBot1.61.zip)
+[Download Latest Version](https://github.com/KaneMcGrath/PTBot/releases/download/1.64/PTBot.1.64.zip)
 
 ## About
 
@@ -16,9 +16,9 @@ I would reccomend a titan size of 1.0,2.0,3.0,4.0, or 5.0.  This mod uses sample
 
 On the first page you will find the most important settings for configuring PTBot
 
-### Spawn PTBot
+### Titan Name
 
-this will spawn a PTBot where the camera is pointing
+This is the name of the titan that will show up in the kill feed when it kills you or it is killed
 
 ### Difficulty
 

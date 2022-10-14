@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using static TitanBot.HitData;
 
 namespace TitanBot
 {
@@ -208,8 +209,8 @@ namespace TitanBot
                 movesetData.hitboxes = readHitBoxData.ToArray();
 
                 HitData.AddData(movesetData);
-                CGTools.log("Loaded data for [" + movesetData.action + "] Size: " + movesetData.titanLevel);
             }
+            CGTools.log("Loaded Hitbox Data.");
         }
 
         public static void StartRecordingHitbox(PTAction action)

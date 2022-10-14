@@ -8,10 +8,10 @@ namespace TitanBot
 {
     public class CGLog
     {
-        public static bool WriteToFile = true;
+        public static bool WriteToFile = false;
         public static string filePath = KaneGameManager.Path + "log.txt";
 
-        public static StreamWriter logWriter = new StreamWriter(KaneGameManager.Path + "log.txt");
+        public static StreamWriter logWriter;
 
         public static void log(string message)
         {
@@ -97,6 +97,19 @@ namespace TitanBot
         {
             CGLog.LogBackground = CGTools.ColorTex(new Color(0.2f, 0.2f, 0.2f, 0.6f));
             CGLog.TrackedBackground = CGTools.ColorTex(new Color(0.5f, 0f, 0f, 0.6f));
+            
+            try
+            {
+                logWriter = new StreamWriter(KaneGameManager.Path + "log.txt");
+                WriteToFile = true;
+                CGTools.log("Streamwriter created successfully.");
+            }
+            catch(Exception e)
+            {
+                logWriter = null;
+                WriteToFile = false;
+                CGTools.log("unable to write CGLog to a file, you likely have 2 instances of the game running.");
+            }
         }
 
         // Token: 0x0400001A RID: 26

@@ -3134,7 +3134,7 @@ public class TITAN : Photon.MonoBehaviour
         {
             object[] parameters = new object[] { num };
             base.photonView.RPC("netSetAbnormalType", PhotonTargets.AllBuffered, parameters);
-            base.name = PlayerTitanBot.TitanName;
+            if (isCustomTitan) base.name = PlayerTitanBot.TitanName;
         }
         else if (IN_GAME_MAIN_CAMERA.gametype == GAMETYPE.SINGLE)
         {
@@ -3254,7 +3254,7 @@ public class TITAN : Photon.MonoBehaviour
         {
             object[] parameters = new object[] { num };
             base.photonView.RPC("netSetAbnormalType", PhotonTargets.AllBuffered, parameters);
-            base.name = PlayerTitanBot.TitanName;
+            if (isCustomTitan) base.name = PlayerTitanBot.TitanName;
         }
         else if (IN_GAME_MAIN_CAMERA.gametype == GAMETYPE.SINGLE)
         {

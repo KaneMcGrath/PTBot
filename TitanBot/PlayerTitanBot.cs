@@ -380,7 +380,7 @@ namespace TitanBot
 
         private void ExecuteAction(PTAction a)
         {
-            gameObject.rigidbody.velocity = Vector3.zero;
+            
             if (a == PTAction.Attack)
             {
                 isAttackDown = true;
@@ -391,58 +391,72 @@ namespace TitanBot
             }
             if (a == PTAction.bite)
             {
+                gameObject.rigidbody.velocity = Vector3.zero;
                 bite = true;
             }
             if (a == PTAction.bitel)
             {
+                gameObject.rigidbody.velocity = Vector3.zero;
                 bitel = true;
             }
             if (a == PTAction.biter)
             {
+                gameObject.rigidbody.velocity = Vector3.zero;
                 biter = true;
             }
             if (a == PTAction.choptl)
             {
+                gameObject.rigidbody.velocity = Vector3.zero;
                 choptl = true;
             }
             if (a == PTAction.choptr)
             {
+                gameObject.rigidbody.velocity = Vector3.zero;
                 choptr = true;
             }
             if (a == PTAction.grabbackl)
             {
+                gameObject.rigidbody.velocity = Vector3.zero;
                 grabbackl = true;
             }
             if (a == PTAction.grabbackr)
             {
+                gameObject.rigidbody.velocity = Vector3.zero;
                 grabbackr = true;
             }
             if (a == PTAction.grabfrontl)
             {
+                gameObject.rigidbody.velocity = Vector3.zero;
                 grabfrontl = true;
             }
             if (a == PTAction.grabfrontr)
             {
+                gameObject.rigidbody.velocity = Vector3.zero;
                 grabfrontr = true;
             }
             if (a == PTAction.grabnapel)
             {
+                gameObject.rigidbody.velocity = Vector3.zero;
                 grabnapel = true;
             }
             if (a == PTAction.grabnaper)
             {
+                gameObject.rigidbody.velocity = Vector3.zero;
                 grabnaper = true;
             }
             if (a == PTAction.chopl)
             {
+                gameObject.rigidbody.velocity = Vector3.zero;
                 chopl = true;
             }
             if (a == PTAction.chopr)
             {
+                gameObject.rigidbody.velocity = Vector3.zero;
                 chopr = true;
             }
             if (a == PTAction.AttackII)
             {
+                gameObject.rigidbody.velocity = Vector3.zero;
                 isAttackIIDown = true;
             }
         }

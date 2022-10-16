@@ -378,6 +378,8 @@ namespace TitanBot
             //}
         }
 
+        private static CAMERA_TYPE lastCameraType;
+
         public void Update()
         {
             InfiniteTitanHandler();
@@ -393,39 +395,22 @@ namespace TitanBot
                 {
                     CGLog.showLogGui = true;
                     toggleQuickMenu = true;
-                    if (!Camera.main.GetComponent<IN_GAME_MAIN_CAMERA>().enabled)
+                    if (FengGameManagerMKII.instance.gameStart)
                     {
+                        lastCameraType = IN_GAME_MAIN_CAMERA.cameraMode;
                         IN_GAME_MAIN_CAMERA.cameraMode = CAMERA_TYPE.WOW;
                         Screen.showCursor = true;
                         Screen.lockCursor = false;
-                        if ((int)FengGameManagerMKII.settingsOld[64] < 100)
-                        {
-                            Camera.main.GetComponent<SpectatorMovement>().disable = true;
-                            Camera.main.GetComponent<MouseLook>().disable = true;
-                        }
-                        if ((int)FengGameManagerMKII.settingsOld[64] >= 100)
-                        {
-                            Camera.main.GetComponent<MouseLook>().enabled = false;
-                        }
                     }
                     return;
                 }
                 CGLog.showLogGui = false;
                 toggleQuickMenu = false;
-                if (!Camera.main.GetComponent<IN_GAME_MAIN_CAMERA>().enabled)
+                if (FengGameManagerMKII.instance.gameStart)
                 {
-                    IN_GAME_MAIN_CAMERA.cameraMode = CAMERA_TYPE.TPS;
+                    IN_GAME_MAIN_CAMERA.cameraMode = lastCameraType;
                     Screen.showCursor = true;
                     Screen.lockCursor = true;
-                    if ((int)FengGameManagerMKII.settingsOld[64] < 100)
-                    {
-                        Camera.main.GetComponent<SpectatorMovement>().disable = false;
-                        Camera.main.GetComponent<MouseLook>().disable = false;
-                    }
-                    if ((int)FengGameManagerMKII.settingsOld[64] >= 100)
-                    {
-                        Camera.main.GetComponent<MouseLook>().enabled = true;
-                    }
                     return;
                 }
             }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using StinkMod;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace TitanBot
@@ -40,11 +41,11 @@ namespace TitanBot
         public static float AdvanceMovesetCheck(MovesetData data, GameObject target, Transform owner)
         {
             if (debugMovementChecking) CGTools.pointsToTrack.Add(target.transform.position);
+            float startOffset = MovesetControl.movesetControlDatabase[data.action].startAnimationAt;
             for (int i = 0; i < data.hitboxes.Length; i++)
             {
                 Hitbox h = data.hitboxes[i];
-                Vector3 future = PTTools.PredictPlayerMotion(target, h.time);
-                //Vector3 future = PTTools.LonelySteelSheetFlyer(target, h.time);
+                Vector3 future = PTTools.PredictPlayerMotion(target, Mathf.Max(0f, h.time - startOffset));
 
                 if (h.CheckTrigger(future, owner))
                 {

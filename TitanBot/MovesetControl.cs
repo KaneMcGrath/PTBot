@@ -7,6 +7,9 @@ using TitanBot;
 
 namespace StinkMod
 {
+    //Keep all titan attacks in a dictionary in here
+    //any attack can be set to come out earlier by the user
+    //and maybe end earlier if I can figure that one out
     public static class MovesetControl
     {
         //store all TitanMoves here, this will be referenced for all titanBots when they throw an attack

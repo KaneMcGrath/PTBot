@@ -268,7 +268,12 @@ public class TITAN : Photon.MonoBehaviour
         this.attacked = false;
         this.isAlarm = true;
         this.attackAnimation = type;
-        this.crossFade("grab_" + type, 0.1f);
+        TitanMove move = MovesetControl.movesetControlDatabase[action];
+        float runtime = baseAnimation["grab_" + type].length;
+        float speed = baseAnimation["grab_" + type].speed;
+        float realRuntime = 2 * runtime - speed * runtime;
+        float normalizedTime = move.startAnimationAt / realRuntime;
+        this.playAnimationAt("grab_" + type, normalizedTime);
         this.isGrabHandLeft = true;
         this.grabbedTarget = null;
         string key = type;
@@ -366,16 +371,12 @@ public class TITAN : Photon.MonoBehaviour
         this.state = TitanState.attack;
         this.attacked = false;
         this.isAlarm = true;
-        if (this.attackAnimation == type)
-        {
-            this.attackAnimation = type;
-            this.playAnimationAt("attack_" + type, move.startAnimationAt);
-        }
-        else
-        {
-            this.attackAnimation = type;
-            this.playAnimationAt("attack_" + type, move.startAnimationAt);
-        }
+        float runtime = baseAnimation["attack_" + type].length;
+        float speed = baseAnimation["attack_" + type].speed;
+        float realRuntime = 2 * runtime - speed * runtime;
+        float normalizedTime = move.startAnimationAt / realRuntime;
+        this.attackAnimation = type;
+        this.playAnimationAt("attack_" + type, normalizedTime);
         this.nextAttackAnimation = null;
         this.fxName = null;
         this.isAttackMoveByCore = false;

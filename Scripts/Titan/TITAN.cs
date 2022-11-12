@@ -3013,6 +3013,43 @@ public class TITAN : Photon.MonoBehaviour
         {
             this.grab("head_back_r");
         }
+        if (isCustomTitan && controller.GetComponent<PlayerTitanBot>())
+        {
+            PlayerTitanBot playerTitanBot = controller.GetComponent<PlayerTitanBot>();
+            if (playerTitanBot.is_combo_2)
+            {
+                this.attack2("combo_2");
+            }
+            if (playerTitanBot.is_combo_3)
+            {
+                this.attack2("combo_3");
+            }
+            if (playerTitanBot.is_front_ground)
+            {
+                this.attack2("front_ground");
+            }
+            if (playerTitanBot.is_kick)
+            {
+                this.attack2("kick");
+            }
+            if (playerTitanBot.is_slap_back)
+            {
+                this.attack2("slap_back");
+            }
+            if (playerTitanBot.is_slap_face)
+            {
+                this.attack2("slap_face");
+            }
+            if (playerTitanBot.is_stomp)
+            {
+                this.attack2("stomp");
+            }
+            if (playerTitanBot.is_crawler_jump_0)
+            {
+                this.attack2("crawler_jump_0");
+            }
+
+        }
     }
 
     public void randomRun(Vector3 targetPt, float r)

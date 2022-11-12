@@ -55,6 +55,17 @@ namespace TitanBot
         private Vector3 lastFarthestPoint = Vector3.zero;
         private Vector3 cityGate = new Vector3(0f, 0f, 900f);
 
+
+        public bool is_combo_2 = false;
+        public bool is_combo_3 = false;
+        public bool is_front_ground = false;
+        public bool is_kick = false;
+        public bool is_slap_back = false;
+        public bool is_slap_face = false;
+        public bool is_stomp = false;
+        public bool is_crawler_jump_0 = false;
+
+
         // public float forsight = 4f;//how far into the future titan will predict player velocity
         // public int forsightSteps = 2;//how many steps not including the current position that the titan will predict
 
@@ -538,6 +549,7 @@ namespace TitanBot
                 AIMaster();
 
             //if something is set on one frame unset it the next frame to make my life easier
+            //attacks wont be registered otherwize
             if (isAttackDown)
             {
                 if (updateNextFrameList[PTAction.Attack])
@@ -728,7 +740,86 @@ namespace TitanBot
                 else
                     updateNextFrameList[PTAction.sit] = true;
             }
-
+            if (is_combo_2)
+            {
+                if (updateNextFrameList[PTAction.combo_2])
+                {
+                    this.is_combo_2 = false;
+                    updateNextFrameList[PTAction.combo_2] = false;
+                }
+                else
+                    updateNextFrameList[PTAction.combo_2] = true;
+            }
+            if (is_combo_3)
+            {
+                if (updateNextFrameList[PTAction.combo_3])
+                {
+                    this.is_combo_3 = false;
+                    updateNextFrameList[PTAction.combo_3] = false;
+                }
+                else
+                    updateNextFrameList[PTAction.combo_3] = true;
+            }
+            if (is_front_ground)
+            {
+                if (updateNextFrameList[PTAction.front_ground])
+                {
+                    this.is_front_ground = false;
+                    updateNextFrameList[PTAction.front_ground] = false;
+                }
+                else
+                    updateNextFrameList[PTAction.front_ground] = true;
+            }
+            if (is_kick)
+            {
+                if (updateNextFrameList[PTAction.kick])
+                {
+                    this.is_kick = false;
+                    updateNextFrameList[PTAction.kick] = false;
+                }
+                else
+                    updateNextFrameList[PTAction.kick] = true;
+            }
+            if (is_slap_back)
+            {
+                if (updateNextFrameList[PTAction.slap_back])
+                {
+                    this.is_slap_back = false;
+                    updateNextFrameList[PTAction.slap_back] = false;
+                }
+                else
+                    updateNextFrameList[PTAction.slap_back] = true;
+            }
+            if (is_slap_face)
+            {
+                if (updateNextFrameList[PTAction.slap_face])
+                {
+                    this.is_slap_face = false;
+                    updateNextFrameList[PTAction.slap_face] = false;
+                }
+                else
+                    updateNextFrameList[PTAction.slap_face] = true;
+            }
+            if (is_stomp)
+            {
+                if (updateNextFrameList[PTAction.stomp])
+                {
+                    this.is_stomp = false;
+                    updateNextFrameList[PTAction.stomp] = false;
+                }
+                else
+                    updateNextFrameList[PTAction.stomp] = true;
+            }
+            if (is_crawler_jump_0)
+            {
+                if (updateNextFrameList[PTAction.crawler_jump_0])
+                {
+                    this.is_crawler_jump_0 = false;
+                    updateNextFrameList[PTAction.crawler_jump_0] = false;
+                }
+                else
+                    updateNextFrameList[PTAction.crawler_jump_0] = true;
+            }
         }
 
         /// <summary>

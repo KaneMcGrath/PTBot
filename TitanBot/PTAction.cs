@@ -21,6 +21,14 @@
         biter,
         cover,
         sit,
+        combo_2,
+        combo_3,
+        front_ground,
+        kick,
+        slap_back,
+        slap_face,
+        stomp,
+        crawler_jump_0,
         nothing
     }
 }

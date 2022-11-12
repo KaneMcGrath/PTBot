@@ -4630,7 +4630,7 @@ public class TITAN : Photon.MonoBehaviour
                         {
                             obj9 = (GameObject) UnityEngine.Object.Instantiate(Resources.Load("FX/" + this.fxName), this.fxPosition, this.fxRotation);
                         }
-                        if (this.nonAI && !isCustomTitan)
+                        if (this.nonAI)
                         {
                             obj9.transform.localScale = (Vector3) (this.baseTransform.localScale * 1.5f);
                             if (obj9.GetComponent<EnemyfxIDcontainer>() != null)

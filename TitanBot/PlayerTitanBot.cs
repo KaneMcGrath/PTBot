@@ -25,6 +25,7 @@ namespace TitanBot
         public static List<PTAction> TempActionsList = new List<PTAction>();
         public static int dataPruningLevel = 2;
         public static string TitanName = "PTBot";
+        public static float titanSpeed = 30f;
 
         public static int[] AIWeightTable = new int[]
         {

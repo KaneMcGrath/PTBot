@@ -128,8 +128,7 @@ public class EnemyCheckCollider : Photon.MonoBehaviour
         if (this.GetComponent<CapsuleCollider>())
         {
             CapsuleCollider cap = this.GetComponent<CapsuleCollider>();
-            CGTools.log("Capsule dmg:" + dmg);
-            PTDataMachine.CreateColliderCapsule(cap.transform.position, cap.transform.rotation, cap.radius, cap.height);
+            PTDataMachine.CreateColliderCapsule(cap.transform.position, cap.transform.rotation, cap.radius, cap.height, dmg);
         }
 
     }

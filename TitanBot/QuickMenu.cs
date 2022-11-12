@@ -785,6 +785,10 @@ namespace TitanBot
                 {
                     PTDataMachine.DeleteVisualizationSpheres();
                 }
+                if (PTDataMachine.RecordData)
+                {
+                    PTDataMachine.StartRecordingHitbox(PTAction.combo_2);
+                }
             }
             if (FlatUI.Button(IndexToRect(10, 8, 2, 2), "combo_3", PTButtonColor))
             {
@@ -800,8 +804,9 @@ namespace TitanBot
                 }
                 if (PTDataMachine.RecordData)
                 {
-                    PTDataMachine.StartRecordingHitbox(PTAction.choptl);
+                    PTDataMachine.StartRecordingHitbox(PTAction.combo_3);
                 }
+
             }
             if (FlatUI.Button(IndexToRect(10, 8, 4, 2), "front_ground", PTButtonColor))
             {
@@ -817,7 +822,7 @@ namespace TitanBot
                 }
                 if (PTDataMachine.RecordData)
                 {
-                    PTDataMachine.StartRecordingHitbox(PTAction.choptr);
+                    PTDataMachine.StartRecordingHitbox(PTAction.front_ground);
                 }
             }
             if (FlatUI.Button(IndexToRect(10, 8, 6, 2), "kick", PTButtonColor))
@@ -834,7 +839,7 @@ namespace TitanBot
                 }
                 if (PTDataMachine.RecordData)
                 {
-                    PTDataMachine.StartRecordingHitbox(PTAction.bite);
+                    PTDataMachine.StartRecordingHitbox(PTAction.kick);
                 }
             }
             if (FlatUI.Button(IndexToRect(11, 8, 0, 2), "slap_back", PTButtonColor))
@@ -848,6 +853,10 @@ namespace TitanBot
                 if (clearHitboxesOnAttack)
                 {
                     PTDataMachine.DeleteVisualizationSpheres();
+                }
+                if (PTDataMachine.RecordData)
+                {
+                    PTDataMachine.StartRecordingHitbox(PTAction.slap_back);
                 }
             }
             if (FlatUI.Button(IndexToRect(11, 8, 2, 2), "slap_face", PTButtonColor))
@@ -864,7 +873,7 @@ namespace TitanBot
                 }
                 if (PTDataMachine.RecordData)
                 {
-                    PTDataMachine.StartRecordingHitbox(PTAction.choptl);
+                    PTDataMachine.StartRecordingHitbox(PTAction.slap_face);
                 }
             }
             if (FlatUI.Button(IndexToRect(11, 8, 4, 2), "stomp", PTButtonColor))
@@ -881,7 +890,7 @@ namespace TitanBot
                 }
                 if (PTDataMachine.RecordData)
                 {
-                    PTDataMachine.StartRecordingHitbox(PTAction.choptr);
+                    PTDataMachine.StartRecordingHitbox(PTAction.stomp);
                 }
             }
             if (FlatUI.Button(IndexToRect(11, 8, 6, 2), "crawler_jump_0", PTButtonColor))
@@ -898,10 +907,9 @@ namespace TitanBot
                 }
                 if (PTDataMachine.RecordData)
                 {
-                    PTDataMachine.StartRecordingHitbox(PTAction.bite);
+                    PTDataMachine.StartRecordingHitbox(PTAction.crawler_jump_0);
                 }
             }
-
             if (FlatUI.Button(IndexToRect(13), "Stop Recording", PTDataMachine.isRecording ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
             {
                 PTDataMachine.FinishRecordingHitbox();

@@ -371,67 +371,84 @@ namespace TitanBot
             }
         }
 
-        //just use 3 spheres because im too lazy to make a capsule system for just the kick, and its for prediction so there is not really much harm to doing this
-        public static void CreateColliderCapsule(Vector3 pos, Quaternion rot, float radius, float height, int dmg = -1)
+        //just use 3 spheres because im too lazy to make a capsule system for just the kick, and its for prediction so there is not really much harm to doing this.
+        //the rotation or something is fucked and right now I cant be bothered so ill just use one sphere in the center.  The capsule is very short so who cares
+        public static void CreateColliderCapsule(Vector3 pos, Quaternion rot, float radius, float height, int damage = -1)
         {
+            float halfHeight = height / 2f - radius;
             Vector3 center = pos;
-            Vector3 top = pos;
 
-            Vector3 bottom = pos;
-            if (isRecording)
+            // Vector3 top = CGTools.RotateAroundPivot(Vector3.up * halfHeight + center, center, rot);
+            // Vector3 bottom = CGTools.RotateAroundPivot(Vector3.down * halfHeight + center, center, rot);
+            if (damage == 1)
             {
-                hitBoxes.Add(new HitData.HitboxSphere(pos - RecordingPosOffset, Time.time - recordingStartTime, QuickMenu.myLastPT.myLevel, radius * QuickMenu.myLastPT.transform.localScale.y * 1.5f));
-            }
-            if (DrawHitboxes)
-            {
-                if (!KeepHitboxes)
+                if (isRecording)
                 {
-                    if (hitSphere == null)
+                    hitBoxes.Add(new HitData.HitboxSphere(center - RecordingPosOffset, Time.time - recordingStartTime, QuickMenu.myLastPT.myLevel, radius * QuickMenu.myLastPT.transform.localScale.y * 1.5f));
+                    //hitBoxes.Add(new HitData.HitboxSphere(top - RecordingPosOffset, Time.time - recordingStartTime, QuickMenu.myLastPT.myLevel, radius * QuickMenu.myLastPT.transform.localScale.y * 1.5f));
+                    //hitBoxes.Add(new HitData.HitboxSphere(bottom - RecordingPosOffset, Time.time - recordingStartTime, QuickMenu.myLastPT.myLevel, radius * QuickMenu.myLastPT.transform.localScale.y * 1.5f));
+                }
+                if (DrawHitboxes)
+                {
+                    if (!KeepHitboxes)
                     {
-                        hitSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                        GameObject.Destroy(hitSphere.GetComponent<SphereCollider>());
+                        if (hitSphere == null)
+                        {
+                            hitSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                            GameObject.Destroy(hitSphere.GetComponent<SphereCollider>());
+                            foreach (Renderer renderer in hitSphere.GetComponentsInChildren<Renderer>())
+                            {
+                                renderer.material = (Material)FengGameManagerMKII.RCassets.Load("killMaterial");
+                            }
+                        }
                         foreach (Renderer renderer in hitSphere.GetComponentsInChildren<Renderer>())
                         {
                             renderer.material = (Material)FengGameManagerMKII.RCassets.Load("killMaterial");
                         }
+                        hitSphere.transform.localScale = radius * QuickMenu.myLastPT.transform.localScale * 1.5f * 2f;
+                        hitSphere.transform.position = pos;
+                        hitboxWaitCounter = framesToKeepHitbox;
+                        return;
                     }
-                    foreach (Renderer renderer in hitSphere.GetComponentsInChildren<Renderer>())
-                    {
-                        renderer.material = (Material)FengGameManagerMKII.RCassets.Load("killMaterial");
-                    }
-                    hitSphere.transform.localScale = radius * QuickMenu.myLastPT.transform.localScale * 1.5f * 2f;
-                    hitSphere.transform.position = pos;
-                    hitboxWaitCounter = framesToKeepHitbox;
-                    return;
-                }
-                GameObject s = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                GameObject.Destroy(s.GetComponent<SphereCollider>());
-                GameObject s1 = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                GameObject.Destroy(s.GetComponent<SphereCollider>());
-                GameObject s2 = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                GameObject.Destroy(s.GetComponent<SphereCollider>());
+                    GameObject s = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    GameObject.Destroy(s.GetComponent<SphereCollider>());
+                    //GameObject s1 = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    //GameObject.Destroy(s1.GetComponent<SphereCollider>());
+                    //GameObject s2 = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    //GameObject.Destroy(s2.GetComponent<SphereCollider>());
 
-                s.transform.localScale = radius * QuickMenu.myLastPT.transform.localScale * 1.5f * 2f;
-                s1.transform.localScale = radius * QuickMenu.myLastPT.transform.localScale * 1.5f * 2f;
-                s2.transform.localScale = radius * QuickMenu.myLastPT.transform.localScale * 1.5f * 2f;
-                foreach (Renderer renderer in s.GetComponentsInChildren<Renderer>())
-                {
-                    renderer.material = (Material)FengGameManagerMKII.RCassets.Load("killMaterial");
+
+                    s.transform.localScale = radius * QuickMenu.myLastPT.transform.localScale * 1.5f * 2f;
+                    //s1.transform.localScale = radius * QuickMenu.myLastPT.transform.localScale * 2f;
+                    //s2.transform.localScale = radius * QuickMenu.myLastPT.transform.localScale * 2f;
+                    foreach (Renderer renderer in s.GetComponentsInChildren<Renderer>())
+                    {
+                        if (damage == 1)
+                            renderer.material = (Material)FengGameManagerMKII.RCassets.Load("killMaterial");
+                        if (damage < 1)
+                            renderer.material = (Material)FengGameManagerMKII.RCassets.Load("barriereditormat");
+                    }
+                    //foreach (Renderer renderer1 in s1.GetComponentsInChildren<Renderer>())
+                    //{
+                    //    if (damage == 1)
+                    //        renderer1.material = (Material)FengGameManagerMKII.RCassets.Load("killMaterial");
+                    //    if (damage < 1)
+                    //        renderer1.material = (Material)FengGameManagerMKII.RCassets.Load("barriereditormat");
+                    //}
+                    //foreach (Renderer renderer2 in s2.GetComponentsInChildren<Renderer>())
+                    //{
+                    //    if (damage == 1)
+                    //        renderer2.material = (Material)FengGameManagerMKII.RCassets.Load("killMaterial");
+                    //    if (damage < 1)
+                    //        renderer2.material = (Material)FengGameManagerMKII.RCassets.Load("barriereditormat");
+                    //}
+                    VisualizationSpheres.Add(s);
+                    //VisualizationSpheres.Add(s1);
+                    //VisualizationSpheres.Add(s2);
+                    s.transform.position = center;
+                    //s1.transform.position = top;
+                    //s2.transform.position = bottom;
                 }
-                foreach (Renderer renderer1 in s1.GetComponentsInChildren<Renderer>())
-                {
-                    renderer1.material = (Material)FengGameManagerMKII.RCassets.Load("killMaterial");
-                }
-                foreach (Renderer renderer2 in s2.GetComponentsInChildren<Renderer>())
-                {
-                    renderer2.material = (Material)FengGameManagerMKII.RCassets.Load("killMaterial");
-                }
-                VisualizationSpheres.Add(s);
-                VisualizationSpheres.Add(s1);
-                VisualizationSpheres.Add(s2);
-                s.transform.position = center;
-                s1.transform.position = top;
-                s2.transform.position = bottom;
             }
         }
 

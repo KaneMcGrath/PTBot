@@ -475,6 +475,45 @@ namespace TitanBot
                 gameObject.rigidbody.velocity = Vector3.zero;
                 isAttackIIDown = true;
             }
+            if (a == PTAction.combo_2)
+            {
+                gameObject.rigidbody.velocity = Vector3.zero;
+                is_combo_2 = true;
+            }
+            if (a == PTAction.combo_3)
+            {
+                gameObject.rigidbody.velocity = Vector3.zero;
+                is_combo_3 = true;
+            }
+            if (a == PTAction.front_ground)
+            {
+                gameObject.rigidbody.velocity = Vector3.zero;
+                is_front_ground = true;
+            }
+            if (a == PTAction.kick)
+            {
+                gameObject.rigidbody.velocity = Vector3.zero;
+                is_kick = true;
+            }
+            if (a == PTAction.slap_back)
+            {
+                gameObject.rigidbody.velocity = Vector3.zero;
+                is_slap_back = true;
+            }
+            if (a == PTAction.slap_face)
+            {
+                gameObject.rigidbody.velocity = Vector3.zero;
+                is_slap_face = true;
+            }
+            if (a == PTAction.stomp)
+            {
+                gameObject.rigidbody.velocity = Vector3.zero;
+                is_stomp = true;
+            }
+            if (a == PTAction.crawler_jump_0)
+            {
+                is_crawler_jump_0 = true;
+            }
         }
 
         private void Start()

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using TitanBot.FlatUI5;
+using TitanBot.Windows;
 using UnityEngine;
 using Utility;
 
@@ -55,6 +56,7 @@ namespace TitanBot
             CGTools.Init();
             PTDataMachine.LoadHitboxData();
             MovesetControl.Init();
+            MovesetControlWindow.Init();
             LoadConfig();
             CGTools.log(GameVersionString);
         }

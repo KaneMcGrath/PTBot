@@ -36,7 +36,14 @@ namespace TitanBot.FlatUI5
             fontStyle = FontStyle.Bold,
             normal = { textColor = Color.white }
         };
-
+        public static GUIStyle titleStyle = new GUIStyle
+        {
+            border = new RectOffset(1, 1, 1, 1),
+            alignment = TextAnchor.MiddleCenter,
+            fontSize = 18,
+            fontStyle = FontStyle.Bold,
+            normal = { textColor = Color.white }
+        };
         /// <summary>
         /// Draws a static box with an outline that will make up most of the GUI elements of this mod
         /// </summary>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using TitanBot.FlatUI5;
+using TitanBot.Windows;
 using UnityEngine;
 
 namespace TitanBot
@@ -67,6 +68,7 @@ namespace TitanBot
             if (tabIndex == 1) moreSettings();
             if (tabIndex == 2) TabConfig();
             //if (tabIndex == 3) TabMain();
+            MovesetControlWindow.OnGUI();
             GUI.DrawTexture(new Rect(Input.mousePosition.x - (mouseScale / 2f), Screen.height - Input.mousePosition.y - (mouseScale / 2f), mouseScale, mouseScale), CGTools.mouseTex);
         }
 
@@ -77,7 +79,7 @@ namespace TitanBot
             Label(IndexToRect(2), "Endless Spawning");
             KaneGameManager.doInfiniteTitans = FlatUI.Check(IndexToRect(3), KaneGameManager.doInfiniteTitans, "Enable Endless Spawning");
             GUI.Label(IndexToRect(4, 3, 0), "Count");
-            infiniteTitanTextBox = GUI.TextField(IndexToRect(4, 3, 1), infiniteTitanTextBox);
+            infiniteTitanTextBox = FlatUI.TextField(IndexToRect(4, 3, 1), infiniteTitanTextBox);
             if (FlatUI.Button(IndexToRect(4, 3, 2), "Apply"))
             {
                 if (int.TryParse(infiniteTitanTextBox, out int i))
@@ -114,7 +116,7 @@ namespace TitanBot
         private static void tabPTBotSettings()
         {
             Label(IndexToRect(0), "Titan Name");
-            titanNameTextBox = GUI.TextField(IndexToRect(1, 4, 0, 3), titanNameTextBox);
+            titanNameTextBox = FlatUI.TextField(IndexToRect(1, 4, 0, 3), titanNameTextBox);
             if (FlatUI.Button(IndexToRect(1,4,3), "Apply"))
             {
                 PlayerTitanBot.TitanName = titanNameTextBox;
@@ -146,20 +148,10 @@ namespace TitanBot
             }
 
             Label(IndexToRect(9), "Moves");
-            toggleAttackButton(10, 0, PTAction.Attack);
-            toggleAttackButton(10, 1, PTAction.Jump);
-            toggleAttackButton(11, 0, PTAction.bite);
-            toggleAttackButton(11, 1, PTAction.bitel);
-            toggleAttackButton(12, 0, PTAction.biter);
-            toggleAttackButton(12, 1, PTAction.choptl);
-            toggleAttackButton(13, 0, PTAction.choptr);
-            toggleAttackButton(13, 1, PTAction.grabbackl);
-            toggleAttackButton(14, 0, PTAction.grabbackr);
-            toggleAttackButton(14, 1, PTAction.grabfrontl);
-            toggleAttackButton(15, 0, PTAction.grabfrontr);
-            toggleAttackButton(15, 1, PTAction.grabnapel);
-            toggleAttackButton(16, 0, PTAction.grabnaper);
-            toggleAttackButton(16, 1, PTAction.AttackII);
+            if (FlatUI.Button(IndexToRect(10), "Show Move Mindow"))
+            {
+                MovesetControlWindow.ControlWindow.showWindow = true;
+            }
             if (FlatUI.Button(IndexToRect(17), "Apply"))
             {
                 PlayerTitanBot.pTActions = PlayerTitanBot.TempActionsList.ToArray();
@@ -179,7 +171,7 @@ namespace TitanBot
             }
             Label(IndexToRect(18), "Pruning");
             GUI.Label(IndexToRect(19, 4, 0, 2), "Pruning Level");
-            prunningSettingTextbox = GUI.TextField(IndexToRect(19, 4, 2), prunningSettingTextbox);
+            prunningSettingTextbox = FlatUI.TextField(IndexToRect(19, 4, 2), prunningSettingTextbox);
             if (FlatUI.Button(IndexToRect(19, 4, 3), "Apply"))
             {
                 if (int.TryParse(prunningSettingTextbox, out int p))
@@ -319,7 +311,7 @@ namespace TitanBot
             {
                 textBoxText[3] = "";
             }
-            textBoxText[3] = GUI.TextField(IndexToRect(15), textBoxText[3]);
+            textBoxText[3] = FlatUI.TextField(IndexToRect(15), textBoxText[3]);
             if (FlatUI.Button(IndexToRect(16, 3, 2), "Chat"))
             {
 
@@ -1041,7 +1033,7 @@ namespace TitanBot
                 tabColors[i] = CGTools.ColorTex(CGTools.randomColor());
             }
             PTButtonColor = CGTools.ColorTex(new Color(1f, 1f, 1f));
-            menuX = (float)Screen.width / 2f - 350f + 1000f;
+            menuX = (float)Screen.width - 450f;
             menuY = (float)Screen.height / 2f - 250f;
         }
         public static float SetTextbox(Rect position, float source, string label, int arrayID)
@@ -1051,7 +1043,7 @@ namespace TitanBot
                 textBoxText[arrayID] = source.ToString();
             }
             GUI.Label(new Rect(position.x, position.y, position.width - 150f, position.height), label);
-            textBoxText[arrayID] = GUI.TextField(new Rect(position.x + position.width - 150f, position.y, 100f, position.height), textBoxText[arrayID]);
+            textBoxText[arrayID] = FlatUI.TextField(new Rect(position.x + position.width - 150f, position.y, 100f, position.height), textBoxText[arrayID]);
             if (FlatUI.Button(new Rect(position.x + position.width - 50f, position.y, 50f, position.height), "✓"))
             {
                 return Convert.ToSingle(textBoxText[arrayID]);
@@ -1065,7 +1057,7 @@ namespace TitanBot
                 textBoxText[arrayID] = source.ToString();
             }
             GUI.Label(new Rect(position.x, position.y, position.width - 150f, position.height), label);
-            textBoxText[arrayID] = GUI.TextField(new Rect(position.x + position.width - 150f, position.y, 100f, position.height), textBoxText[arrayID]);
+            textBoxText[arrayID] = FlatUI.TextField(new Rect(position.x + position.width - 150f, position.y, 100f, position.height), textBoxText[arrayID]);
             if (FlatUI.Button(new Rect(position.x + position.width - 50f, position.y, 50f, position.height), "✓"))
             {
                 return Convert.ToInt32(textBoxText[arrayID]);

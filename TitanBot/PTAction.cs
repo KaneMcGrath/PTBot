@@ -29,6 +29,8 @@
         slap_face,
         stomp,
         crawler_jump_0,
+        grab_head_front_r,
+        grab_head_front_l,
         nothing
     }
 }

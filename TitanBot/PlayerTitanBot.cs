@@ -65,7 +65,8 @@ namespace TitanBot
         public bool is_slap_face = false;
         public bool is_stomp = false;
         public bool is_crawler_jump_0 = false;
-
+        public bool is_grab_head_front_r = false;
+        public bool is_grab_head_front_l = false;
 
         // public float forsight = 4f;//how far into the future titan will predict player velocity
         // public int forsightSteps = 2;//how many steps not including the current position that the titan will predict
@@ -515,6 +516,16 @@ namespace TitanBot
             {
                 is_crawler_jump_0 = true;
             }
+            if (a == PTAction.grab_head_front_l)
+            {
+                gameObject.rigidbody.velocity = Vector3.zero;
+                is_grab_head_front_l = true;
+            }
+            if (a == PTAction.grab_head_front_r)
+            {
+                gameObject.rigidbody.velocity = Vector3.zero;
+                is_grab_head_front_r = true;
+            }
         }
 
         private void Start()
@@ -588,7 +599,7 @@ namespace TitanBot
             if (doStuff)
                 AIMaster();
 
-            //if something is set on one frame unset it the next frame to make my life easier
+            //if something is set on one tick unset it the next tick to make my life easier
             //attacks wont be registered otherwize
             if (isAttackDown)
             {
@@ -859,6 +870,26 @@ namespace TitanBot
                 }
                 else
                     updateNextFrameList[PTAction.crawler_jump_0] = true;
+            }
+            if (is_grab_head_front_l)
+            {
+                if (updateNextFrameList[PTAction.grab_head_front_l])
+                {
+                    this.is_grab_head_front_l = false;
+                    updateNextFrameList[PTAction.grab_head_front_l] = false;
+                }
+                else
+                    updateNextFrameList[PTAction.grab_head_front_l] = true;
+            }
+            if (is_grab_head_front_r)
+            {
+                if (updateNextFrameList[PTAction.grab_head_front_r])
+                {
+                    this.is_grab_head_front_r = false;
+                    updateNextFrameList[PTAction.grab_head_front_r] = false;
+                }
+                else
+                    updateNextFrameList[PTAction.grab_head_front_r] = true;
             }
         }
 

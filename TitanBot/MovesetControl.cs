@@ -51,6 +51,8 @@ namespace StinkMod
             movesetControlDatabase.Add(PTAction.slap_face, new TitanMove("Slap Face", "slap_face", false, 0f, -1f, 0f));
             movesetControlDatabase.Add(PTAction.stomp, new TitanMove("Stomp", "stomp", false, 0f, -1f, 0f));
             movesetControlDatabase.Add(PTAction.crawler_jump_0, new TitanMove("Crawler Jump", "crawler_jump_0", false, 0f, -1f, 0f));
+            movesetControlDatabase.Add(PTAction.grab_head_front_l, new TitanMove("Grab Face Right", "grab_head_front_l", false, 0f, -1f, 0f));
+            movesetControlDatabase.Add(PTAction.grab_head_front_r, new TitanMove("Grab Face Left", "grab_head_front_r", false, 0f, -1f, 0f));
         }
     }
 

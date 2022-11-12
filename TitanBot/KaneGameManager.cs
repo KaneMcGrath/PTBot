@@ -206,6 +206,26 @@ namespace TitanBot
                     PlayerTitanBot.TitanName = config["TitanName"];
                     QuickMenu.titanNameTextBox = config["TitanName"];
                 }
+                if (config.ContainsKey("Timing"))
+                {
+                    bool hasmoves = config.ContainsKey("Moves");
+                    string[] individuals = config["Timing"].Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (string s in individuals)
+                    {
+                        string[] split = s.Split('>');
+                        PTAction action = (PTAction)Enum.Parse(typeof(PTAction), split[0]);
+                        float StartAt = 0f;
+                        if (float.TryParse(split[1], out StartAt))
+                        {
+                            MovesetControl.movesetControlDatabase[action].startAnimationAt = StartAt;
+                        }
+                        else
+                        {
+                            CGLog.log("Could not parse Timing for attack: " + split[0]);
+                        }
+                    }
+                }
+                MovesetControlWindow.UpdateWindowData();
                 CGTools.log("Loaded config from " + Path + "\"Config.txt\"");
             }
         }
@@ -233,6 +253,18 @@ namespace TitanBot
                 }
             }
             config.Add("Moves", moves);
+
+            string moveTiming = "";
+            PTAction[] actions = new PTAction[MovesetControl.movesetControlDatabase.Keys.Count];
+            MovesetControl.movesetControlDatabase.Keys.CopyTo(actions, 0);
+            for (int i = 0; i < actions.Length; i++)
+            {
+                TitanMove move = MovesetControl.movesetControlDatabase[actions[i]];
+                moveTiming += actions[i].ToString() + ">" + move.startAnimationAt.ToString();
+                if (i != actions.Length - 1)
+                    moveTiming += ',';
+            }
+            config.Add("Timing", moveTiming);
             List<string> lines = new List<string>();
             foreach (string key in config.Keys)
             {
@@ -264,6 +296,8 @@ namespace TitanBot
             PlayerTitanBot.TempActionsList.AddRange(PlayerTitanBot.pTActions);
             PlayerTitanBot.TitanName = "PTBot";
             QuickMenu.titanNameTextBox = "PTBot";
+            MovesetControl.SetDefaults();
+            MovesetControlWindow.UpdateWindowData();
             CGTools.log("Reset settings to default values");
         }
 

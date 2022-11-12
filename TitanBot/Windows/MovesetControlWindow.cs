@@ -13,8 +13,8 @@ namespace TitanBot.Windows
         public static Window ControlWindow;
         private static ScrollList ScrollList;
         private static Dictionary<PTAction, TitanMove> modifiableMovesetControls;
-        private static Dictionary<PTAction, bool> moveEnabled;
-        private static Dictionary<PTAction, string> startAnimAtTextBoxs;
+        public static Dictionary<PTAction, bool> moveEnabled;
+        public static Dictionary<PTAction, string> startAnimAtTextBoxs;
         private static PTAction[] movesToControl;
         private static int changesCount = 0;
         private static float checkForChangesTimer = 0f;
@@ -86,6 +86,22 @@ namespace TitanBot.Windows
                 startAnimAtTextBoxs[move] = FlatUI.TextField(ScrollList.IndexToRect(idx + 1, 8, 2, 2), startAnimAtTextBoxs[move]);
             }
         }
+        public static void UpdateWindowData()
+        {
+            foreach (PTAction action in movesToControl)
+            {
+                startAnimAtTextBoxs[action] = MovesetControl.movesetControlDatabase[action].startAnimationAt.ToString();
+                if (PlayerTitanBot.TempActionsList.Contains(action))
+                {
+                    MovesetControlWindow.moveEnabled[action] = true;
+                }
+                else
+                {
+                    MovesetControlWindow.moveEnabled[action] = false;
+                }
+            }
+        }
+
 
         private static void CheckForChanges()
         {

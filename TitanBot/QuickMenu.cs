@@ -910,6 +910,40 @@ namespace TitanBot
                     PTDataMachine.StartRecordingHitbox(PTAction.crawler_jump_0);
                 }
             }
+            if (FlatUI.Button(IndexToRect(12, 8, 2, 2), "grab_head_front_r", PTButtonColor))
+            {
+                ((PlayerTitanBot)myLastPT.controller).is_grab_head_front_r = true;
+                if (resetPositionsOnAttack)
+                {
+                    myLastPT.transform.position = Vector3.zero;
+                    myLastPT.transform.rotation = Quaternion.identity;
+                }
+                if (clearHitboxesOnAttack)
+                {
+                    PTDataMachine.DeleteVisualizationSpheres();
+                }
+                if (PTDataMachine.RecordData)
+                {
+                    PTDataMachine.StartRecordingHitbox(PTAction.grab_head_front_r);
+                }
+            }
+            if (FlatUI.Button(IndexToRect(12, 8, 4, 2), "grab_head_front_l", PTButtonColor))
+            {
+                ((PlayerTitanBot)myLastPT.controller).is_grab_head_front_l = true;
+                if (resetPositionsOnAttack)
+                {
+                    myLastPT.transform.position = Vector3.zero;
+                    myLastPT.transform.rotation = Quaternion.identity;
+                }
+                if (clearHitboxesOnAttack)
+                {
+                    PTDataMachine.DeleteVisualizationSpheres();
+                }
+                if (PTDataMachine.RecordData)
+                {
+                    PTDataMachine.StartRecordingHitbox(PTAction.grab_head_front_l);
+                }
+            }
             if (FlatUI.Button(IndexToRect(13), "Stop Recording", PTDataMachine.isRecording ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
             {
                 PTDataMachine.FinishRecordingHitbox();

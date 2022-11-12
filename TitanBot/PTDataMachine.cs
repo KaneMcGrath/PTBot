@@ -371,32 +371,67 @@ namespace TitanBot
             }
         }
 
-        public static void CreateColliderCapsule(Vector3 pos, float radius, float height)
+        //just use 3 spheres because im too lazy to make a capsule system for just the kick, and its for prediction so there is not really much harm to doing this
+        public static void CreateColliderCapsule(Vector3 pos, Quaternion rot, float radius, float height, int dmg = -1)
         {
+            Vector3 center = pos;
+            Vector3 top = pos;
+
+            Vector3 bottom = pos;
+            if (isRecording)
+            {
+                hitBoxes.Add(new HitData.HitboxSphere(pos - RecordingPosOffset, Time.time - recordingStartTime, QuickMenu.myLastPT.myLevel, radius * QuickMenu.myLastPT.transform.localScale.y * 1.5f));
+            }
             if (DrawHitboxes)
             {
                 if (!KeepHitboxes)
                 {
-
-                }
-                else
-                {
-                    if (HurtCapsule == null)
+                    if (hitSphere == null)
                     {
-                        HurtCapsule = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-                        GameObject.Destroy(HurtCapsule.GetComponent<CapsuleCollider>());
-                        foreach (Renderer renderer in HurtCapsule.GetComponentsInChildren<Renderer>())
+                        hitSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                        GameObject.Destroy(hitSphere.GetComponent<SphereCollider>());
+                        foreach (Renderer renderer in hitSphere.GetComponentsInChildren<Renderer>())
                         {
-                            renderer.material = (Material)FengGameManagerMKII.RCassets.Load("checkpointMat");
+                            renderer.material = (Material)FengGameManagerMKII.RCassets.Load("killMaterial");
                         }
                     }
-                    if (player != null)
+                    foreach (Renderer renderer in hitSphere.GetComponentsInChildren<Renderer>())
                     {
-                        CapsuleCollider ccc = player.GetComponent<CapsuleCollider>();
-                        HurtCapsule.transform.position = ccc.transform.position + ccc.center;
-                        HurtCapsule.transform.rotation = ccc.transform.rotation;
+                        renderer.material = (Material)FengGameManagerMKII.RCassets.Load("killMaterial");
                     }
+                    hitSphere.transform.localScale = radius * QuickMenu.myLastPT.transform.localScale * 1.5f * 2f;
+                    hitSphere.transform.position = pos;
+                    hitboxWaitCounter = framesToKeepHitbox;
+                    return;
                 }
+                GameObject s = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                GameObject.Destroy(s.GetComponent<SphereCollider>());
+                GameObject s1 = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                GameObject.Destroy(s.GetComponent<SphereCollider>());
+                GameObject s2 = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                GameObject.Destroy(s.GetComponent<SphereCollider>());
+
+                s.transform.localScale = radius * QuickMenu.myLastPT.transform.localScale * 1.5f * 2f;
+                s1.transform.localScale = radius * QuickMenu.myLastPT.transform.localScale * 1.5f * 2f;
+                s2.transform.localScale = radius * QuickMenu.myLastPT.transform.localScale * 1.5f * 2f;
+                foreach (Renderer renderer in s.GetComponentsInChildren<Renderer>())
+                {
+                    renderer.material = (Material)FengGameManagerMKII.RCassets.Load("killMaterial");
+                }
+                foreach (Renderer renderer1 in s1.GetComponentsInChildren<Renderer>())
+                {
+                    renderer1.material = (Material)FengGameManagerMKII.RCassets.Load("killMaterial");
+                }
+                foreach (Renderer renderer2 in s2.GetComponentsInChildren<Renderer>())
+                {
+                    renderer2.material = (Material)FengGameManagerMKII.RCassets.Load("killMaterial");
+                }
+                VisualizationSpheres.Add(s);
+                VisualizationSpheres.Add(s1);
+                VisualizationSpheres.Add(s2);
+                s.transform.position = center;
+                s1.transform.position = top;
+                s2.transform.position = bottom;
             }
         }
 

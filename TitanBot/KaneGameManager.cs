@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StinkMod;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using TitanBot.FlatUI5;
@@ -53,6 +54,7 @@ namespace TitanBot
             CGLog.Start();
             CGTools.Init();
             PTDataMachine.LoadHitboxData();
+            MovesetControl.Init();
             LoadConfig();
             CGTools.log(GameVersionString);
         }

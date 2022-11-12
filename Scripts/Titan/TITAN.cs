@@ -14,6 +14,7 @@ using UI;
 using GameProgress;
 using TitanBot;
 using System.ComponentModel;
+using StinkMod;
 
 public class TITAN : Photon.MonoBehaviour
 {
@@ -141,6 +142,428 @@ public class TITAN : Photon.MonoBehaviour
     private bool _fastHeadRotation;
 
     public bool isCustomTitan = false;
+    private void CustomPT()
+    {
+        PlayerTitanBot playerTitanBot = controller.GetComponent<PlayerTitanBot>();
+        if (playerTitanBot.bite)
+        {
+            CustomAttack(PTAction.bite);
+        }
+        if (playerTitanBot.bitel)
+        {
+            CustomAttack(PTAction.bitel);
+        }
+        if (playerTitanBot.biter)
+        {
+            CustomAttack(PTAction.biter);
+        }
+        if (playerTitanBot.chopl)
+        {
+            CustomAttack(PTAction.chopl);
+        }
+        if (playerTitanBot.chopr)
+        {
+            CustomAttack(PTAction.chopr);
+        }
+        if (playerTitanBot.choptl)
+        {
+            CustomAttack(PTAction.choptl);
+        }
+        if (playerTitanBot.choptr)
+        {
+            CustomAttack(PTAction.choptr);
+        }
+        if (playerTitanBot.cover && (this.stamina > 75f))
+        {
+            this.recoverpt();
+            this.stamina -= 75f;
+        }
+        if (playerTitanBot.grabbackl)
+        {
+            CustomAttack(PTAction.grabbackl);
+        }
+        if (playerTitanBot.grabbackr)
+        {
+            CustomAttack(PTAction.grabbackr);
+        }
+        if (playerTitanBot.grabfrontl)
+        {
+            CustomAttack(PTAction.grabfrontl);
+        }
+        if (playerTitanBot.grabfrontr)
+        {
+            CustomAttack(PTAction.grabfrontr);
+        }
+        if (playerTitanBot.grabnapel)
+        {
+            CustomAttack(PTAction.grabnapel);
+        }
+        if (playerTitanBot.grabnaper)
+        {
+            CustomAttack(PTAction.grabnaper);
+        }
+        //this was originally outside this function for some reason
+        if (this.abnormalType != AbnormalType.TYPE_CRAWLER)
+        {
+            if (playerTitanBot.isAttackDown && (this.stamina > 25f))
+            {
+                this.stamina -= 25f;
+                CustomAttack(PTAction.Attack);
+            }
+            else if (playerTitanBot.isAttackIIDown && (this.stamina > 50f))
+            {
+                this.stamina -= 50f;
+                CustomAttack(PTAction.AttackII);
+            }
+            else if (playerTitanBot.isJumpDown && (this.stamina > 15f))
+            {
+                this.stamina -= 15f;
+                CustomAttack(PTAction.Jump);
+            }
+        }
+        if (playerTitanBot.isSuicide)
+        {
+            this.suicide();
+        }
+        if (playerTitanBot.is_combo_2)
+        {
+            CustomAttack(PTAction.combo_2);
+        }
+        if (playerTitanBot.is_combo_3)
+        {
+            CustomAttack(PTAction.combo_3);
+        }
+        if (playerTitanBot.is_front_ground)
+        {
+            CustomAttack(PTAction.front_ground);
+        }
+        if (playerTitanBot.is_kick)
+        {
+            CustomAttack(PTAction.kick);
+        }
+        if (playerTitanBot.is_slap_back)
+        {
+            CustomAttack(PTAction.slap_back);
+        }
+        if (playerTitanBot.is_slap_face)
+        {
+            CustomAttack(PTAction.slap_face);
+        }
+        if (playerTitanBot.is_stomp)
+        {
+            CustomAttack(PTAction.stomp);
+        }
+        if (playerTitanBot.is_crawler_jump_0)
+        {
+            CustomAttack(PTAction.crawler_jump_0);
+        }
+    }
+
+    //Custom grab function that gets attack data from the movesetControlDatabase
+    //This will be put to better use in the Custom Games Mod 3
+    private void CustomGrab(PTAction action)
+    {
+        string type = MovesetControl.movesetControlDatabase[action].AttackName;
+        this.state = TitanState.grab;
+        this.attacked = false;
+        this.isAlarm = true;
+        this.attackAnimation = type;
+        this.crossFade("grab_" + type, 0.1f);
+        this.isGrabHandLeft = true;
+        this.grabbedTarget = null;
+        string key = type;
+        if (key != null)
+        {
+            int num;
+            if (fswitchSmap7 == null)
+            {
+                Dictionary<string, int> dictionary = new Dictionary<string, int>(8);
+                dictionary.Add("ground_back_l", 0);
+                dictionary.Add("ground_back_r", 1);
+                dictionary.Add("ground_front_l", 2);
+                dictionary.Add("ground_front_r", 3);
+                dictionary.Add("head_back_l", 4);
+                dictionary.Add("head_back_r", 5);
+                dictionary.Add("head_front_l", 6);
+                dictionary.Add("head_front_r", 7);
+                fswitchSmap7 = dictionary;
+            }
+            if (fswitchSmap7.TryGetValue(key, out num))
+            {
+                switch (num)
+                {
+                    case 0:
+                        this.attackCheckTimeA = 0.34f;
+                        this.attackCheckTimeB = 0.49f;
+                        break;
+
+                    case 1:
+                        this.attackCheckTimeA = 0.34f;
+                        this.attackCheckTimeB = 0.49f;
+                        this.isGrabHandLeft = false;
+                        break;
+
+                    case 2:
+                        this.attackCheckTimeA = 0.37f;
+                        this.attackCheckTimeB = 0.6f;
+                        break;
+
+                    case 3:
+                        this.attackCheckTimeA = 0.37f;
+                        this.attackCheckTimeB = 0.6f;
+                        this.isGrabHandLeft = false;
+                        break;
+
+                    case 4:
+                        this.attackCheckTimeA = 0.45f;
+                        this.attackCheckTimeB = 0.5f;
+                        this.isGrabHandLeft = false;
+                        break;
+
+                    case 5:
+                        this.attackCheckTimeA = 0.45f;
+                        this.attackCheckTimeB = 0.5f;
+                        break;
+
+                    case 6:
+                        this.attackCheckTimeA = 0.38f;
+                        this.attackCheckTimeB = 0.55f;
+                        break;
+
+                    case 7:
+                        this.attackCheckTimeA = 0.38f;
+                        this.attackCheckTimeB = 0.55f;
+                        this.isGrabHandLeft = false;
+                        break;
+                }
+            }
+        }
+        if (this.isGrabHandLeft)
+        {
+            this.currentGrabHand = base.transform.Find("Amarture/Core/Controller_Body/hip/spine/chest/shoulder_L/upper_arm_L/forearm_L/hand_L/hand_L_001");
+        }
+        else
+        {
+            this.currentGrabHand = base.transform.Find("Amarture/Core/Controller_Body/hip/spine/chest/shoulder_R/upper_arm_R/forearm_R/hand_R/hand_R_001");
+        }
+    }
+    //Custom attack function that gets attack data from the movesetControlDatabase
+    //This will be put to better use in the Custom Games Mod 3
+    private void CustomAttack(PTAction action)
+    {
+        if (!MovesetControl.movesetControlDatabase.ContainsKey(action))
+        {
+            CGTools.log("PTAction: " + action + " was not found in the movesetControlDatabase!  This should not happen!");
+            return;
+        }
+        TitanMove move = MovesetControl.movesetControlDatabase[action];
+        if (move.isGrab)
+        {
+            CustomGrab(action);
+            return;
+        }
+        string type = move.AttackName;
+        this.state = TitanState.attack;
+        this.attacked = false;
+        this.isAlarm = true;
+        if (this.attackAnimation == type)
+        {
+            this.attackAnimation = type;
+            this.playAnimationAt("attack_" + type, move.startAnimationAt);
+        }
+        else
+        {
+            this.attackAnimation = type;
+            this.playAnimationAt("attack_" + type, move.startAnimationAt);
+        }
+        this.nextAttackAnimation = null;
+        this.fxName = null;
+        this.isAttackMoveByCore = false;
+        this.attackCheckTime = 0f;
+        this.attackCheckTimeA = 0f;
+        this.attackCheckTimeB = 0f;
+        this.attackEndWait = 0f;
+        this.fxRotation = Quaternion.Euler(270f, 0f, 0f);
+
+        string key = type;
+        if (key != null)
+        {
+            int num;
+            if (fswitchmap6 == null)
+            {
+                Dictionary<string, int> dictionary = new Dictionary<string, int>(0x16);
+                dictionary.Add("abnormal_getup", 0);
+                dictionary.Add("abnormal_jump", 1);
+                dictionary.Add("combo_1", 2);
+                dictionary.Add("combo_2", 3);
+                dictionary.Add("combo_3", 4);
+                dictionary.Add("front_ground", 5);
+                dictionary.Add("kick", 6);
+                dictionary.Add("slap_back", 7);
+                dictionary.Add("slap_face", 8);
+                dictionary.Add("stomp", 9);
+                dictionary.Add("bite", 10);
+                dictionary.Add("bite_l", 11);
+                dictionary.Add("bite_r", 12);
+                dictionary.Add("jumper_0", 13);
+                dictionary.Add("crawler_jump_0", 14);
+                dictionary.Add("anti_AE_l", 15);
+                dictionary.Add("anti_AE_r", 0x10);
+                dictionary.Add("anti_AE_low_l", 0x11);
+                dictionary.Add("anti_AE_low_r", 0x12);
+                dictionary.Add("quick_turn_l", 0x13);
+                dictionary.Add("quick_turn_r", 20);
+                dictionary.Add("throw", 0x15);
+                fswitchmap6 = dictionary;
+            }
+            if (fswitchmap6.TryGetValue(key, out num))
+            {
+                switch (num)
+                {
+                    case 0:
+                        this.attackCheckTime = 0f;
+                        this.fxName = string.Empty;
+                        break;
+
+                    case 1:
+                        this.nextAttackAnimation = "abnormal_getup";
+                        if (this.nonAI)
+                        {
+                            this.attackEndWait = 0f;
+                        }
+                        else
+                        {
+                            this.attackEndWait = (this.myDifficulty <= 0) ? UnityEngine.Random.Range((float)1f, (float)4f) : UnityEngine.Random.Range((float)0f, (float)1f);
+                        }
+                        this.attackCheckTime = 0.75f;
+                        this.fxName = "boom4";
+                        this.fxRotation = Quaternion.Euler(270f, this.baseTransform.rotation.eulerAngles.y, 0f);
+                        break;
+
+                    case 2:
+                        this.nextAttackAnimation = "combo_2";
+                        this.attackCheckTimeA = 0.54f;
+                        this.attackCheckTimeB = 0.76f;
+                        this.nonAIcombo = false;
+                        this.isAttackMoveByCore = true;
+                        this.leftHandAttack = false;
+                        break;
+
+                    case 3:
+                        if (!((this.abnormalType == AbnormalType.TYPE_PUNK) || this.nonAI))
+                        {
+                            this.nextAttackAnimation = "combo_3";
+                        }
+                        this.attackCheckTimeA = 0.37f;
+                        this.attackCheckTimeB = 0.57f;
+                        this.nonAIcombo = false;
+                        this.isAttackMoveByCore = true;
+                        this.leftHandAttack = true;
+                        break;
+
+                    case 4:
+                        this.nonAIcombo = false;
+                        this.isAttackMoveByCore = true;
+                        this.attackCheckTime = 0.21f;
+                        this.fxName = "boom1";
+                        break;
+
+                    case 5:
+                        this.fxName = "boom1";
+                        this.attackCheckTime = 0.45f;
+                        break;
+
+                    case 6:
+                        this.fxName = "boom5";
+                        this.fxRotation = this.baseTransform.rotation;
+                        this.attackCheckTime = 0.43f;
+                        break;
+
+                    case 7:
+                        this.fxName = "boom3";
+                        this.attackCheckTime = 0.66f;
+                        break;
+
+                    case 8:
+                        this.fxName = "boom3";
+                        this.attackCheckTime = 0.655f;
+                        break;
+
+                    case 9:
+                        this.fxName = "boom2";
+                        this.attackCheckTime = 0.42f;
+                        break;
+
+                    case 10:
+                        this.fxName = "bite";
+                        this.attackCheckTime = 0.6f;
+                        break;
+
+                    case 11:
+                        this.fxName = "bite";
+                        this.attackCheckTime = 0.4f;
+                        break;
+
+                    case 12:
+                        this.fxName = "bite";
+                        this.attackCheckTime = 0.4f;
+                        break;
+
+                    case 13:
+                        this.abnorma_jump_bite_horizon_v = Vector3.zero;
+                        break;
+
+                    case 14:
+                        this.abnorma_jump_bite_horizon_v = Vector3.zero;
+                        break;
+
+                    case 15:
+                        this.attackCheckTimeA = 0.31f;
+                        this.attackCheckTimeB = 0.4f;
+                        this.leftHandAttack = true;
+                        break;
+
+                    case 0x10:
+                        this.attackCheckTimeA = 0.31f;
+                        this.attackCheckTimeB = 0.4f;
+                        this.leftHandAttack = false;
+                        break;
+
+                    case 0x11:
+                        this.attackCheckTimeA = 0.31f;
+                        this.attackCheckTimeB = 0.4f;
+                        this.leftHandAttack = true;
+                        break;
+
+                    case 0x12:
+                        this.attackCheckTimeA = 0.31f;
+                        this.attackCheckTimeB = 0.4f;
+                        this.leftHandAttack = false;
+                        break;
+
+                    case 0x13:
+                        this.attackCheckTimeA = 2f;
+                        this.attackCheckTimeB = 2f;
+                        this.isAttackMoveByCore = true;
+                        break;
+
+                    case 20:
+                        this.attackCheckTimeA = 2f;
+                        this.attackCheckTimeB = 2f;
+                        this.isAttackMoveByCore = true;
+                        break;
+
+                    case 0x15:
+                        this.isAlarm = true;
+                        this.chaseDistance = 99999f;
+                        break;
+                }
+            }
+        }
+        this.needFreshCorePosition = true;
+    }
+
+
 
     // extremely hacky, just move the titan far away to hide it
     private void HideTitanIfBomb()
@@ -2956,99 +3379,97 @@ public class TITAN : Photon.MonoBehaviour
 
     public void pt()
     {
-        if (this.controller.bite)
-        {
-            this.attack2("bite");
-        }
-        if (this.controller.bitel)
-        {
-            this.attack2("bite_l");
-        }
-        if (this.controller.biter)
-        {
-            this.attack2("bite_r");
-        }
-        if (this.controller.chopl)
-        {
-            this.attack2("anti_AE_low_l");
-        }
-        if (this.controller.chopr)
-        {
-            this.attack2("anti_AE_low_r");
-        }
-        if (this.controller.choptl)
-        {
-            this.attack2("anti_AE_l");
-        }
-        if (this.controller.choptr)
-        {
-            this.attack2("anti_AE_r");
-        }
-        if (this.controller.cover && (this.stamina > 75f))
-        {
-            this.recoverpt();
-            this.stamina -= 75f;
-        }
-        if (this.controller.grabbackl)
-        {
-            this.grab("ground_back_l");
-        }
-        if (this.controller.grabbackr)
-        {
-            this.grab("ground_back_r");
-        }
-        if (this.controller.grabfrontl)
-        {
-            this.grab("ground_front_l");
-        }
-        if (this.controller.grabfrontr)
-        {
-            this.grab("ground_front_r");
-        }
-        if (this.controller.grabnapel)
-        {
-            this.grab("head_back_l");
-        }
-        if (this.controller.grabnaper)
-        {
-            this.grab("head_back_r");
-        }
         if (isCustomTitan && controller.GetComponent<PlayerTitanBot>())
         {
-            PlayerTitanBot playerTitanBot = controller.GetComponent<PlayerTitanBot>();
-            if (playerTitanBot.is_combo_2)
+            CustomPT();
+        }
+        else
+        {
+            if (this.controller.bite)
             {
-                this.attack2("combo_2");
+                this.attack2("bite");
             }
-            if (playerTitanBot.is_combo_3)
+            if (this.controller.bitel)
             {
-                this.attack2("combo_3");
+                this.attack2("bite_l");
             }
-            if (playerTitanBot.is_front_ground)
+            if (this.controller.biter)
             {
-                this.attack2("front_ground");
+                this.attack2("bite_r");
             }
-            if (playerTitanBot.is_kick)
+            if (this.controller.chopl)
             {
-                this.attack2("kick");
+                this.attack2("anti_AE_low_l");
             }
-            if (playerTitanBot.is_slap_back)
+            if (this.controller.chopr)
             {
-                this.attack2("slap_back");
+                this.attack2("anti_AE_low_r");
             }
-            if (playerTitanBot.is_slap_face)
+            if (this.controller.choptl)
             {
-                this.attack2("slap_face");
+                this.attack2("anti_AE_l");
             }
-            if (playerTitanBot.is_stomp)
+            if (this.controller.choptr)
             {
-                this.attack2("stomp");
+                this.attack2("anti_AE_r");
             }
-            if (playerTitanBot.is_crawler_jump_0)
+            if (this.controller.cover && (this.stamina > 75f))
             {
+                this.recoverpt();
+                this.stamina -= 75f;
+            }
+            if (this.controller.grabbackl)
+            {
+                this.grab("ground_back_l");
+            }
+            if (this.controller.grabbackr)
+            {
+                this.grab("ground_back_r");
+            }
+            if (this.controller.grabfrontl)
+            {
+                this.grab("ground_front_l");
+            }
+            if (this.controller.grabfrontr)
+            {
+                this.grab("ground_front_r");
+            }
+            if (this.controller.grabnapel)
+            {
+                this.grab("head_back_l");
+            }
+            if (this.controller.grabnaper)
+            {
+                this.grab("head_back_r");
+            }
+            //this was originally outside this function for some reason
+            if (this.abnormalType != AbnormalType.TYPE_CRAWLER)
+            {
+                if (this.controller.isAttackDown && (this.stamina > 25f))
+                {
+                    this.stamina -= 25f;
+                    this.attack2("combo_1");
+                }
+                else if (this.controller.isAttackIIDown && (this.stamina > 50f))
+                {
+                    this.stamina -= 50f;
+                    this.attack2("abnormal_jump");
+                }
+                else if (this.controller.isJumpDown && (this.stamina > 15f))
+                {
+                    this.stamina -= 15f;
+                    this.attack2("jumper_0");
+                }
+            }
+            else if (this.controller.isAttackDown && (this.stamina > 40f))
+            {
+                this.stamina -= 40f;
                 this.attack2("crawler_jump_0");
             }
-
+            if (this.controller.isSuicide)
+            {
+                this.suicide();
+            }
         }
     }
 
@@ -3932,33 +4353,7 @@ public class TITAN : Photon.MonoBehaviour
                         if (!GameMenu.Paused)
                         {
                             this.pt();
-                            if (this.abnormalType != AbnormalType.TYPE_CRAWLER)
-                            {
-                                if (this.controller.isAttackDown && (this.stamina > 25f))
-                                {
-                                    this.stamina -= 25f;
-                                    this.attack2("combo_1");
-                                }
-                                else if (this.controller.isAttackIIDown && (this.stamina > 50f))
-                                {
-                                    this.stamina -= 50f;
-                                    this.attack2("abnormal_jump");
-                                }
-                                else if (this.controller.isJumpDown && (this.stamina > 15f))
-                                {
-                                    this.stamina -= 15f;
-                                    this.attack2("jumper_0");
-                                }
-                            }
-                            else if (this.controller.isAttackDown && (this.stamina > 40f))
-                            {
-                                this.stamina -= 40f;
-                                this.attack2("crawler_jump_0");
-                            }
-                            if (this.controller.isSuicide)
-                            {
-                                this.suicide();
-                            }
+                           
                         }
                     }
                     else if (this.sbtime > 0f)

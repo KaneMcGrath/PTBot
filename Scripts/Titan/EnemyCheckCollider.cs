@@ -121,14 +121,16 @@ public class EnemyCheckCollider : Photon.MonoBehaviour
             BoxCollider boxCollider = this.GetComponent<BoxCollider>();
             PTDataMachine.CreateColliderBox(boxCollider.transform.position, boxCollider.size, boxCollider.transform.rotation);
         }
-        //if (this.GetComponent<MeshCollider>())
-        //{
-        //    CGTools.log("there is a mesh collider");
-        //}
-        //if (this.GetComponent<CapsuleCollider>())
-        //{
-        //    CGTools.log("there is a cap collider");
-        //}
+        if (this.GetComponent<MeshCollider>())
+        {
+            CGTools.log("there is a mesh collider");
+        }
+        if (this.GetComponent<CapsuleCollider>())
+        {
+            CapsuleCollider cap = this.GetComponent<CapsuleCollider>();
+            CGTools.log("Capsule dmg:" + dmg);
+            PTDataMachine.CreateColliderCapsule(cap.transform.position, cap.transform.rotation, cap.radius, cap.height);
+        }
 
     }
 }

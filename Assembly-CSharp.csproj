@@ -401,6 +401,10 @@
     <Compile Include="Scripts\Human\TriggerColliderWeapon.cs" />
     <Compile Include="Scripts\Human\UNIFORM_TYPE.cs" />
     <Compile Include="TitanBot\CGLog.cs" />
+    <Compile Include="TitanBot\FlatUI5\ListWindow.cs" />
+    <Compile Include="TitanBot\FlatUI5\RTools.cs" />
+    <Compile Include="TitanBot\FlatUI5\ScrollList.cs" />
+    <Compile Include="TitanBot\FlatUI5\Window.cs" />
     <Compile Include="TitanBot\MovesetControl.cs" />
     <Compile Include="TitanBot\ParseMaster.cs" />
     <Compile Include="TitanBot\PlayerTitanBot.cs" />

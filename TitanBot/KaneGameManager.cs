@@ -38,15 +38,6 @@ namespace TitanBot
             normal = { textColor = Color.white }
         };
 
-        //every function that should be deleted or modified before release should call this fuction so it can be found through the references
-        public static void MarkDevFunction(string message = "")
-        {
-            if (message != "")
-            {
-                CGLog.log(message);
-            }
-        }
-
         public static void Init()
         {
             instance = SingletonFactory.CreateSingleton(instance);

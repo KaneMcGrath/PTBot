@@ -74,6 +74,23 @@ namespace StinkMod
             this.endAnimationAt = endAnimationAt;
             this.attackEndDelay = attackEndDelay;
         }
+        public override bool Equals(object obj)
+        {
+            if (obj.GetType() == typeof(TitanMove))
+            {
+                TitanMove other = (TitanMove)obj;
+                if (this.AttackName.Equals(other.AttackName) && this.startAnimationAt.Equals(other.startAnimationAt) && this.endAnimationAt.Equals(other.endAnimationAt) && this.attackEndDelay.Equals(other.attackEndDelay))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public TitanMove Copy()
+        {
+            return new TitanMove(this.Name, this.AttackName, this.isGrab, this.startAnimationAt, this.endAnimationAt, this.attackEndDelay);
+        }
     }
 }
 

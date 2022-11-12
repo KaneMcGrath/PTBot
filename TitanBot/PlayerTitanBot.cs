@@ -26,6 +26,18 @@ namespace TitanBot
         public static int dataPruningLevel = 2;
         public static string TitanName = "PTBot";
 
+        public static int[] AIWeightTable = new int[]
+        {
+            2,
+            1,
+            4,
+            1
+        };
+        public static float AIChangeStateTime = 5f;
+        public static float AIWobbleMagnitude = 30f;
+        public static float AIWobbleRate = 4f;
+        public static float AIWalkChance = 10f;
+
         public bool doStuff = true;
         public TITAN MyTitan = null;
 
@@ -69,7 +81,7 @@ namespace TitanBot
             //unless a function overrides the walk input
             if (CGTools.timer(ref SpeedTimer, 0.5f))
             {
-                if (CGTools.Chance(10f))
+                if (CGTools.Chance(AIWalkChance))
                 {
                     isWALKDown = true;
                 }
@@ -80,15 +92,9 @@ namespace TitanBot
             }
 
             //every 5 seconds we change state
-            if (CGTools.timer(ref stateTimer, 5f))
+            if (CGTools.timer(ref stateTimer, AIChangeStateTime))
             {
-                int s = CGTools.WeightTable(new int[]
-                {
-                    2,
-                    1,
-                    4,
-                    1
-                });
+                int s = CGTools.WeightTable(AIWeightTable);
                 if (s == 0)
                 {
                     state = TitanState.Repositioning;
@@ -167,8 +173,7 @@ namespace TitanBot
 
             //turn left and right on a sin wave to keep our movements a bit sparratic
             //also convinently helps our raycasting
-            float wobbleRate = 30f;
-            float wobble = Mathf.Sin(Time.time * 4f) * wobbleRate;
+            float wobble = Mathf.Sin(Time.time * AIWobbleRate) * AIWobbleMagnitude;
             float targetDirectionFinal = targetDirectionLerp + wobble;
             targetLerpT += turnrate * Time.deltaTime;
             if (state != TitanState.Spinning)

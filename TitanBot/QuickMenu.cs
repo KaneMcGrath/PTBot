@@ -62,7 +62,7 @@ namespace TitanBot
         {
             menuX = Screen.width - 450f;
             FlatUI.Box(new Rect(menuX, menuY, 250f, 700f), tabColors[tabIndex], FengGameManagerMKII.instance.textureBackgroundBlack);
-            tabIndex = tabs(new Rect(menuX + 250f, menuY, 700f, 100f), tabNames, tabIndex, false, tabColors);
+            tabIndex = FlatUI.tabs(new Rect(menuX + 250f, menuY, 700f, 100f), tabNames, tabIndex, false, tabColors);
             if (tabIndex == 0) tabPTBotSettings();
             if (tabIndex == 1) moreSettings();
             if (tabIndex == 2) TabConfig();
@@ -1033,80 +1033,6 @@ namespace TitanBot
                 divisions = 1;
             }
             return new Rect(menuX + 4f + num / (float)divisions * (float)j, menuY + (float)i * 30f, (float)n * (num / (float)divisions), 30f * rows);
-        }
-        public static int tabs(Rect pos, string[] tabs, int index, bool top, Texture2D[] tabColors)
-        {
-            int num = tabs.Length;
-            float num2 = pos.width / (float)num;
-            Texture2D[] array = new Texture2D[num];
-            for (int i = 0; i < num; i++)
-            {
-                if (i < tabColors.Length)
-                {
-                    array[i] = tabColors[i];
-                }
-                else
-                {
-                    array[i] = FengGameManagerMKII.instance.textureBackgroundBlue;
-                }
-            }
-            for (int j = 0; j < num; j++)
-            {
-                Rect rect;
-                if (top)
-                {
-                    rect = new Rect(pos.x + num2 * (float)j, pos.y, num2, pos.height);
-                }
-                else
-                {
-                    rect = new Rect(pos.x, pos.y + (float)j * 30f, 100f, 30f);
-                }
-                if (index == j)
-                {
-                    tab(rect, top, array[j], FengGameManagerMKII.instance.textureBackgroundBlack);
-                    GUI.Label(rect, tabs[j], new GUIStyle
-                    {
-                        border = new RectOffset(1, 1, 1, 1),
-                        alignment = TextAnchor.MiddleCenter,
-                        normal =
-                        {
-                            textColor = Color.white
-                        }
-                    });
-                }
-                else
-                {
-                    FlatUI.Box(rect, array[j], FengGameManagerMKII.instance.textureBackgroundBlack);
-                    if (GUI.Button(rect, tabs[j], new GUIStyle
-                    {
-                        border = new RectOffset(1, 1, 1, 1),
-                        alignment = TextAnchor.MiddleCenter,
-                        normal =
-                        {
-                            textColor = Color.white
-                        }
-                    }))
-                    {
-                        return j;
-                    }
-                }
-            }
-            return index;
-        }
-        private static void tab(Rect rect, bool top, Texture2D inside, Texture2D outside)
-        {
-            if (top)
-            {
-                GUI.DrawTexture(new Rect(rect.x, rect.y, rect.width, rect.height), outside);
-                GUI.DrawTexture(new Rect(rect.x + 2f, rect.y + 2f, rect.width - 4f, rect.height), inside);
-                return;
-            }
-            else
-            {
-                GUI.DrawTexture(new Rect(rect.x - 2f, rect.y, rect.width, rect.height), outside);
-                GUI.DrawTexture(new Rect(rect.x - 2f, rect.y + 2f, rect.width - 2f, rect.height - 4f), inside);
-                return;
-            }
         }
         public static void Init()
         {

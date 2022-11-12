@@ -120,7 +120,7 @@ public class TITAN : Photon.MonoBehaviour
     private Vector3 spawnPt;
     public float speed = 7f;
     private float stamina = 320f;
-    private TitanState state;
+    public TitanState state;
     private int stepSoundPhase = 2;
     private bool stuck;
     private float stuckTime;

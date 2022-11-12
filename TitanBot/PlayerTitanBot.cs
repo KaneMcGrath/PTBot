@@ -45,7 +45,7 @@ namespace TitanBot
         private Dictionary<PTAction, bool> updateNextFrameList = new Dictionary<PTAction, bool>();
         private GameObject[] players;
         private GameObject closestPlayer;
-        private TitanState state = TitanState.Running;
+        private TitanBotState state = TitanBotState.Running;
         private List<Vector3> lastRaycasts = new List<Vector3>();
         private float stateTimer = 0f;
         private float targetDirectionLerp = 0f;
@@ -110,34 +110,34 @@ namespace TitanBot
                 int s = CGTools.WeightTable(AIWeightTable);
                 if (s == 0)
                 {
-                    state = TitanState.Repositioning;
+                    state = TitanBotState.Repositioning;
                     //CGTools.log(state.ToString());
                     stateTimer = Time.time + 2f;
                 }
                 if (s == 1)
                 {
-                    state = TitanState.Running;
+                    state = TitanBotState.Running;
                     stateTimer = Time.time + 2f;
                     //CGTools.log(state.ToString());
                 }
                 if (s == 2)
                 {
-                    state = TitanState.Attacking;
+                    state = TitanBotState.Attacking;
                     //CGTools.log(state.ToString());
                 }
                 if (s == 3)
                 {
-                    state = TitanState.Spinning;
+                    state = TitanBotState.Spinning;
                     //CGTools.log(state.ToString());
                     stateTimer = Time.time + 1f;
                 }
             }
-            if (state == TitanState.Running)
+            if (state == TitanBotState.Running)
             {
                 run();
                 letErRip();
             }
-            else if (state == TitanState.Attacking)
+            else if (state == TitanBotState.Attacking)
             {
                 bool flag = false;
                 if (closestPlayer != null)
@@ -162,11 +162,11 @@ namespace TitanBot
                 }
                 letErRip();
             }
-            else if (state == TitanState.Spinning)
+            else if (state == TitanBotState.Spinning)
             {
                 spin();
             }
-            else if (state == TitanState.Repositioning)
+            else if (state == TitanBotState.Repositioning)
             {
                 bool flag = false;
                 if (closestPlayer != null)
@@ -189,7 +189,7 @@ namespace TitanBot
             float wobble = Mathf.Sin(Time.time * AIWobbleRate) * AIWobbleMagnitude;
             float targetDirectionFinal = targetDirectionLerp + wobble;
             targetLerpT += turnrate * Time.deltaTime;
-            if (state != TitanState.Spinning)
+            if (state != TitanBotState.Spinning)
                 targetDirection = Mathf.Lerp(targetDirection, targetDirectionFinal, targetLerpT);
             if (debugRaycasts)
             {
@@ -260,7 +260,7 @@ namespace TitanBot
                     {
                         PickNewDirection();
                         isWALKDown = false;
-                        state = TitanState.Running;
+                        state = TitanBotState.Running;
                         stateTimer = Time.time + 1.5f;
                     }
                 }
@@ -398,133 +398,135 @@ namespace TitanBot
 
         private void ExecuteAction(PTAction a)
         {
-            
-            if (a == PTAction.Attack)
+            if (MyTitan.state != TitanState.attack)
             {
-                isAttackDown = true;
-            }
-            if (a == PTAction.Jump)
-            {
-                isJumpDown = true;
-            }
-            if (a == PTAction.bite)
-            {
-                gameObject.rigidbody.velocity = Vector3.zero;
-                bite = true;
-            }
-            if (a == PTAction.bitel)
-            {
-                gameObject.rigidbody.velocity = Vector3.zero;
-                bitel = true;
-            }
-            if (a == PTAction.biter)
-            {
-                gameObject.rigidbody.velocity = Vector3.zero;
-                biter = true;
-            }
-            if (a == PTAction.choptl)
-            {
-                gameObject.rigidbody.velocity = Vector3.zero;
-                choptl = true;
-            }
-            if (a == PTAction.choptr)
-            {
-                gameObject.rigidbody.velocity = Vector3.zero;
-                choptr = true;
-            }
-            if (a == PTAction.grabbackl)
-            {
-                gameObject.rigidbody.velocity = Vector3.zero;
-                grabbackl = true;
-            }
-            if (a == PTAction.grabbackr)
-            {
-                gameObject.rigidbody.velocity = Vector3.zero;
-                grabbackr = true;
-            }
-            if (a == PTAction.grabfrontl)
-            {
-                gameObject.rigidbody.velocity = Vector3.zero;
-                grabfrontl = true;
-            }
-            if (a == PTAction.grabfrontr)
-            {
-                gameObject.rigidbody.velocity = Vector3.zero;
-                grabfrontr = true;
-            }
-            if (a == PTAction.grabnapel)
-            {
-                gameObject.rigidbody.velocity = Vector3.zero;
-                grabnapel = true;
-            }
-            if (a == PTAction.grabnaper)
-            {
-                gameObject.rigidbody.velocity = Vector3.zero;
-                grabnaper = true;
-            }
-            if (a == PTAction.chopl)
-            {
-                gameObject.rigidbody.velocity = Vector3.zero;
-                chopl = true;
-            }
-            if (a == PTAction.chopr)
-            {
-                gameObject.rigidbody.velocity = Vector3.zero;
-                chopr = true;
-            }
-            if (a == PTAction.AttackII)
-            {
-                gameObject.rigidbody.velocity = Vector3.zero;
-                isAttackIIDown = true;
-            }
-            if (a == PTAction.combo_2)
-            {
-                gameObject.rigidbody.velocity = Vector3.zero;
-                is_combo_2 = true;
-            }
-            if (a == PTAction.combo_3)
-            {
-                gameObject.rigidbody.velocity = Vector3.zero;
-                is_combo_3 = true;
-            }
-            if (a == PTAction.front_ground)
-            {
-                gameObject.rigidbody.velocity = Vector3.zero;
-                is_front_ground = true;
-            }
-            if (a == PTAction.kick)
-            {
-                gameObject.rigidbody.velocity = Vector3.zero;
-                is_kick = true;
-            }
-            if (a == PTAction.slap_back)
-            {
-                gameObject.rigidbody.velocity = Vector3.zero;
-                is_slap_back = true;
-            }
-            if (a == PTAction.slap_face)
-            {
-                gameObject.rigidbody.velocity = Vector3.zero;
-                is_slap_face = true;
-            }
-            if (a == PTAction.stomp)
-            {
-                gameObject.rigidbody.velocity = Vector3.zero;
-                is_stomp = true;
-            }
-            if (a == PTAction.crawler_jump_0)
-            {
-                is_crawler_jump_0 = true;
-            }
-            if (a == PTAction.grab_head_front_l)
-            {
-                gameObject.rigidbody.velocity = Vector3.zero;
-                is_grab_head_front_l = true;
-            }
-            if (a == PTAction.grab_head_front_r)
-            {
-                gameObject.rigidbody.velocity = Vector3.zero;
-                is_grab_head_front_r = true;
+                if (a == PTAction.Attack)
+                {
+                    isAttackDown = true;
+                }
+                if (a == PTAction.Jump)
+                {
+                    isJumpDown = true;
+                }
+                if (a == PTAction.bite)
+                {
+                    gameObject.rigidbody.velocity = Vector3.zero;
+                    bite = true;
+                }
+                if (a == PTAction.bitel)
+                {
+                    gameObject.rigidbody.velocity = Vector3.zero;
+                    bitel = true;
+                }
+                if (a == PTAction.biter)
+                {
+                    gameObject.rigidbody.velocity = Vector3.zero;
+                    biter = true;
+                }
+                if (a == PTAction.choptl)
+                {
+                    gameObject.rigidbody.velocity = Vector3.zero;
+                    choptl = true;
+                }
+                if (a == PTAction.choptr)
+                {
+                    gameObject.rigidbody.velocity = Vector3.zero;
+                    choptr = true;
+                }
+                if (a == PTAction.grabbackl)
+                {
+                    gameObject.rigidbody.velocity = Vector3.zero;
+                    grabbackl = true;
+                }
+                if (a == PTAction.grabbackr)
+                {
+                    gameObject.rigidbody.velocity = Vector3.zero;
+                    grabbackr = true;
+                }
+                if (a == PTAction.grabfrontl)
+                {
+                    gameObject.rigidbody.velocity = Vector3.zero;
+                    grabfrontl = true;
+                }
+                if (a == PTAction.grabfrontr)
+                {
+                    gameObject.rigidbody.velocity = Vector3.zero;
+                    grabfrontr = true;
+                }
+                if (a == PTAction.grabnapel)
+                {
+                    gameObject.rigidbody.velocity = Vector3.zero;
+                    grabnapel = true;
+                }
+                if (a == PTAction.grabnaper)
+                {
+                    gameObject.rigidbody.velocity = Vector3.zero;
+                    grabnaper = true;
+                }
+                if (a == PTAction.chopl)
+                {
+                    gameObject.rigidbody.velocity = Vector3.zero;
+                    chopl = true;
+                }
+                if (a == PTAction.chopr)
+                {
+                    gameObject.rigidbody.velocity = Vector3.zero;
+                    chopr = true;
+                }
+                if (a == PTAction.AttackII)
+                {
+                    gameObject.rigidbody.velocity = Vector3.zero;
+                    isAttackIIDown = true;
+                }
+                if (a == PTAction.combo_2)
+                {
+                    gameObject.rigidbody.velocity = Vector3.zero;
+                    is_combo_2 = true;
+                }
+                if (a == PTAction.combo_3)
+                {
+                    gameObject.rigidbody.velocity = Vector3.zero;
+                    is_combo_3 = true;
+                }
+                if (a == PTAction.front_ground)
+                {
+                    gameObject.rigidbody.velocity = Vector3.zero;
+                    is_front_ground = true;
+                }
+                if (a == PTAction.kick)
+                {
+                    gameObject.rigidbody.velocity = Vector3.zero;
+                    is_kick = true;
+                }
+                if (a == PTAction.slap_back)
+                {
+                    gameObject.rigidbody.velocity = Vector3.zero;
+                    is_slap_back = true;
+                }
+                if (a == PTAction.slap_face)
+                {
+                    gameObject.rigidbody.velocity = Vector3.zero;
+                    is_slap_face = true;
+                }
+                if (a == PTAction.stomp)
+                {
+                    gameObject.rigidbody.velocity = Vector3.zero;
+                    is_stomp = true;
+                }
+                if (a == PTAction.crawler_jump_0)
+                {
+                    is_crawler_jump_0 = true;
+                }
+                if (a == PTAction.grab_head_front_l)
+                {
+                    gameObject.rigidbody.velocity = Vector3.zero;
+                    is_grab_head_front_l = true;
+                }
+                if (a == PTAction.grab_head_front_r)
+                {
+                    gameObject.rigidbody.velocity = Vector3.zero;
+                    is_grab_head_front_r = true;
+                }
             }
         }
 
@@ -966,7 +968,7 @@ namespace TitanBot
         }
     }
 
-    public enum TitanState
+    public enum TitanBotState
     {
         Running,
         Repositioning,

@@ -771,113 +771,140 @@ namespace TitanBot
                     PTDataMachine.DeleteVisualizationSpheres();
                 }
             }
-            if (FlatUI.Button(IndexToRect(10), "Stop Recording", PTDataMachine.isRecording ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
+
+            //New Attacks
+            if (FlatUI.Button(IndexToRect(10, 8, 0, 2), "combo_2", PTButtonColor))
             {
-                PTDataMachine.FinishRecordingHitbox();
+                ((PlayerTitanBot)myLastPT.controller).is_combo_2 = true;
+                if (resetPositionsOnAttack)
+                {
+                    myLastPT.transform.position = Vector3.zero;
+                    myLastPT.transform.rotation = Quaternion.identity;
+                }
+                if (clearHitboxesOnAttack)
+                {
+                    PTDataMachine.DeleteVisualizationSpheres();
+                }
+            }
+            if (FlatUI.Button(IndexToRect(10, 8, 2, 2), "combo_3", PTButtonColor))
+            {
+                ((PlayerTitanBot)myLastPT.controller).is_combo_3 = true;
+                if (resetPositionsOnAttack)
+                {
+                    myLastPT.transform.position = Vector3.zero;
+                    myLastPT.transform.rotation = Quaternion.identity;
+                }
+                if (clearHitboxesOnAttack)
+                {
+                    PTDataMachine.DeleteVisualizationSpheres();
+                }
+                if (PTDataMachine.RecordData)
+                {
+                    PTDataMachine.StartRecordingHitbox(PTAction.choptl);
+                }
+            }
+            if (FlatUI.Button(IndexToRect(10, 8, 4, 2), "front_ground", PTButtonColor))
+            {
+                ((PlayerTitanBot)myLastPT.controller).is_front_ground = true;
+                if (resetPositionsOnAttack)
+                {
+                    myLastPT.transform.position = Vector3.zero;
+                    myLastPT.transform.rotation = Quaternion.identity;
+                }
+                if (clearHitboxesOnAttack)
+                {
+                    PTDataMachine.DeleteVisualizationSpheres();
+                }
+                if (PTDataMachine.RecordData)
+                {
+                    PTDataMachine.StartRecordingHitbox(PTAction.choptr);
+                }
+            }
+            if (FlatUI.Button(IndexToRect(10, 8, 6, 2), "kick", PTButtonColor))
+            {
+                ((PlayerTitanBot)myLastPT.controller).is_kick = true;
+                if (resetPositionsOnAttack)
+                {
+                    myLastPT.transform.position = Vector3.zero;
+                    myLastPT.transform.rotation = Quaternion.identity;
+                }
+                if (clearHitboxesOnAttack)
+                {
+                    PTDataMachine.DeleteVisualizationSpheres();
+                }
+                if (PTDataMachine.RecordData)
+                {
+                    PTDataMachine.StartRecordingHitbox(PTAction.bite);
+                }
+            }
+            if (FlatUI.Button(IndexToRect(11, 8, 0, 2), "slap_back", PTButtonColor))
+            {
+                ((PlayerTitanBot)myLastPT.controller).is_slap_back = true;
+                if (resetPositionsOnAttack)
+                {
+                    myLastPT.transform.position = Vector3.zero;
+                    myLastPT.transform.rotation = Quaternion.identity;
+                }
+                if (clearHitboxesOnAttack)
+                {
+                    PTDataMachine.DeleteVisualizationSpheres();
+                }
+            }
+            if (FlatUI.Button(IndexToRect(11, 8, 2, 2), "slap_face", PTButtonColor))
+            {
+                ((PlayerTitanBot)myLastPT.controller).is_slap_face = true;
+                if (resetPositionsOnAttack)
+                {
+                    myLastPT.transform.position = Vector3.zero;
+                    myLastPT.transform.rotation = Quaternion.identity;
+                }
+                if (clearHitboxesOnAttack)
+                {
+                    PTDataMachine.DeleteVisualizationSpheres();
+                }
+                if (PTDataMachine.RecordData)
+                {
+                    PTDataMachine.StartRecordingHitbox(PTAction.choptl);
+                }
+            }
+            if (FlatUI.Button(IndexToRect(11, 8, 4, 2), "stomp", PTButtonColor))
+            {
+                ((PlayerTitanBot)myLastPT.controller).is_stomp = true;
+                if (resetPositionsOnAttack)
+                {
+                    myLastPT.transform.position = Vector3.zero;
+                    myLastPT.transform.rotation = Quaternion.identity;
+                }
+                if (clearHitboxesOnAttack)
+                {
+                    PTDataMachine.DeleteVisualizationSpheres();
+                }
+                if (PTDataMachine.RecordData)
+                {
+                    PTDataMachine.StartRecordingHitbox(PTAction.choptr);
+                }
+            }
+            if (FlatUI.Button(IndexToRect(11, 8, 6, 2), "crawler_jump_0", PTButtonColor))
+            {
+                ((PlayerTitanBot)myLastPT.controller).is_crawler_jump_0 = true;
+                if (resetPositionsOnAttack)
+                {
+                    myLastPT.transform.position = Vector3.zero;
+                    myLastPT.transform.rotation = Quaternion.identity;
+                }
+                if (clearHitboxesOnAttack)
+                {
+                    PTDataMachine.DeleteVisualizationSpheres();
+                }
+                if (PTDataMachine.RecordData)
+                {
+                    PTDataMachine.StartRecordingHitbox(PTAction.bite);
+                }
             }
 
-            if (FlatUI.Button(IndexToRect(11, 3, 0), "Camera 1", CameraPositions[0] == Vector3.zero ? FlatUI.insideColorTex : QuickMenu.PTButtonColor))
+            if (FlatUI.Button(IndexToRect(13), "Stop Recording", PTDataMachine.isRecording ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
             {
-                int id = 0;
-                if (CameraPositions[id] == Vector3.zero)
-                {
-                    CameraPositions[id] = Camera.main.transform.position;
-                    CameraRotations[id] = Camera.main.transform.rotation;
-                }
-                Camera.main.transform.position = CameraPositions[id];
-                Camera.main.transform.rotation = CameraRotations[id];
-            }
-            if (FlatUI.Button(IndexToRect(11, 3, 1), "Camera 2", CameraPositions[1] == Vector3.zero ? FlatUI.insideColorTex : QuickMenu.PTButtonColor))
-            {
-                int id = 1;
-                if (CameraPositions[id] == Vector3.zero)
-                {
-                    CameraPositions[id] = Camera.main.transform.position;
-                    CameraRotations[id] = Camera.main.transform.rotation;
-                }
-                Camera.main.transform.position = CameraPositions[id];
-                Camera.main.transform.rotation = CameraRotations[id];
-            }
-            if (FlatUI.Button(IndexToRect(11, 3, 2), "Camera 3", CameraPositions[2] == Vector3.zero ? FlatUI.insideColorTex : QuickMenu.PTButtonColor))
-            {
-                int id = 2;
-                if (CameraPositions[id] == Vector3.zero)
-                {
-                    CameraPositions[id] = Camera.main.transform.position;
-                    CameraRotations[id] = Camera.main.transform.rotation;
-                }
-                Camera.main.transform.position = CameraPositions[id];
-                Camera.main.transform.rotation = CameraRotations[id];
-            }
-            if (FlatUI.Button(IndexToRect(12, 3, 0), "Camera 4", CameraPositions[3] == Vector3.zero ? FlatUI.insideColorTex : QuickMenu.PTButtonColor))
-            {
-                int id = 3;
-                if (CameraPositions[id] == Vector3.zero)
-                {
-                    CameraPositions[id] = Camera.main.transform.position;
-                    CameraRotations[id] = Camera.main.transform.rotation;
-                }
-                Camera.main.transform.position = CameraPositions[id];
-                Camera.main.transform.rotation = CameraRotations[id];
-            }
-            if (FlatUI.Button(IndexToRect(12, 3, 1), "Camera 5", CameraPositions[4] == Vector3.zero ? FlatUI.insideColorTex : QuickMenu.PTButtonColor))
-            {
-                int id = 4;
-                if (CameraPositions[id] == Vector3.zero)
-                {
-                    CameraPositions[id] = Camera.main.transform.position;
-                    CameraRotations[id] = Camera.main.transform.rotation;
-                }
-                Camera.main.transform.position = CameraPositions[id];
-                Camera.main.transform.rotation = CameraRotations[id];
-            }
-            if (FlatUI.Button(IndexToRect(12, 3, 2), "Camera 6", CameraPositions[5] == Vector3.zero ? FlatUI.insideColorTex : QuickMenu.PTButtonColor))
-            {
-                int id = 5;
-                if (CameraPositions[id] == Vector3.zero)
-                {
-                    CameraPositions[id] = Camera.main.transform.position;
-                    CameraRotations[id] = Camera.main.transform.rotation;
-                }
-                Camera.main.transform.position = CameraPositions[id];
-                Camera.main.transform.rotation = CameraRotations[id];
-            }
-            if (FlatUI.Button(IndexToRect(13, 3, 0), "Camera 7", CameraPositions[6] == Vector3.zero ? FlatUI.insideColorTex : QuickMenu.PTButtonColor))
-            {
-                int id = 6;
-                if (CameraPositions[id] == Vector3.zero)
-                {
-                    CameraPositions[id] = Camera.main.transform.position;
-                    CameraRotations[id] = Camera.main.transform.rotation;
-                }
-                Camera.main.transform.position = CameraPositions[id];
-                Camera.main.transform.rotation = CameraRotations[id];
-            }
-            if (FlatUI.Button(IndexToRect(13, 3, 1), "Camera 8", CameraPositions[7] == Vector3.zero ? FlatUI.insideColorTex : QuickMenu.PTButtonColor))
-            {
-                int id = 7;
-                if (CameraPositions[id] == Vector3.zero)
-                {
-                    CameraPositions[id] = Camera.main.transform.position;
-                    CameraRotations[id] = Camera.main.transform.rotation;
-                }
-                Camera.main.transform.position = CameraPositions[id];
-                Camera.main.transform.rotation = CameraRotations[id];
-            }
-            if (FlatUI.Button(IndexToRect(13, 3, 2), "Camera 9", CameraPositions[8] == Vector3.zero ? FlatUI.insideColorTex : QuickMenu.PTButtonColor))
-            {
-                int id = 8;
-                if (CameraPositions[id] == Vector3.zero)
-                {
-                    CameraPositions[id] = Camera.main.transform.position;
-                    CameraRotations[id] = Camera.main.transform.rotation;
-                }
-                Camera.main.transform.position = CameraPositions[id];
-                Camera.main.transform.rotation = CameraRotations[id];
-            }
-            if (FlatUI.Button(IndexToRect(14, 2, 0), "Reset Cameras"))
-            {
-                CameraPositions = new Vector3[10];
+                PTDataMachine.FinishRecordingHitbox();
             }
             resetPositionsOnAttack = FlatUI.Check(IndexToRect(14, 2, 1), resetPositionsOnAttack, "Reset Position");
             if (FlatUI.Button(IndexToRect(15, 2, 0), "Save Data"))

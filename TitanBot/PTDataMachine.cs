@@ -201,13 +201,8 @@ namespace TitanBot
                         readHitBoxData.Add(new HitData.HitboxRectangle(new Vector3(x, y, z), time, titanLevel, new Vector3(sizex, sizey, sizez), new Quaternion(rotw, rotx, roty, rotz)));
                     }
                 }
-
-
-
-
                 HitData.MovesetData movesetData = new HitData.MovesetData(action, titanLevel);
                 movesetData.hitboxes = readHitBoxData.ToArray();
-
                 HitData.AddData(movesetData);
             }
             CGTools.log("Loaded Hitbox Data.");
@@ -228,7 +223,6 @@ namespace TitanBot
             currentlyRecordingHitboxData.hitboxes = hitBoxes.ToArray();
             isRecording = false;
             HitData.AddData(currentlyRecordingHitboxData);
-
         }
 
         public static void CreateVisualizationSphere(Vector3 pos, float radius)

@@ -25,7 +25,7 @@ namespace TitanBot
         public static List<PTAction> TempActionsList = new List<PTAction>();
         public static int dataPruningLevel = 2;
         public static string TitanName = "PTBot";
-        public static float titanSpeed = 30f;
+        public static float titanSpeed = 60f;
 
         public static int[] AIWeightTable = new int[]
         {
@@ -92,8 +92,14 @@ namespace TitanBot
 
             //every half second there is a 10% chance that we walk for that period
             //unless a function overrides the walk input
+            //we will also check and set the titans speed on this timer, because it is set like 30 different times when it is spawned
+            //and the final speed is set in an rpc which makes it hard to set consistantly
             if (CGTools.timer(ref SpeedTimer, 0.5f))
             {
+                if (MyTitan.speed != titanSpeed)
+                {
+                    MyTitan.speed = titanSpeed;
+                }
                 if (CGTools.Chance(AIWalkChance))
                 {
                     isWALKDown = true;

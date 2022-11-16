@@ -43,13 +43,14 @@ namespace TitanBot.Windows
         {
             if (ControlWindow.showWindow)
             {
+                ControlWindow.OnGUI();
                 if (ControlWindow.ContentVisible())
                 {
                     if (CGTools.timer(ref checkForChangesTimer, 0.5f))
                     {
                         CheckForChanges();
                     }
-                    ControlWindow.OnGUI();
+                    
                     Rect ScrollArea = new Rect(ControlWindow.ContentRect.x, ControlWindow.ContentRect.y, ControlWindow.ContentRect.width, ControlWindow.ContentRect.height - 50f);
                     Rect BottomArea = new Rect(ControlWindow.ContentRect.x, ControlWindow.ContentRect.y + ControlWindow.ContentRect.height - 32f, ControlWindow.ContentRect.width, 30f);
                     Rect WarningArea = new Rect(ControlWindow.ContentRect.x + 2f, ControlWindow.ContentRect.y + ControlWindow.ContentRect.height - 80f, ControlWindow.ContentRect.width - 4f, 50f);

@@ -12,11 +12,13 @@ namespace TitanBot.FlatUI5
         public static readonly Color defaultButtonColor = new Color(0.4f, 0.4f, 0.4f);
         public static readonly Color defaultTextFieldColor = new Color(0.8f, 0.8f, 0.8f);
         public static readonly Color defaultTextFieldOutlineColor = new Color(0.2f, 0.2f, 0.2f);
+        public static readonly Color ChangedValueOutlineColor = new Color(1f, 0.5f, 0f);
         public static Texture2D outsideColorTex;
         public static Texture2D insideColorTex;
         public static Texture2D defaultButtonTex;
         public static Texture2D defaultTextFieldTex;
         public static Texture2D defaultTextFieldOutlineTex;
+        public static Texture2D ChangedValueOutlineTex;
         public static int defaultOutlineThickness = 2;
 
 
@@ -119,6 +121,26 @@ namespace TitanBot.FlatUI5
             }
         }
 
+        public static void SwitchBox(Rect Rect, bool invert, Texture2D insideTex, Texture2D staticOutsideTex)
+        {
+            int outlineModifier = 0;
+            if (IsMouseInRect(Rect))
+            {
+                outlineModifier = 1;
+            }
+            Rect insideRect = new Rect(Rect.x + defaultOutlineThickness + outlineModifier, Rect.y + defaultOutlineThickness + outlineModifier, Rect.width - (defaultOutlineThickness + outlineModifier) * 2, Rect.height - (defaultOutlineThickness + outlineModifier) * 2);
+            if (invert)
+            {
+                GUI.DrawTexture(Rect, staticOutsideTex);
+                GUI.DrawTexture(insideRect, outsideColorTex);
+            }
+            else
+            {
+                GUI.DrawTexture(Rect, staticOutsideTex);
+                GUI.DrawTexture(insideRect, insideTex);
+            }
+        }
+
         /// <summary>
         /// Styled button, inverts colors when clicked
         /// </summary>
@@ -143,6 +165,19 @@ namespace TitanBot.FlatUI5
             {
                 SwitchBox(Rect, IsMouseInRect(Rect) && Input.GetKey(KeyCode.Mouse0), insideTex);
                 return GUI.Button(Rect, label, BlackTextButtonStyle);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static bool Button(Rect Rect, string label, Texture2D insideTex, Texture2D outsideTex, bool draw = true)
+        {
+            if (draw)
+            {
+                SwitchBox(Rect, IsMouseInRect(Rect) && Input.GetKey(KeyCode.Mouse0), insideTex, outsideTex);
+                return GUI.Button(Rect, label, ButtonStyle);
             }
             else
             {
@@ -389,8 +424,10 @@ namespace TitanBot.FlatUI5
             defaultTextFieldOutlineTex = new Texture2D(1, 1, TextureFormat.ARGB32, false);
             defaultTextFieldOutlineTex.SetPixel(0, 0, defaultTextFieldOutlineColor);
             defaultTextFieldOutlineTex.Apply();
-        }
-
+            ChangedValueOutlineTex = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+            ChangedValueOutlineTex.SetPixel(0, 0, ChangedValueOutlineColor);
+            ChangedValueOutlineTex.Apply();
+        }                         
         private static GUIStyle ButtonStyle = new GUIStyle
         {
             border = new RectOffset(1, 1, 1, 1),

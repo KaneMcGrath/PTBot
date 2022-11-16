@@ -95,6 +95,7 @@ namespace TitanBot
             if (tabIndex == 2) TabConfig();
             //if (tabIndex == 3) TabMain();
             MovesetControlWindow.OnGUI();
+            ToolTipWindow.OnGUI();
             GUI.DrawTexture(new Rect(Input.mousePosition.x - (mouseScale / 2f), Screen.height - Input.mousePosition.y - (mouseScale / 2f), mouseScale, mouseScale), CGTools.mouseTex);
             if (CGTools.timer(ref changeTrackerTimer, 0.5f))
             {
@@ -193,21 +194,21 @@ namespace TitanBot
             {
                 PTTools.difficulty = Difficulty.VeryEasy;
             }
-
             Label(IndexToRect(9), "Titan Options");
             if (FlatUI.Button(IndexToRect(10), "Edit Moves"))
             {
                 MovesetControlWindow.ControlWindow.showWindow = true;
             }
-            FlatUI.Label(IndexToRect(12, 4, 0, 2), "Titan Speed");
-            speedTextBox = FlatUI.TextField(IndexToRect(12, 4, 2), speedTextBox);
-            if (FlatUI.Button(IndexToRect(12,4,3), "Apply", FlatUI.defaultButtonTex, isChanged[3] ? FlatUI.ChangedValueOutlineTex : FlatUI.outsideColorTex, true))
+            FlatUI.Label(IndexToRect(12, 8, 0, 3), "Titan Speed");
+            speedTextBox = FlatUI.TextField(IndexToRect(12, 8, 3, 2), speedTextBox);
+            if (FlatUI.Button(IndexToRect(12,8,5,2), "Apply", FlatUI.defaultButtonTex, isChanged[3] ? FlatUI.ChangedValueOutlineTex : FlatUI.outsideColorTex, true))
             {
                 if (float.TryParse(speedTextBox, out float h))
                 {
                     PlayerTitanBot.titanSpeed = h;
                 }
             }
+            FlatUI.TooltipButton(IndexToRect(12, 8, 7), "Titan Speed", "How fast the titan will move.  This can also mess up jumps and cause some minor problems with predictions.  \nDefault = 60", 3);
 
             //if (FlatUI.Button(IndexToRect(17), "Apply"))
             //{

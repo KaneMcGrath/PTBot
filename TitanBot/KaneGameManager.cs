@@ -48,6 +48,7 @@ namespace TitanBot
             PTDataMachine.LoadHitboxData();
             MovesetControl.Init();
             MovesetControlWindow.Init();
+            ToolTipWindow.Init();
             LoadConfig();
             CGTools.log(GameVersionString);
         }

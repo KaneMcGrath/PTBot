@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Reflection.Emit;
+using TitanBot.Windows;
+using UnityEngine;
 
 namespace TitanBot.FlatUI5
 {
@@ -182,6 +184,18 @@ namespace TitanBot.FlatUI5
             else
             {
                 return false;
+            }
+        }
+
+        public static void TooltipButton(Rect rect, string title, string content, int tabColor, bool draw = true)
+        {
+            if (draw)
+            {
+                SwitchBox(new Rect(rect.x + rect.width - 28f, rect.y + 2f, 26f, rect.height - 4f), IsMouseInRect(rect) && Input.GetKey(KeyCode.Mouse0), insideColorTex, outsideColorTex);
+                if (GUI.Button(new Rect(rect.x + rect.width - 28f, rect.y + 2f, 26f, rect.height - 4f), "?", ButtonStyle))
+                {
+                    ToolTipWindow.Tooltip(title, content, tabColor);
+                }
             }
         }
 

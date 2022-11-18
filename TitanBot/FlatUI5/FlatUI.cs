@@ -191,7 +191,7 @@ namespace TitanBot.FlatUI5
         {
             if (draw)
             {
-                SwitchBox(new Rect(rect.x + rect.width - 28f, rect.y + 2f, 26f, rect.height - 4f), IsMouseInRect(rect) && Input.GetKey(KeyCode.Mouse0), insideColorTex, outsideColorTex);
+                SwitchBox(new Rect(rect.x + rect.width - 26f, rect.y + 4f, 26f, rect.height - 8f), IsMouseInRect(rect) && Input.GetKey(KeyCode.Mouse0), insideColorTex, outsideColorTex);
                 if (GUI.Button(new Rect(rect.x + rect.width - 28f, rect.y + 2f, 26f, rect.height - 4f), "?", ButtonStyle))
                 {
                     ToolTipWindow.Tooltip(title, content, tabColor);

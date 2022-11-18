@@ -25,7 +25,7 @@ namespace TitanBot.Windows
 
         public static void Init()
         {
-            MyWindow = new Window(new Rect(QuickMenu.menuX - 400f, QuickMenu.menuY, 400f, 500f), "Tooltip", QuickMenu.tabColors[0]);
+            MyWindow = new Window(new Rect(QuickMenu.menuX - 800f, QuickMenu.menuY, 400f, 500f), "Tooltip", QuickMenu.tabColors[0]);
         }
 
         public static void OnGUI()
@@ -51,7 +51,6 @@ namespace TitanBot.Windows
             fontStyle = FontStyle.Normal,
             normal = { textColor = Color.white },
             wordWrap = true
-            
         };
     }
 }

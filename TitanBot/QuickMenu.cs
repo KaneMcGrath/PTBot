@@ -27,6 +27,7 @@ namespace TitanBot
         };
         public static bool showHitboxs = false;
         public static bool doAttacks = true;
+        
 
         private static float checkDataLevel = 0f;
         private static bool resetPositionsOnAttack = false;
@@ -93,7 +94,7 @@ namespace TitanBot
             if (tabIndex == 0) tabPTBotSettings();
             if (tabIndex == 1) moreSettings();
             if (tabIndex == 2) TabConfig();
-            //if (tabIndex == 3) TabMain();
+            if (tabIndex == 3) TabMain();
             MovesetControlWindow.OnGUI();
             ToolTipWindow.OnGUI();
             GUI.DrawTexture(new Rect(Input.mousePosition.x - (mouseScale / 2f), Screen.height - Input.mousePosition.y - (mouseScale / 2f), mouseScale, mouseScale), CGTools.mouseTex);
@@ -120,13 +121,15 @@ namespace TitanBot
 
         private static void moreSettings()
         {
-            KaneGameManager.sendJoinMessage = FlatUI.Check(IndexToRect(1), KaneGameManager.sendJoinMessage, "Send Join Message");
+            KaneGameManager.sendJoinMessage = FlatUI.Check(IndexToRect(1, 8, 0, 7), KaneGameManager.sendJoinMessage, "Send Join Message");
+            FlatUI.TooltipButton(IndexToRect(1, 8, 7), "Send Join Message", "When a player joins your room they are sent a message with a link to the mod and what your current ping is. This setting enables or disables sending that message.", 6);
 
             Label(IndexToRect(2), "Endless Spawning");
-            KaneGameManager.doInfiniteTitans = FlatUI.Check(IndexToRect(3), KaneGameManager.doInfiniteTitans, "Enable Endless Spawning");
-            GUI.Label(IndexToRect(4, 3, 0), "Count");
-            infiniteTitanTextBox = FlatUI.TextField(IndexToRect(4, 3, 1), infiniteTitanTextBox);
-            if (FlatUI.Button(IndexToRect(4, 3, 2), "Apply", FlatUI.defaultButtonTex, isChanged[0] ? FlatUI.ChangedValueOutlineTex : FlatUI.outsideColorTex, true))
+            FlatUI.TooltipButton(IndexToRect(3, 8, 7), "Endless Spawning", "This will spawn a certain amount of PTBots. when one dies another will immediatly spawn. Titans will only respawn when the number of total titans including other types is below the count.", 7);
+            KaneGameManager.doInfiniteTitans = FlatUI.Check(IndexToRect(3, 8, 0, 7), KaneGameManager.doInfiniteTitans, "Enable Endless Spawning");
+            GUI.Label(IndexToRect(4, 8, 1, 3), "Count");
+            infiniteTitanTextBox = FlatUI.TextField(IndexToRect(4, 8, 3, 2), infiniteTitanTextBox);
+            if (FlatUI.Button(IndexToRect(4, 8, 5, 2), "Apply", FlatUI.defaultButtonTex, isChanged[0] ? FlatUI.ChangedValueOutlineTex : FlatUI.outsideColorTex, true))
             {
                 if (int.TryParse(infiniteTitanTextBox, out int i))
                 {
@@ -139,8 +142,10 @@ namespace TitanBot
                 }
                 CheckForChanges();
             }
-            PlayerTitanBot.ReplaceSpawnedTitans = FlatUI.Check(IndexToRect(6), PlayerTitanBot.ReplaceSpawnedTitans, "Replace Normal Titans");
-            KaneGameManager.doSpawnTeleporting = FlatUI.Check(IndexToRect(7), KaneGameManager.doSpawnTeleporting, "Teleport Titans Away from spawn");
+            PlayerTitanBot.ReplaceSpawnedTitans = FlatUI.Check(IndexToRect(6, 8, 0, 7), PlayerTitanBot.ReplaceSpawnedTitans, "Replace Normal Titans");
+            FlatUI.TooltipButton(IndexToRect(6, 8, 7), "Replace Normal Titans", "This will replace any titan spawned by your game with a PTBot. You can use this for wave modes or on custom maps.", 8);
+            KaneGameManager.doSpawnTeleporting = FlatUI.Check(IndexToRect(7, 8, 0, 7), KaneGameManager.doSpawnTeleporting, "Teleport Titans from spawn");
+            FlatUI.TooltipButton(IndexToRect(7, 8, 7), "Teleport Titans Away From Spawn", "This only works on The Forest and The City. When a titan gets too close to the spawn position, it is teleported to a random position on the map. This will also teleport Player Titans.", 9);
 
             Label(IndexToRect(8), "Debug");
             PlayerTitanBot.debugRaycasts = FlatUI.Check(IndexToRect(9), PlayerTitanBot.debugRaycasts, "Debug Raycasts");
@@ -169,46 +174,52 @@ namespace TitanBot
                 PlayerTitanBot.TitanName = titanNameTextBox;
                 CheckForChanges();
             }
-            Label(IndexToRect(2), "Difficulty");
-            if (FlatUI.Button(IndexToRect(3), "Very Very Hard", (PTTools.difficulty == Difficulty.VeryVeryHard) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
+            Label(IndexToRect(3), "Difficulty");
+            FlatUI.TooltipButton(IndexToRect(3, 12, 11), "Difficulty", "This only affects how accurate the PTBot predictions are. At lower difficulties It will miss alot of moves or throw them out too early or to late. You can see this effect with the Debug Predictions setting.", 6);
+            if (FlatUI.Button(IndexToRect(4), "Very Very Hard", (PTTools.difficulty == Difficulty.VeryVeryHard) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
             {
                 PTTools.difficulty = Difficulty.VeryVeryHard;
             }
-            if (FlatUI.Button(IndexToRect(4), "Very Hard", (PTTools.difficulty == Difficulty.VeryHard) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
+            if (FlatUI.Button(IndexToRect(5), "Very Hard", (PTTools.difficulty == Difficulty.VeryHard) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
             {
                 PTTools.difficulty = Difficulty.VeryHard;
             }
-            if (FlatUI.Button(IndexToRect(5), "Hard", (PTTools.difficulty == Difficulty.Hard) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
+            if (FlatUI.Button(IndexToRect(6), "Hard", (PTTools.difficulty == Difficulty.Hard) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
             {
                 PTTools.difficulty = Difficulty.Hard;
             }
-            if (FlatUI.Button(IndexToRect(6), "Medium", (PTTools.difficulty == Difficulty.Medium) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
+            if (FlatUI.Button(IndexToRect(7), "Medium", (PTTools.difficulty == Difficulty.Medium) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
             {
                 PTTools.difficulty = Difficulty.Medium;
             }
-            if (FlatUI.Button(IndexToRect(7), "Easy", (PTTools.difficulty == Difficulty.Easy) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
+            if (FlatUI.Button(IndexToRect(8), "Easy", (PTTools.difficulty == Difficulty.Easy) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
             {
                 PTTools.difficulty = Difficulty.Easy;
             }
-            if (FlatUI.Button(IndexToRect(8), "Very Easy", (PTTools.difficulty == Difficulty.VeryEasy) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
+            if (FlatUI.Button(IndexToRect(9), "Very Easy", (PTTools.difficulty == Difficulty.VeryEasy) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
             {
                 PTTools.difficulty = Difficulty.VeryEasy;
             }
-            Label(IndexToRect(9), "Titan Options");
-            if (FlatUI.Button(IndexToRect(10), "Edit Moves"))
+            Label(IndexToRect(11), "Titan Options");
+            if (FlatUI.Button(IndexToRect(12, 8, 0, 7), "Edit Moves"))
             {
                 MovesetControlWindow.ControlWindow.showWindow = true;
             }
-            FlatUI.Label(IndexToRect(12, 8, 0, 3), "Titan Speed");
-            speedTextBox = FlatUI.TextField(IndexToRect(12, 8, 3, 2), speedTextBox);
-            if (FlatUI.Button(IndexToRect(12,8,5,2), "Apply", FlatUI.defaultButtonTex, isChanged[3] ? FlatUI.ChangedValueOutlineTex : FlatUI.outsideColorTex, true))
+            FlatUI.TooltipButton(IndexToRect(12, 8, 7), "Titan Moves", "This window will allow you to edit each of the moves availible to PTBot.  You can enable or disable each move and set the start time in seconds.  The start time of a move will skip forward in the animation to make moves come out quicker.  \n\nWarning! \nsetting StartAt too high on certain moves can cause spaming explosions which will disconnect you from the game.  These are moves like slam or slap face most of these moves are around 2 seconds in length and you should be safe setting it around 1 second \n\nTry out moves in offline mode first if you are unsure", 9);
+
+            FlatUI.Label(IndexToRect(14, 8, 0, 3), "Titan Speed");
+            speedTextBox = FlatUI.TextField(IndexToRect(14, 8, 3, 2), speedTextBox);
+            if (FlatUI.Button(IndexToRect(14,8,5,2), "Apply", FlatUI.defaultButtonTex, isChanged[3] ? FlatUI.ChangedValueOutlineTex : FlatUI.outsideColorTex, true))
             {
                 if (float.TryParse(speedTextBox, out float h))
                 {
                     PlayerTitanBot.titanSpeed = h;
                 }
             }
-            FlatUI.TooltipButton(IndexToRect(12, 8, 7), "Titan Speed", "How fast the titan will move.  This can also mess up jumps and cause some minor problems with predictions.  \nDefault = 60", 3);
+            FlatUI.TooltipButton(IndexToRect(14, 8, 7), "Titan Speed", "How fast the titan will move.  This can also mess up jumps and cause some minor problems with predictions.  But its mostly harmless" +
+                "\nDefault = 60", 3);
+
+
 
             //if (FlatUI.Button(IndexToRect(17), "Apply"))
             //{
@@ -227,10 +238,10 @@ namespace TitanBot
             //    }
             //    CGTools.log("Moveset Updated for All Titans!");
             //}
-            Label(IndexToRect(18), "Pruning");
-            GUI.Label(IndexToRect(19, 4, 0, 2), "Pruning Level");
-            prunningSettingTextbox = FlatUI.TextField(IndexToRect(19, 4, 2), prunningSettingTextbox);
-            if (FlatUI.Button(IndexToRect(19, 4, 3), "Apply", FlatUI.defaultButtonTex, isChanged[2] ? FlatUI.ChangedValueOutlineTex : FlatUI.outsideColorTex, true))
+            Label(IndexToRect(16), "Pruning");
+            GUI.Label(IndexToRect(17, 8, 0, 3), "Pruning Level");
+            prunningSettingTextbox = FlatUI.TextField(IndexToRect(17, 8, 3, 2), prunningSettingTextbox);
+            if (FlatUI.Button(IndexToRect(17, 8, 5, 2), "Apply", FlatUI.defaultButtonTex, isChanged[2] ? FlatUI.ChangedValueOutlineTex : FlatUI.outsideColorTex, true))
             {
                 if (int.TryParse(prunningSettingTextbox, out int p))
                 {
@@ -254,7 +265,9 @@ namespace TitanBot
                 }
                 CheckForChanges();
             }
-            GUI.Label(IndexToRectMultiLine(20, 3), "*only keep 1 of every n number of hitboxes so the rest dont have to be calculated.  Most of them overlap so it is reccomended on large player or titan counts");
+            FlatUI.TooltipButton(IndexToRect(17, 8, 7), "Pruning Level", "This Setting is to help with performance, every players movement is predicted for each sampled hitbox. These hitboxes were sampled at a high framerate and overlap eachother. Pruning removes a number of hitboxes from the sampled data so they dont have to be calculated. A pruning level of 2 will keep 1 out of every 2 hitboxes, A pruning level of 3 will keep 1 out of every 3 hitboxes and so on.  I wouldn't recommend any higher than 4" +
+                "\nDefault = 2", 7);
+            GUI.Label(IndexToRectMultiLine(18, 3), "*only keep 1 of every n number of hitboxes so the rest dont have to be calculated.  Most of them overlap so it is reccomended on large player or titan counts");
         }
 
 

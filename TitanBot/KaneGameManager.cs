@@ -29,6 +29,8 @@ namespace TitanBot
         public static bool doInfiniteTitans = false;
         public static bool sendJoinMessage = true;
 
+        public static bool isDevMode = false;
+
         private static GUIStyle TagStyle = new GUIStyle
         {
             border = new RectOffset(1, 1, 1, 1),
@@ -50,6 +52,16 @@ namespace TitanBot
             MovesetControlWindow.Init();
             ToolTipWindow.Init();
             LoadConfig();
+            if (isDevMode)
+            {
+                QuickMenu.tabNames = new string[]
+                {
+                    "PTBot Settings",
+                    "Game Settings",
+                    "Config",
+                    "Controller"
+                };
+            }
             CGTools.log(GameVersionString);
         }
 
@@ -217,6 +229,10 @@ namespace TitanBot
                         }
                     }
                 }
+                if (config.ContainsKey("Dev"))
+                {
+                    isDevMode = true;
+                }
                 MovesetControlWindow.UpdateWindowData();
                 CGTools.log("Loaded config from " + Path + "\"Config.txt\"");
             }
@@ -257,6 +273,7 @@ namespace TitanBot
                     moveTiming += ',';
             }
             config.Add("Timing", moveTiming);
+            config.Add("Speed", PlayerTitanBot.titanSpeed.ToString());
             List<string> lines = new List<string>();
             foreach (string key in config.Keys)
             {

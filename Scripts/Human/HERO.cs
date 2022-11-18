@@ -10,6 +10,7 @@ using ApplicationManagers;
 using Constants;
 using Weather;
 using GameProgress;
+using TitanBot;
 
 public class HERO : Photon.MonoBehaviour
 {
@@ -4554,7 +4555,7 @@ public class HERO : Photon.MonoBehaviour
                                 this.changeBlade();
                                 return;
                             }
-                            if ((!this.isMounted && (SettingsManager.InputSettings.Human.AttackDefault.GetKeyDown() || SettingsManager.InputSettings.Human.AttackSpecial.GetKeyDown())) && !this.useGun)
+                            if ((!this.isMounted && (SettingsManager.InputSettings.Human.AttackDefault.GetKeyDown() || SettingsManager.InputSettings.Human.AttackSpecial.GetKeyDown())) && !this.useGun && !KaneGameManager.toggleQuickMenu)
                             {
                                 bool flag3 = false;
                                 if (SettingsManager.InputSettings.Human.AttackSpecial.GetKeyDown())

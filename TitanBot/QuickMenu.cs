@@ -608,6 +608,10 @@ namespace TitanBot
                 {
                     PTDataMachine.DeleteVisualizationSpheres();
                 }
+                if (PTDataMachine.RecordData)
+                {
+                    PTDataMachine.StartRecordingHitbox(PTAction.chopl);
+                }
             }
             if (FlatUI.Button(IndexToRect(5, 8, 6, 2), "chopr"))
             {
@@ -620,6 +624,10 @@ namespace TitanBot
                 if (clearHitboxesOnAttack)
                 {
                     PTDataMachine.DeleteVisualizationSpheres();
+                }
+                if (PTDataMachine.RecordData)
+                {
+                    PTDataMachine.StartRecordingHitbox(PTAction.chopr);
                 }
             }
             if (FlatUI.Button(IndexToRect(6, 8, 4, 2), "grabnapel", PTButtonColor))

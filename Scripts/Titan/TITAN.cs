@@ -257,6 +257,14 @@ public class TITAN : Photon.MonoBehaviour
         {
             CustomAttack(PTAction.crawler_jump_0);
         }
+        if (playerTitanBot.is_grab_head_front_l)
+        {
+            CustomAttack(PTAction.grab_head_front_l);
+        }
+        if (playerTitanBot.is_grab_head_front_r)
+        {
+            CustomAttack(PTAction.grab_head_front_r);
+        }
     }
 
     //Custom grab function that gets attack data from the movesetControlDatabase

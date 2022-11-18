@@ -566,6 +566,13 @@ namespace TitanBot
             foreach (PTAction action in pTActions)
             {
                 HitData.MovesetData closestData = HitData.GetClosestData(action, titanLevel);
+
+                if (closestData == null)
+                {
+                    CGTools.log("There is no hitbox data for action: " + action.ToString());
+                    continue;
+                }
+
                 if (closestData.titanLevel == titanLevel)
                 {
                     HitData.MovesetData copy = closestData.Copy();

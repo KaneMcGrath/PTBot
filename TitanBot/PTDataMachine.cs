@@ -101,11 +101,12 @@ namespace TitanBot
                 catch (Exception e)
                 {
                     CGTools.log("Failed to parse file \\\"\" + file + \"\\\" > PTAction");
+                    continue;
                 }
                 if (!float.TryParse(preDataSplit[1], out titanLevel))
                 {
                     CGTools.log("Failed to parse file \"" + file + "\" > titanLevel");
-                    return;
+                    continue;
                 }
 
                 //ex. (Hsphere{13},0.4196033[22.95233,67.94828,31.8136])
@@ -124,22 +125,22 @@ namespace TitanBot
                     if (!float.TryParse(vector3Floats[0], out float x))
                     {
                         CGTools.log("Failed to parse file \"" + file + "\" > Vector3 x");
-                        return;
+                        continue;
                     }
                     if (!float.TryParse(vector3Floats[1], out float y))
                     {
                         CGTools.log("Failed to parse file \"" + file + "\" > Vector3 y");
-                        return;
+                        continue;
                     }
                     if (!float.TryParse(vector3Floats[2], out float z))
                     {
                         CGTools.log("Failed to parse file \"" + file + "\" > Vector3 z");
-                        return;
+                        continue;
                     }
                     if (!float.TryParse(typeAndTimeData[1], out float time))
                     {
                         CGTools.log("Failed to parse file \"" + file + "\" > time");
-                        return;
+                        continue;
                     }
 
 
@@ -150,7 +151,7 @@ namespace TitanBot
                         if (!float.TryParse(radius, out float rad))
                         {
                             CGTools.log("Failed to parse file \"" + file + "\" > radius");
-                            return;
+                            continue;
                         }
                         readHitBoxData.Add(new HitData.HitboxSphere(new Vector3(x, y, z), time, titanLevel, rad));
                     }
@@ -161,42 +162,42 @@ namespace TitanBot
                         if (rectData.Length != 7)
                         {
                             CGTools.log("Failed to parse file \"" + file + "\" > rectData needs 7 arguments");
-                            return;
+                            continue;
                         }
                         if (!float.TryParse(rectData[0], out float sizex))
                         {
                             CGTools.log("Failed to parse file \"" + file + "\" > sizex");
-                            return;
+                            continue;
                         }
                         if (!float.TryParse(rectData[1], out float sizey))
                         {
                             CGTools.log("Failed to parse file \"" + file + "\" > sizey");
-                            return;
+                            continue;
                         }
                         if (!float.TryParse(rectData[2], out float sizez))
                         {
                             CGTools.log("Failed to parse file \"" + file + "\" > sizez");
-                            return;
+                            continue;
                         }
                         if (!float.TryParse(rectData[3], out float rotw))
                         {
                             CGTools.log("Failed to parse file \"" + file + "\" > rotw");
-                            return;
+                            continue;
                         }
                         if (!float.TryParse(rectData[4], out float rotx))
                         {
                             CGTools.log("Failed to parse file \"" + file + "\" > rotx");
-                            return;
+                            continue;
                         }
                         if (!float.TryParse(rectData[5], out float roty))
                         {
                             CGTools.log("Failed to parse file \"" + file + "\" > roty");
-                            return;
+                            continue;
                         }
                         if (!float.TryParse(rectData[6], out float rotz))
                         {
                             CGTools.log("Failed to parse file \"" + file + "\" > rotz");
-                            return;
+                            continue;
                         }
                         readHitBoxData.Add(new HitData.HitboxRectangle(new Vector3(x, y, z), time, titanLevel, new Vector3(sizex, sizey, sizez), new Quaternion(rotw, rotx, roty, rotz)));
                     }

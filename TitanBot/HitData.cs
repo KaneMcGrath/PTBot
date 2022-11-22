@@ -286,7 +286,7 @@ namespace TitanBot
             {
                 Vector3 tp = CGTools.TransformPointUnscaled(owner, pos);
                 if (debugMovementChecking) CGTools.pointsToTrack.Add(tp);
-                if (Vector3.Distance(target, tp) < radius)
+                if (Vector3.Distance(target, tp) < radius - level)
                 {
                     if (debugMovementChecking) CGTools.redPointsToTrack.Add(target);
                     return true;

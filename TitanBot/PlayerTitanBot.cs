@@ -25,6 +25,7 @@ namespace TitanBot
         public static List<PTAction> TempActionsList = new List<PTAction>();
         public static int dataPruningLevel = 2;
         public static string TitanName = "PTBot";
+        public static bool useCustomSpeed = false;
         public static float titanSpeed = 60f;
 
         public static int[] AIWeightTable = new int[]
@@ -55,6 +56,7 @@ namespace TitanBot
         private float SpeedTimer = 0f;
         private Vector3 lastFarthestPoint = Vector3.zero;
         private Vector3 cityGate = new Vector3(0f, 0f, 900f);
+        private float myOriginalSpeed = 0f;
 
 
         public bool is_combo_2 = false;
@@ -96,9 +98,20 @@ namespace TitanBot
             //and the final speed is set in an rpc which makes it hard to set consistantly
             if (CGTools.timer(ref SpeedTimer, 0.5f))
             {
-                if (MyTitan.speed != titanSpeed)
+                if (useCustomSpeed)
                 {
-                    MyTitan.speed = titanSpeed;
+                    if (MyTitan.speed != titanSpeed)
+                    {
+                        myOriginalSpeed = MyTitan.speed;
+                        MyTitan.speed = titanSpeed;
+                    }
+                }
+                else
+                {
+                    if (myOriginalSpeed != 0f && MyTitan.speed != myOriginalSpeed)
+                    {
+                        MyTitan.speed = myOriginalSpeed;
+                    }
                 }
                 if (CGTools.Chance(AIWalkChance))
                 {

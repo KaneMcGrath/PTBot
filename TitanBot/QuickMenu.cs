@@ -207,41 +207,24 @@ namespace TitanBot
             }
             FlatUI.TooltipButton(IndexToRect(12, 8, 7), "Titan Moves", "This window will allow you to edit each of the moves availible to PTBot.  You can enable or disable each move and set the start time in seconds.  The start time of a move will skip forward in the animation to make moves come out quicker.  \n\nWarning! \nsetting StartAt too high on certain moves can cause spaming explosions which will disconnect you from the game.  These are moves like slam or slap face most of these moves are around 2 seconds in length and you should be safe setting it around 1 second \n\nTry out moves in offline mode first if you are unsure", 9);
 
-            FlatUI.Label(IndexToRect(14, 8, 0, 3), "Titan Speed");
-            speedTextBox = FlatUI.TextField(IndexToRect(14, 8, 3, 2), speedTextBox);
-            if (FlatUI.Button(IndexToRect(14,8,5,2), "Apply", FlatUI.defaultButtonTex, isChanged[3] ? FlatUI.ChangedValueOutlineTex : FlatUI.outsideColorTex, true))
-            {
-                if (float.TryParse(speedTextBox, out float h))
-                {
-                    PlayerTitanBot.titanSpeed = h;
-                }
-            }
+            PlayerTitanBot.useCustomSpeed = FlatUI.Check(IndexToRect(14, 8, 0, 7), PlayerTitanBot.useCustomSpeed, "Use Custom Speed");
             FlatUI.TooltipButton(IndexToRect(14, 8, 7), "Titan Speed", "How fast the titan will move.  This can also mess up jumps and cause some minor problems with predictions.  But its mostly harmless" +
                 "\nDefault = 60", 3);
-
-
-
-            //if (FlatUI.Button(IndexToRect(17), "Apply"))
-            //{
-            //    PlayerTitanBot.pTActions = PlayerTitanBot.TempActionsList.ToArray();
-            //    if (FengGameManagerMKII.instance.gameStart)
-            //    {
-            //        foreach (GameObject t in GameObject.FindGameObjectsWithTag("titan"))
-            //        {
-            //            TITAN titan = t.GetComponent<TITAN>();
-            //            if (titan.isCustomTitan)
-            //            {
-            //                PlayerTitanBot b = (PlayerTitanBot)titan.controller;
-            //                b.LiveUpdateMovesetData();
-            //            }
-            //        }
-            //    }
-            //    CGTools.log("Moveset Updated for All Titans!");
-            //}
-            Label(IndexToRect(16), "Pruning");
-            GUI.Label(IndexToRect(17, 8, 0, 3), "Pruning Level");
-            prunningSettingTextbox = FlatUI.TextField(IndexToRect(17, 8, 3, 2), prunningSettingTextbox);
-            if (FlatUI.Button(IndexToRect(17, 8, 5, 2), "Apply", FlatUI.defaultButtonTex, isChanged[2] ? FlatUI.ChangedValueOutlineTex : FlatUI.outsideColorTex, true))
+            if (PlayerTitanBot.useCustomSpeed) {
+                FlatUI.Label(IndexToRect(15, 8, 0, 3), "Titan Speed");
+                speedTextBox = FlatUI.TextField(IndexToRect(15, 8, 3, 2), speedTextBox);
+                if (FlatUI.Button(IndexToRect(15, 8, 5, 2), "Apply", FlatUI.defaultButtonTex, isChanged[3] ? FlatUI.ChangedValueOutlineTex : FlatUI.outsideColorTex, true))
+                {
+                    if (float.TryParse(speedTextBox, out float h))
+                    {
+                        PlayerTitanBot.titanSpeed = h;
+                    }
+                }
+            }
+            Label(IndexToRect(17), "Pruning");
+            GUI.Label(IndexToRect(18, 8, 0, 3), "Pruning Level");
+            prunningSettingTextbox = FlatUI.TextField(IndexToRect(18, 8, 3, 2), prunningSettingTextbox);
+            if (FlatUI.Button(IndexToRect(18, 8, 5, 2), "Apply", FlatUI.defaultButtonTex, isChanged[2] ? FlatUI.ChangedValueOutlineTex : FlatUI.outsideColorTex, true))
             {
                 if (int.TryParse(prunningSettingTextbox, out int p))
                 {
@@ -265,9 +248,9 @@ namespace TitanBot
                 }
                 CheckForChanges();
             }
-            FlatUI.TooltipButton(IndexToRect(17, 8, 7), "Pruning Level", "This Setting is to help with performance, every players movement is predicted for each sampled hitbox. These hitboxes were sampled at a high framerate and overlap eachother. Pruning removes a number of hitboxes from the sampled data so they dont have to be calculated. A pruning level of 2 will keep 1 out of every 2 hitboxes, A pruning level of 3 will keep 1 out of every 3 hitboxes and so on.  I wouldn't recommend any higher than 4" +
+            FlatUI.TooltipButton(IndexToRect(18, 8, 7), "Pruning Level", "This Setting is to help with performance, every players movement is predicted for each sampled hitbox. These hitboxes were sampled at a high framerate and overlap eachother. Pruning removes a number of hitboxes from the sampled data so they dont have to be calculated. A pruning level of 2 will keep 1 out of every 2 hitboxes, A pruning level of 3 will keep 1 out of every 3 hitboxes and so on.  I wouldn't recommend any higher than 4" +
                 "\nDefault = 2", 7);
-            GUI.Label(IndexToRectMultiLine(18, 3), "*only keep 1 of every n number of hitboxes so the rest dont have to be calculated.  Most of them overlap so it is reccomended on large player or titan counts");
+            GUI.Label(IndexToRectMultiLine(19, 3), "*only keep 1 of every n number of hitboxes so the rest dont have to be calculated.  Most of them overlap so it is reccomended on large player or titan counts");
         }
 
 

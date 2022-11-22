@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Settings;
+using System;
 using System.Collections.Generic;
 using TitanBot.FlatUI5;
 using TitanBot.Windows;
@@ -1034,7 +1035,20 @@ namespace TitanBot
                 CGTools.log("Do stuff = " + ((PlayerTitanBot)myLastPT.controller).doStuff.ToString());
             }
             PTDataMachine.DrawHitboxes = FlatUI.Check(IndexToRect(20), PTDataMachine.DrawHitboxes, "DrawHitboxes");
-            GUI.Label(IndexToRect(21, 4, 0, 2), "Prune Hitboxes");
+            if ((FlatUI.Button(IndexToRect(21), "Specmode")))
+            {
+                SettingsManager.LegacyGeneralSettings.SpecMode.Value = !SettingsManager.LegacyGeneralSettings.SpecMode.Value;
+                if (SettingsManager.LegacyGeneralSettings.SpecMode.Value)
+                {
+                    FengGameManagerMKII.instance.EnterSpecMode(true);
+                    FengGameManagerMKII.instance.chatRoom.addLINE("<color=#FFCC00>You have entered spectator mode.</color>");
+                }
+                else
+                {
+                    FengGameManagerMKII.instance.EnterSpecMode(false);
+                    FengGameManagerMKII.instance.chatRoom.addLINE("<color=#FFCC00>You have exited spectator mode.</color>");
+                }
+            }
             if (FlatUI.Button(IndexToRect(22), "Show Calculated Data"))
             {
                 PlayerTitanBot pt = (PlayerTitanBot)myLastPT.controller;

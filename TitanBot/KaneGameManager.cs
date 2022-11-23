@@ -471,6 +471,7 @@ namespace TitanBot
             {
                 if (!toggleQuickMenu)
                 {
+                    QuickMenu.QuickMenuWindow.showWindow = true;
                     CGLog.showLogGui = true;
                     toggleQuickMenu = true;
                     if (FengGameManagerMKII.instance.gameStart)

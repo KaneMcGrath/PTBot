@@ -9,6 +9,8 @@ namespace TitanBot
 {
     public static class QuickMenu
     {
+        public static Window QuickMenuWindow;
+
         public static Texture2D PTButtonColor;
         public static Texture2D[] tabColors = new Texture2D[20];
         public static float menuX;
@@ -89,19 +91,47 @@ namespace TitanBot
 
         public static void OnGUI()
         {
-            menuX = Screen.width - 450f;
-            FlatUI.Box(new Rect(menuX, menuY, 250f, 700f), tabColors[tabIndex], FengGameManagerMKII.instance.textureBackgroundBlack);
-            tabIndex = FlatUI.tabs(new Rect(menuX + 250f, menuY, 700f, 100f), tabNames, tabIndex, false, tabColors);
-            if (tabIndex == 0) tabPTBotSettings();
-            if (tabIndex == 1) moreSettings();
-            if (tabIndex == 2) TabConfig();
-            if (tabIndex == 3) TabMain();
-            MovesetControlWindow.OnGUI();
-            ToolTipWindow.OnGUI();
-            GUI.DrawTexture(new Rect(Input.mousePosition.x - (mouseScale / 2f), Screen.height - Input.mousePosition.y - (mouseScale / 2f), mouseScale, mouseScale), CGTools.mouseTex);
-            if (CGTools.timer(ref changeTrackerTimer, 0.5f))
+            if (!QuickMenuWindow.showWindow) KaneGameManager.toggleQuickMenu = false;
+            QuickMenuWindow.OnGUI();
+            menuX = QuickMenuWindow.rect.x;
+            menuY = QuickMenuWindow.rect.y;
+
+            if (QuickMenuWindow.ContentVisible())
             {
-                CheckForChanges();
+
+                //FlatUI.Box(new Rect(menuX, menuY, 250f, 700f), tabColors[tabIndex], FengGameManagerMKII.instance.textureBackgroundBlack);
+                tabIndex = FlatUI.tabs(new Rect(menuX + 250f, menuY + 30f, 700f, 100f), tabNames, tabIndex, false, tabColors);
+                if (tabIndex == 0) 
+                { 
+                    tabPTBotSettings();
+                    QuickMenuWindow.insideTex = tabColors[tabIndex];
+                    QuickMenuWindow.title = tabNames[tabIndex];
+                }
+                if (tabIndex == 1) 
+                { 
+                    moreSettings();
+                    QuickMenuWindow.insideTex = tabColors[tabIndex];
+                    QuickMenuWindow.title = tabNames[tabIndex];
+                }
+                if (tabIndex == 2) 
+                { 
+                    TabConfig();
+                    QuickMenuWindow.insideTex = tabColors[tabIndex];
+                    QuickMenuWindow.title = tabNames[tabIndex];
+                }
+                if (tabIndex == 3) 
+                { 
+                    TabMain();
+                    QuickMenuWindow.insideTex = tabColors[tabIndex];
+                    QuickMenuWindow.title = tabNames[tabIndex];
+                }
+                MovesetControlWindow.OnGUI();
+                ToolTipWindow.OnGUI();
+                GUI.DrawTexture(new Rect(Input.mousePosition.x - (mouseScale / 2f), Screen.height - Input.mousePosition.y - (mouseScale / 2f), mouseScale, mouseScale), CGTools.mouseTex);
+                if (CGTools.timer(ref changeTrackerTimer, 0.5f))
+                {
+                    CheckForChanges();
+                }
             }
         }
         public static void TabConfig()
@@ -168,9 +198,9 @@ namespace TitanBot
 
         private static void tabPTBotSettings()
         {
-            Label(IndexToRect(0), "Titan Name");
-            titanNameTextBox = FlatUI.TextField(IndexToRect(1, 4, 0, 3), titanNameTextBox);
-            if (FlatUI.Button(IndexToRect(1,4,3), "Apply", FlatUI.defaultButtonTex, isChanged[1] ? FlatUI.ChangedValueOutlineTex : FlatUI.outsideColorTex, true))
+            Label(IndexToRect(1), "Titan Name");
+            titanNameTextBox = FlatUI.TextField(IndexToRect(2, 4, 0, 3), titanNameTextBox);
+            if (FlatUI.Button(IndexToRect(2,4,3), "Apply", FlatUI.defaultButtonTex, isChanged[1] ? FlatUI.ChangedValueOutlineTex : FlatUI.outsideColorTex, true))
             {
                 PlayerTitanBot.TitanName = titanNameTextBox;
                 CheckForChanges();
@@ -1112,6 +1142,7 @@ namespace TitanBot
             PTButtonColor = CGTools.ColorTex(new Color(1f, 1f, 1f));
             menuX = (float)Screen.width - 450f;
             menuY = (float)Screen.height / 2f - 350f;
+            QuickMenuWindow = new Window(new Rect(menuX, menuY, 250f, 700f), "QuickMenu", tabColors[0]) { showWindow = true};
         }
         public static float SetTextbox(Rect position, float source, string label, int arrayID)
         {

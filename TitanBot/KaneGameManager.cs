@@ -229,6 +229,29 @@ namespace TitanBot
                         }
                     }
                 }
+                if (config.ContainsKey("SpeedEnabled"))
+                {
+                    if (bool.TryParse(config["SpeedEnabled"], out bool b))
+                    {
+                        PlayerTitanBot.useCustomSpeed = b;
+                    }
+                    else
+                    {
+                        CGTools.log("Could not parse Setting [SpeedEnabled]");
+                    }
+                }
+                if (config.ContainsKey("Speed"))
+                {
+                    if (float.TryParse(config["Speed"], out float f))
+                    {
+                        QuickMenu.speedTextBox = f.ToString();
+                        PlayerTitanBot.titanSpeed = f;
+                    }
+                    else
+                    {
+                        CGTools.log("Could not parse Setting [Speed]");
+                    }
+                }
                 if (config.ContainsKey("Dev"))
                 {
                     isDevMode = true;
@@ -273,6 +296,7 @@ namespace TitanBot
                     moveTiming += ',';
             }
             config.Add("Timing", moveTiming);
+            config.Add("SpeedEnabled", PlayerTitanBot.useCustomSpeed.ToString());
             config.Add("Speed", PlayerTitanBot.titanSpeed.ToString());
             List<string> lines = new List<string>();
             foreach (string key in config.Keys)
@@ -307,6 +331,9 @@ namespace TitanBot
             QuickMenu.titanNameTextBox = "PTBot";
             MovesetControl.SetDefaults();
             MovesetControlWindow.UpdateWindowData();
+            PlayerTitanBot.useCustomSpeed = false;
+            PlayerTitanBot.titanSpeed = 60f;
+            QuickMenu.speedTextBox = "60";
             CGTools.log("Reset settings to default values");
         }
 

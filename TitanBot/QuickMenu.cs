@@ -1111,7 +1111,7 @@ namespace TitanBot
             }
             PTButtonColor = CGTools.ColorTex(new Color(1f, 1f, 1f));
             menuX = (float)Screen.width - 450f;
-            menuY = (float)Screen.height / 2f - 250f;
+            menuY = (float)Screen.height / 2f - 350f;
         }
         public static float SetTextbox(Rect position, float source, string label, int arrayID)
         {

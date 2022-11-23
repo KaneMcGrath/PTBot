@@ -298,6 +298,10 @@ namespace TitanBot
             config.Add("Timing", moveTiming);
             config.Add("SpeedEnabled", PlayerTitanBot.useCustomSpeed.ToString());
             config.Add("Speed", PlayerTitanBot.titanSpeed.ToString());
+            if (KaneGameManager.isDevMode)
+            {
+                config.Add("Dev", "True");
+            }
             List<string> lines = new List<string>();
             foreach (string key in config.Keys)
             {

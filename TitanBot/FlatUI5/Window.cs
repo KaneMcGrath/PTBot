@@ -127,6 +127,10 @@ namespace TitanBot.FlatUI5
                 {
                     this.rect.x = Input.mousePosition.x - this.dragXOffset;
                     this.rect.y = (float)Screen.height - Input.mousePosition.y - this.dragYOffset;
+                    if (this.rect.x < 0) this.rect.x = 0;
+                    if (this.rect.y < 0) this.rect.y = 0;
+                    if (this.rect.x > Screen.width - this.rect.width) this.rect.x = Screen.width - this.rect.width;
+                    if (this.rect.y > Screen.height - 30f) this.rect.y = Screen.height - 30f;
                 }
                 drawWindowContents();
             }

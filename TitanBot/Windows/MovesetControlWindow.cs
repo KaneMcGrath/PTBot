@@ -62,7 +62,7 @@ namespace TitanBot.Windows
                     }
                     ScrollList.DrawBlanks(ScrollArea);
                     FlatUI.TooltipButton(TopArea, "Titan Moves", "This window will allow you to edit each of the moves availible to PTBot.  You can enable or disable each move and set the start time in seconds.  The start time of a move will skip forward in the animation to make moves come out quicker.  \n\nWarning! \nSetting StartAt too high on certain moves can cause spaming explosions which will disconnect you from the game.  These are moves like slam or slap face most of these moves are around 2 seconds in length and you should be safe setting it around 1 second \n\nTry out moves in offline mode first if you are unsure", 9);
-                    FlatUI.Label(WarningArea, "Warning! setting StartAt too high on certain moves can cause spaming explosions which will disconnect you from the game.  Try out moves in offline mode first", WarningTextStyle);
+                    FlatUI.Label(WarningArea, "Warning! setting StartAt too high on certain moves can cause spamming explosions which will disconnect you from the game.  Try out moves in offline mode first", WarningTextStyle);
                     if (changesCount > 0)
                     {
                         FlatUI.Label(RTools.SplitH(BottomArea, 8, 0, 4), changesCount.ToString() + " unsaved changes", FlatUI.titleStyle);

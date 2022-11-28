@@ -236,7 +236,7 @@ namespace TitanBot
             {
                 MovesetControlWindow.ControlWindow.showWindow = true;
             }
-            FlatUI.TooltipButton(IndexToRect(12, 8, 7), "Titan Moves", "This window will allow you to edit each of the moves availible to PTBot.  You can enable or disable each move and set the start time in seconds.  The start time of a move will skip forward in the animation to make moves come out quicker.  \n\nWarning! \nsetting StartAt too high on certain moves can cause spaming explosions which will disconnect you from the game.  These are moves like slam or slap face most of these moves are around 2 seconds in length and you should be safe setting it around 1 second \n\nTry out moves in offline mode first if you are unsure", 9);
+            FlatUI.TooltipButton(IndexToRect(12, 8, 7), "Titan Moves", "This window will allow you to edit each of the moves availible to PTBot.  You can enable or disable each move and set the start time in seconds.  The start time of a move will skip forward in the animation to make moves come out quicker.  \n\nWarning! \nsetting StartAt too high on certain moves can cause spamming explosions which will disconnect you from the game.  These are moves like slam or slap face most of these moves are around 2 seconds in length and you should be safe setting it around 1 second \n\nTry out moves in offline mode first if you are unsure", 9);
 
             PlayerTitanBot.useCustomSpeed = FlatUI.Check(IndexToRect(14, 8, 0, 7), PlayerTitanBot.useCustomSpeed, "Use Custom Speed");
             FlatUI.TooltipButton(IndexToRect(14, 8, 7), "Titan Speed", "How fast the titan will move.  This can also mess up jumps and cause some minor problems with predictions.  But its mostly harmless" +

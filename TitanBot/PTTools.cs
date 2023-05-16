@@ -23,7 +23,7 @@ namespace TitanBot
         {
             if (difficulty == Difficulty.VeryVeryHard)
             {
-                Vector3 p = player.transform.position + player.transform.rigidbody.velocity * t + new Vector3(0f, -20f * player.rigidbody.mass, 0f) * t * t * 0.5f;
+                Vector3 p = player.transform.position + player.transform.rigidbody.velocity * t + new Vector3(0f, -20f * player.rigidbody.mass, 0f) * t * t;
                 if (debugPlayerData) CGTools.pointsToTrack.Add(p);
                 return p;
             }
@@ -38,7 +38,7 @@ namespace TitanBot
             }
             float time = t + tRand;
             Vector3 difficultyAdjusted = new Vector3(xRand, yRand, zRand);
-            Vector3 point = (player.transform.position + (difficultyAdjusted * 5f)) + (player.transform.rigidbody.velocity + difficultyAdjusted) * time + new Vector3(0f, -20f * player.rigidbody.mass, 0f) * time * time * 0.5f;
+            Vector3 point = (player.transform.position + (difficultyAdjusted * 5f)) + (player.transform.rigidbody.velocity + difficultyAdjusted) * time + new Vector3(0f, -20f * player.rigidbody.mass, 0f) * time * time;
 
             if (debugPlayerData) CGTools.pointsToTrack.Add(point);
             return point;

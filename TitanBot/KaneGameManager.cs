@@ -13,7 +13,7 @@ namespace TitanBot
     {
         public static KaneGameManager instance;
         public static bool toggleQuickMenu = false;
-        public static string GameVersionString = "PTBot 1.8";
+        public static string GameVersionString = "PTBot 1.82";
         public static bool doCameraRotation = false;
         public static float cameraRotationSpeed = 30f;
         public static string Path = Application.dataPath + "/PTBot/";

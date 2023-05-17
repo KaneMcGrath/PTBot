@@ -255,10 +255,10 @@ namespace TitanBot
 
             PlayerTitanBot.AllowAnkleHits = FlatUI.Check(IndexToRect(17, 8, 0, 7), PlayerTitanBot.AllowAnkleHits, "Allow ankle hits");
             FlatUI.TooltipButton(IndexToRect(17, 8, 7), "Allow ankle hits", "If players are able to hit the titans ankles to force them to sit.  This is usually not possible on player titans" +
-                "\nDefault = false", 13);
-            PlayerTitanBot.AllowAnkleHits = FlatUI.Check(IndexToRect(18, 8, 0, 7), PlayerTitanBot.AllowAnkleHits, "Allow eye hits");
+                "\nDefault = true", 13);
+            PlayerTitanBot.AllowEyeHits = FlatUI.Check(IndexToRect(18, 8, 0, 7), PlayerTitanBot.AllowEyeHits, "Allow eye hits");
             FlatUI.TooltipButton(IndexToRect(18, 8, 7), "Allow eye hits", "If players are able to hit the titans eyes to stun them.  This is usually not possible on player titans" +
-                "\nDefault = false", 12);
+                "\nDefault = true", 12);
 
             Label(IndexToRect(20), "Performance Options");
             GUI.Label(IndexToRect(21, 8, 0, 3), "Pruning Level");

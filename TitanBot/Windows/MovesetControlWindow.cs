@@ -18,14 +18,34 @@ namespace TitanBot.Windows
         private static PTAction[] movesToControl;
         private static int changesCount = 0;
         private static float checkForChangesTimer = 0f;
+        private static Texture2D[] tabColors;
+
+        private static string[] tabs = new string[]
+        {
+            "Moves",
+            "Profile"
+        };
+        private static int tabIndex = 0;
+
+        private static string ProfileName = "";
+        private static ScrollList ProfileScrollList;
+
+        private static int selectedProfileIndex = -1;
 
         /// <summary>
         /// Init After MovesetControl
         /// </summary>
         public static void Init()
         {
+
+            tabColors = new Texture2D[]
+            {
+                CGTools.ColorTex(CGTools.randomColor()),
+                CGTools.ColorTex(CGTools.randomColor())
+            };
             ControlWindow = new Window(new Rect(QuickMenu.menuX - 400f, QuickMenu.menuY, 400f, 700f), "Moveset Control", QuickMenu.tabColors[1]);
-            ScrollList = new ScrollList(30f, QuickMenu.tabColors[1]);
+            ScrollList = new ScrollList(30f, tabColors[0]);
+            ProfileScrollList = new ScrollList(30f, tabColors[1]);
             modifiableMovesetControls = new Dictionary<PTAction, TitanMove>();
             startAnimAtTextBoxs = new Dictionary<PTAction, string>();
             moveEnabled = new Dictionary<PTAction, bool>();
@@ -37,6 +57,7 @@ namespace TitanBot.Windows
                 startAnimAtTextBoxs.Add(action, "0");
                 moveEnabled[action] = true;
             }
+
         }
 
         public static void OnGUI()
@@ -46,33 +67,74 @@ namespace TitanBot.Windows
                 ControlWindow.OnGUI();
                 if (ControlWindow.ContentVisible())
                 {
-                    if (CGTools.timer(ref checkForChangesTimer, 0.5f))
+                    FlatUI.Box(new Rect(ControlWindow.rect.x, ControlWindow.rect.y + 60f, ControlWindow.rect.width, ControlWindow.rect.height - 60f), tabColors[tabIndex]);
+                    Rect TabsRect = new Rect(ControlWindow.rect.x, ControlWindow.rect.y + 30f, ControlWindow.rect.width - 120f, 30f);
+                    tabIndex = FlatUI.tabs(TabsRect, tabs, tabIndex, true, tabColors);
+                    if (tabIndex == 0)
                     {
-                        CheckForChanges();
-                    }
-                    
-                    Rect ScrollArea = new Rect(ControlWindow.ContentRect.x, ControlWindow.ContentRect.y, ControlWindow.ContentRect.width, ControlWindow.ContentRect.height - 50f);
-                    Rect TopArea = new Rect(ControlWindow.ContentRect.x, ControlWindow.ContentRect.y, ControlWindow.ContentRect.width, 30f);
-                    Rect BottomArea = new Rect(ControlWindow.ContentRect.x, ControlWindow.ContentRect.y + ControlWindow.ContentRect.height - 32f, ControlWindow.ContentRect.width, 30f);
-                    Rect WarningArea = new Rect(ControlWindow.ContentRect.x + 2f, ControlWindow.ContentRect.y + ControlWindow.ContentRect.height - 80f, ControlWindow.ContentRect.width - 4f, 50f);
-                    
-                    for (int i = 0; i < movesToControl.Length; i++)
-                    {
-                        MovesetControlElement(i, movesToControl[i]);
-                    }
-                    ScrollList.DrawBlanks(ScrollArea);
-                    FlatUI.TooltipButton(TopArea, "Titan Moves", "This window will allow you to edit each of the moves availible to PTBot.  You can enable or disable each move and set the start time in seconds.  The start time of a move will skip forward in the animation to make moves come out quicker.  \n\nWarning! \nSetting StartAt too high on certain moves can cause spaming explosions which will disconnect you from the game.  These are moves like slam or slap face most of these moves are around 2 seconds in length and you should be safe setting it around 1 second \n\nTry out moves in offline mode first if you are unsure", 9);
-                    FlatUI.Label(WarningArea, "Warning! setting StartAt too high on certain moves can cause spamming explosions which will disconnect you from the game.  Try out moves in offline mode first", WarningTextStyle);
-                    if (changesCount > 0)
-                    {
-                        FlatUI.Label(RTools.SplitH(BottomArea, 8, 0, 4), changesCount.ToString() + " unsaved changes", FlatUI.titleStyle);
-                        if (FlatUI.Button(RTools.SplitH(BottomArea, 8, 4, 2), "Undo Changes"))
+                        if (CGTools.timer(ref checkForChangesTimer, 0.5f))
                         {
-                            UpdateWindowData();
+                            CheckForChanges();
                         }
-                        if (FlatUI.Button(RTools.SplitH(BottomArea, 8, 6, 2), "Apply Changes"))
+
+                        Rect ScrollArea = new Rect(ControlWindow.ContentRect.x, ControlWindow.ContentRect.y + 30f, ControlWindow.ContentRect.width, ControlWindow.ContentRect.height - 50f);
+                        Rect TopArea = new Rect(ControlWindow.ContentRect.x, ControlWindow.ContentRect.y + 30f, ControlWindow.ContentRect.width, 30f);
+                        Rect BottomArea = new Rect(ControlWindow.ContentRect.x, ControlWindow.ContentRect.y + ControlWindow.ContentRect.height - 32f, ControlWindow.ContentRect.width, 30f);
+                        Rect WarningArea = new Rect(ControlWindow.ContentRect.x + 2f, ControlWindow.ContentRect.y + ControlWindow.ContentRect.height - 50f, ControlWindow.ContentRect.width - 4f, 50f);
+
+                        for (int i = 0; i < movesToControl.Length; i++)
                         {
-                            ApplyChanges();
+                            MovesetControlElement(i, movesToControl[i]);
+                        }
+                        ScrollList.DrawBlanks(ScrollArea);
+                        FlatUI.TooltipButton(TopArea, "Titan Moves", "This window will allow you to edit each of the moves availible to PTBot.  You can enable or disable each move and set the start time in seconds.  The start time of a move will skip forward in the animation to make moves come out quicker.  \n\nWarning! \nSetting StartAt too high on certain moves can cause spaming explosions which will disconnect you from the game.  These are moves like slam or slap face most of these moves are around 2 seconds in length and you should be safe setting it around 1 second \n\nTry out moves in offline mode first if you are unsure", 9);
+                        //FlatUI.Label(WarningArea, "Warning! setting StartAt too high on certain moves can cause spamming explosions which will disconnect you from the game.  Try out moves in offline mode first", WarningTextStyle);
+                        if (changesCount > 0)
+                        {
+                            FlatUI.Label(RTools.SplitH(BottomArea, 8, 0, 4), changesCount.ToString() + " unsaved changes", FlatUI.titleStyle);
+                            if (FlatUI.Button(RTools.SplitH(BottomArea, 8, 4, 2), "Undo Changes"))
+                            {
+                                UpdateWindowData();
+                            }
+                            if (FlatUI.Button(RTools.SplitH(BottomArea, 8, 6, 2), "Apply Changes"))
+                            {
+                                ApplyChanges();
+                            }
+                        }
+                    }
+                    else if(tabIndex == 1)
+                    {
+                        MovesetProfile.LoadProfilesFromFolder();
+                        ProfileName = FlatUI.TextField(new Rect(ControlWindow.ContentRect.x, ControlWindow.ContentRect.y + 30f, ControlWindow.ContentRect.width, 30f), ProfileName);
+
+                        Rect ScrollArea = new Rect(ControlWindow.ContentRect.x, ControlWindow.ContentRect.y + 60f, ControlWindow.ContentRect.width, ControlWindow.ContentRect.height - 90f);
+                        for (int i = 0; i < MovesetProfile.profiles.Count; i++)
+                        {
+                            string Profile = MovesetProfile.profiles[i];
+                            if (selectedProfileIndex == i)
+                            {
+                                if (FlatUI.Button(ProfileScrollList.IndexToRect(i), Profile, FlatUI.defaultButtonTex, FlatUI.ChangedValueOutlineTex))
+                                {
+                                    selectedProfileIndex = -1;
+                                }
+                            }
+                            else
+                            {
+                                if (FlatUI.Button(ProfileScrollList.IndexToRect(i), Profile, FlatUI.defaultButtonTex, FlatUI.outsideColorTex))
+                                {
+                                    selectedProfileIndex = i;
+                                }
+                            }
+                        }
+                        ProfileScrollList.DrawBlanks(ScrollArea);
+                        if (selectedProfileIndex != -1)
+                        {
+                            Rect bottom = new Rect(ControlWindow.ContentRect.x, ControlWindow.ContentRect.y + ControlWindow.ContentRect.height - 30f, ControlWindow.ContentRect.width, 30f);
+                            if (FlatUI.Button(bottom, "Load Profile"))
+                            {
+                                MovesetProfile.LoadProfile(MovesetProfile.profiles[selectedProfileIndex]);
+                                selectedProfileIndex = -1;
+                            }
                         }
                     }
                 }

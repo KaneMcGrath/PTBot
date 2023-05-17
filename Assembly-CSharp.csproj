@@ -406,6 +406,7 @@
     <Compile Include="TitanBot\FlatUI5\ScrollList.cs" />
     <Compile Include="TitanBot\FlatUI5\Window.cs" />
     <Compile Include="TitanBot\MovesetControl.cs" />
+    <Compile Include="TitanBot\MovesetProfile.cs" />
     <Compile Include="TitanBot\ParseMaster.cs" />
     <Compile Include="TitanBot\PlayerTitanBot.cs" />
     <Compile Include="TitanBot\CGTools.cs" />

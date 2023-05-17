@@ -58,21 +58,19 @@ namespace TitanBot
             }
             if (!File.Exists(ProfilesPath + "Default.txt"))
             {
-                
-            }
-            if (!File.Exists(ProfilesPath + "Anarchy.txt"))
-            {
-
+                File.WriteAllLines(ProfilesPath + "Default.txt", new string[]
+                {
+                    "Moves:Attack,AttackII,Jump,choptl,choptr",
+                    "Timing:Attack>0,AttackII>0,Jump>0,bite>0,bitel>0,biter>0,chopl>0,chopr>0,choptl>0,choptr>0,grabbackl>0,grabbackr>0,grabfrontl>0,grabfrontr>0,grabnapel>0,grabnaper>0,combo_2>0,combo_3>0,front_ground>0,kick>0,slap_back>0,slap_face>0,stomp>0,crawler_jump_0>0,grab_head_front_l>0,grab_head_front_r>0"
+                });
             }
         }
 
-        /// <summary>
-        /// literally just copied the load config function from KaneGameManager.
-        /// I decided to not delete the other loading options incase anyone wants some more detailed profiles
-        /// they can copy their config.txt into the profiles directory and it will work
-        /// some hidden functionality
-        /// </summary>
-        /// <param name="name"></param>
+
+        // literally just copied the load config function from KaneGameManager.
+        // I decided to not delete the other loading options incase anyone wants some more detailed profiles
+        // they can copy their config.txt into the profiles directory and it will work
+        // some hidden functionality
         public static void LoadProfile(string name)
         {
             string file = ProfilesPath + name + ".txt";

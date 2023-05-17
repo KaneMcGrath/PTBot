@@ -43,7 +43,7 @@ namespace TitanBot.Windows
                 CGTools.ColorTex(CGTools.randomColor()),
                 CGTools.ColorTex(CGTools.randomColor())
             };
-            ControlWindow = new Window(new Rect(QuickMenu.menuX - 400f, QuickMenu.menuY, 400f, 700f), "Moveset Control", QuickMenu.tabColors[1]);
+            ControlWindow = new Window(new Rect(QuickMenu.menuX - 400f, QuickMenu.menuY, 400f, 700f), "Moveset Control", tabColors[0]);
             ScrollList = new ScrollList(30f, tabColors[0]);
             ProfileScrollList = new ScrollList(30f, tabColors[1]);
             modifiableMovesetControls = new Dictionary<PTAction, TitanMove>();
@@ -67,9 +67,10 @@ namespace TitanBot.Windows
                 ControlWindow.OnGUI();
                 if (ControlWindow.ContentVisible())
                 {
-                    FlatUI.Box(new Rect(ControlWindow.rect.x, ControlWindow.rect.y + 60f, ControlWindow.rect.width, ControlWindow.rect.height - 60f), tabColors[tabIndex]);
-                    Rect TabsRect = new Rect(ControlWindow.rect.x, ControlWindow.rect.y + 30f, ControlWindow.rect.width - 120f, 30f);
+                    //FlatUI.Box(new Rect(ControlWindow.rect.x, ControlWindow.rect.y + 60f, ControlWindow.rect.width, ControlWindow.rect.height - 60f), tabColors[tabIndex]);
+                    Rect TabsRect = new Rect(ControlWindow.rect.x, ControlWindow.rect.y - 30f, ControlWindow.rect.width - 120f, 30f);
                     tabIndex = FlatUI.tabs(TabsRect, tabs, tabIndex, true, tabColors);
+                    ControlWindow.insideTex = tabColors[tabIndex]; //probably stupid but works
                     if (tabIndex == 0)
                     {
                         if (CGTools.timer(ref checkForChangesTimer, 0.5f))

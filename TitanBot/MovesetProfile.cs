@@ -20,9 +20,14 @@ namespace TitanBot
         /// <summary>
         /// Get all the text files in the profiles directory and add them to a list
         /// </summary>
-        public static void LoadProfilesFromFolder()
+        public static void ProfilesUpdateCheck()
         {
             if (!CGTools.timer(ref UpdateLevelsTimer, 5f)) return;
+            UpdateProfiles();
+        }
+
+        public static void UpdateProfiles()
+        {
             if (Directory.Exists(ProfilesPath))
             {
                 profiles.Clear();
@@ -227,7 +232,7 @@ namespace TitanBot
                     }
                 }
                 MovesetControlWindow.UpdateWindowData();
-                CGTools.log("Loaded profile from " + file);
+                CGTools.log("Loaded profile " + name + ".txt");
             }
             else
             {
@@ -237,7 +242,46 @@ namespace TitanBot
 
         public static void SaveProfile(string name)
         {
+            Dictionary<string, string> config = new Dictionary<string, string>();
+            string moves = "";
+            if (PlayerTitanBot.pTActions.Length > 0)
+            {
+                for (int i = 0; i < PlayerTitanBot.pTActions.Length; i++)
+                {
+                    PTAction action = PlayerTitanBot.pTActions[i];
+                    moves += action.ToString();
+                    if (i != PlayerTitanBot.pTActions.Length - 1)
+                        moves += ',';
+                }
+            }
+            config.Add("Moves", moves);
 
+            string moveTiming = "";
+            PTAction[] actions = new PTAction[MovesetControl.movesetControlDatabase.Keys.Count];
+            MovesetControl.movesetControlDatabase.Keys.CopyTo(actions, 0);
+            for (int i = 0; i < actions.Length; i++)
+            {
+                TitanMove move = MovesetControl.movesetControlDatabase[actions[i]];
+                moveTiming += actions[i].ToString() + ">" + move.startAnimationAt.ToString();
+                if (i != actions.Length - 1)
+                    moveTiming += ',';
+            }
+            config.Add("Timing", moveTiming);
+            List<string> lines = new List<string>();
+            foreach (string key in config.Keys)
+            {
+                lines.Add(key + ":" + config[key]);
+            }
+            try
+            {
+                File.WriteAllLines(ProfilesPath + name + ".txt", lines.ToArray());
+                CGTools.log("Saved profile " + name + ".txt");
+            }
+            catch (Exception e)
+            {
+                CGTools.log(e.Message);
+            }
+            
         }
     }
 }

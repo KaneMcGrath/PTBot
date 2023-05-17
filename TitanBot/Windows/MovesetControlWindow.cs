@@ -70,7 +70,7 @@ namespace TitanBot.Windows
                     //FlatUI.Box(new Rect(ControlWindow.rect.x, ControlWindow.rect.y + 60f, ControlWindow.rect.width, ControlWindow.rect.height - 60f), tabColors[tabIndex]);
                     Rect TabsRect = new Rect(ControlWindow.rect.x, ControlWindow.rect.y - 30f, ControlWindow.rect.width - 120f, 30f);
                     tabIndex = FlatUI.tabs(TabsRect, tabs, tabIndex, true, tabColors);
-                    ControlWindow.insideTex = tabColors[tabIndex]; //probably stupid but works
+                    ControlWindow.insideTex = tabColors[tabIndex];
                     if (tabIndex == 0)
                     {
                         if (CGTools.timer(ref checkForChangesTimer, 0.1f))
@@ -78,8 +78,8 @@ namespace TitanBot.Windows
                             CheckForChanges();
                         }
 
-                        Rect ScrollArea = new Rect(ControlWindow.ContentRect.x, ControlWindow.ContentRect.y + 30f, ControlWindow.ContentRect.width, ControlWindow.ContentRect.height - 50f);
-                        Rect TopArea = new Rect(ControlWindow.ContentRect.x, ControlWindow.ContentRect.y + 30f, ControlWindow.ContentRect.width, 30f);
+                        Rect ScrollArea = new Rect(ControlWindow.ContentRect.x, ControlWindow.ContentRect.y, ControlWindow.ContentRect.width, ControlWindow.ContentRect.height - 50f);
+                        Rect TopArea = new Rect(ControlWindow.ContentRect.x, ControlWindow.ContentRect.y, ControlWindow.ContentRect.width, 30f);
                         Rect BottomArea = new Rect(ControlWindow.ContentRect.x, ControlWindow.ContentRect.y + ControlWindow.ContentRect.height - 32f, ControlWindow.ContentRect.width, 30f);
                         Rect WarningArea = new Rect(ControlWindow.ContentRect.x + 2f, ControlWindow.ContentRect.y + ControlWindow.ContentRect.height - 50f, ControlWindow.ContentRect.width - 4f, 50f);
 
@@ -105,29 +105,47 @@ namespace TitanBot.Windows
                     }
                     else if(tabIndex == 1)
                     {
-                        MovesetProfile.LoadProfilesFromFolder();
-                        ProfileName = FlatUI.TextField(new Rect(ControlWindow.ContentRect.x, ControlWindow.ContentRect.y + 30f, ControlWindow.ContentRect.width, 30f), ProfileName);
-
+                        MovesetProfile.ProfilesUpdateCheck();
+                        Rect TopRect = new Rect(ControlWindow.ContentRect.x, ControlWindow.ContentRect.y + 30f, ControlWindow.ContentRect.width, 30f);
+                        Rect TopLabelRect = RTools.SplitH(TopRect, 4, 0);
+                        Rect TopTextBoxRect = RTools.SplitH(TopRect, 4, 1, 2);
+                        Rect TopButtonRect = RTools.SplitH(TopRect, 4, 3);
+                        FlatUI.Label(TopLabelRect, "Profile Name");
+                        ProfileName = FlatUI.TextField(TopTextBoxRect, ProfileName);
+                        if (FlatUI.Button(TopButtonRect, "Save"))
+                        {
+                            if (!ProfileName.IsNullOrEmpty())
+                            {
+                                MovesetProfile.SaveProfile(ProfileName);
+                                ProfileName = "";
+                                MovesetProfile.UpdateProfiles();
+                            }
+                        }
+                        
                         Rect ScrollArea = new Rect(ControlWindow.ContentRect.x, ControlWindow.ContentRect.y + 60f, ControlWindow.ContentRect.width, ControlWindow.ContentRect.height - 90f);
                         for (int i = 0; i < MovesetProfile.profiles.Count; i++)
                         {
                             string Profile = MovesetProfile.profiles[i];
                             if (selectedProfileIndex == i)
                             {
-                                if (FlatUI.Button(ProfileScrollList.IndexToRect(i), Profile, FlatUI.defaultButtonTex, FlatUI.ChangedValueOutlineTex))
+                                if (FlatUI.Button(ProfileScrollList.IndexToRect(i), Profile, FlatUI.defaultButtonTex, FlatUI.ChangedValueOutlineTex, ProfileScrollList.IsVisible(i)))
                                 {
                                     selectedProfileIndex = -1;
                                 }
                             }
                             else
                             {
-                                if (FlatUI.Button(ProfileScrollList.IndexToRect(i), Profile, FlatUI.defaultButtonTex, FlatUI.outsideColorTex))
+                                if (FlatUI.Button(ProfileScrollList.IndexToRect(i), Profile, FlatUI.defaultButtonTex, FlatUI.outsideColorTex, ProfileScrollList.IsVisible(i)))
                                 {
                                     selectedProfileIndex = i;
                                 }
                             }
                         }
                         ProfileScrollList.DrawBlanks(ScrollArea);
+                        if (MovesetProfile.profiles.Contains(ProfileName))
+                        {
+                            FlatUI.Label(new Rect(TopRect.x, TopRect.y + 30f, TopRect.width, 30f), "Profile already exists.  Do you want to overwrite?", WarningTextStyle);
+                        }
                         if (selectedProfileIndex != -1)
                         {
                             Rect bottom = new Rect(ControlWindow.ContentRect.x, ControlWindow.ContentRect.y + ControlWindow.ContentRect.height - 30f, ControlWindow.ContentRect.width, 30f);
@@ -141,6 +159,8 @@ namespace TitanBot.Windows
                 }
             }
         }
+
+
 
         private static void MovesetControlElement(int i, PTAction move)
         {

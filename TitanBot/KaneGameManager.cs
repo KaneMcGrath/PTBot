@@ -25,9 +25,11 @@ namespace TitanBot
 
         private static float movetoRPCTimer = 0f;
         public static bool doSpawnTeleporting = false;
-        public static int InfTitanCount = 5;
+        public static int InfPTBotCount = 5;
+        public static int InfiniteTitansCount = 10;
         public static bool doInfiniteTitans = false;
         public static bool sendJoinMessage = true;
+        private static float spawnRad = 350f;
 
         public static bool isDevMode = false;
 
@@ -129,12 +131,24 @@ namespace TitanBot
                 {
                     if (int.TryParse(config["InfiniteTitanCount"], out int i))
                     {
-                        QuickMenu.infiniteTitanTextBox = i.ToString();
-                        InfTitanCount = i;
+                        QuickMenu.infinitePTBotTextBox = i.ToString();
+                        InfPTBotCount = i;
                     }
                     else
                     {
                         CGTools.log("Could not parse Setting [InfiniteTitanCount]");
+                    }
+                }
+                if (config.ContainsKey("InfiniteNormalTitanCount"))
+                {
+                    if (int.TryParse(config["InfiniteNormalTitanCount"], out int i))
+                    {
+                        QuickMenu.infiniteNormalTitanTextBox = i.ToString();
+                        InfiniteTitansCount = i;
+                    }
+                    else
+                    {
+                        CGTools.log("Could not parse Setting [InfiniteNormalTitanCount]");
                     }
                 }
                 if (config.ContainsKey("ReplaceSpawnedTitans"))
@@ -289,7 +303,8 @@ namespace TitanBot
             Dictionary<string, string> config = new Dictionary<string, string>();
             config.Add("QuickMenuHotkey", QuickMenuKey.ToString());
             config.Add("SendJoinMessage", sendJoinMessage.ToString());
-            config.Add("InfiniteTitanCount", InfTitanCount.ToString());
+            config.Add("InfiniteTitanCount", InfPTBotCount.ToString());
+            config.Add("InfiniteNormalTitanCount", InfiniteTitansCount.ToString());
             config.Add("ReplaceSpawnedTitans", PlayerTitanBot.ReplaceSpawnedTitans.ToString());
             config.Add("doSpawnTeleporting", doSpawnTeleporting.ToString());
             config.Add("Difficulty", PTTools.difficulty.ToString());
@@ -346,8 +361,8 @@ namespace TitanBot
         public static void ResetDefaults()
         {
             sendJoinMessage = true;
-            InfTitanCount = 5;
-            QuickMenu.infiniteTitanTextBox = "5";
+            InfPTBotCount = 5;
+            QuickMenu.infinitePTBotTextBox = "5";
             PlayerTitanBot.ReplaceSpawnedTitans = false;
             doSpawnTeleporting = false;
             PTTools.difficulty = Difficulty.VeryVeryHard;
@@ -573,38 +588,84 @@ namespace TitanBot
             }
         }
 
-
-
-
+        private static float infiniteTitanTimer = 0f;
         public static void InfiniteTitanHandler()
         {
-            if (doInfiniteTitans && FengGameManagerMKII.instance.gameStart && PhotonNetwork.isMasterClient && GameObject.FindGameObjectsWithTag("titan").Length < InfTitanCount)
+            if (!CGTools.timer(ref infiniteTitanTimer, 1f)) return;
+            if (doInfiniteTitans && FengGameManagerMKII.instance.gameStart && PhotonNetwork.isMasterClient)
             {
-                Vector3 pos = Camera.main.transform.position;
-                Quaternion rot = Quaternion.identity;
-                float x = UnityEngine.Random.Range(-360f, 360f);
-                float z = UnityEngine.Random.Range(-360f, 360f);
-
-                Vector3 rayOrigin = new Vector3(x, 200f, z);
-                Vector3 rayDirection = Vector3.down;
-                Ray ray = new Ray(rayOrigin, rayDirection);
-
-                Vector3 spawnPosition = rayOrigin;
-
-                if (Physics.Raycast(ray, out RaycastHit raycastHit))
+                int realCount = InfiniteTitansCount + InfPTBotCount;
+                GameObject[] ts = GameObject.FindGameObjectsWithTag("titan");
+                if (ts.Length < realCount)
                 {
-                    spawnPosition = raycastHit.point;
+                    int ptcount = 0;
+                    int titancount = 0;
+                    foreach (GameObject g in ts)
+                    {
+                        TITAN tt = g.GetComponent<TITAN>();
+                        if (tt.isCustomTitan)
+                        {
+                            ptcount++;
+                        }
+                        else
+                        {
+                            titancount++;
+                        }
+                    }
+                    if (titancount < InfiniteTitansCount)
+                    {
+                        Vector3 pos = Camera.main.transform.position;
+                        Quaternion rot = Quaternion.identity;
+                        float x = UnityEngine.Random.Range(-spawnRad, spawnRad);
+                        float z = UnityEngine.Random.Range(-spawnRad, spawnRad);
+
+                        Vector3 rayOrigin = new Vector3(x, 200f, z);
+                        Vector3 rayDirection = Vector3.down;
+                        Ray ray = new Ray(rayOrigin, rayDirection);
+
+                        Vector3 spawnPosition = rayOrigin;
+
+                        if (Physics.Raycast(ray, out RaycastHit raycastHit))
+                        {
+                            spawnPosition = raycastHit.point;
+                        }
+
+
+                        GameObject t = PhotonNetwork.Instantiate("TITAN_VER3.1", spawnPosition, rot, 0);
+                        return;
+
+                    }
+                    if (ptcount < InfPTBotCount)
+                    {
+                        Vector3 pos = Camera.main.transform.position;
+                        Quaternion rot = Quaternion.identity;
+                        float x = UnityEngine.Random.Range(-spawnRad, spawnRad);
+                        float z = UnityEngine.Random.Range(-spawnRad, spawnRad);
+
+                        Vector3 rayOrigin = new Vector3(x, 200f, z);
+                        Vector3 rayDirection = Vector3.down;
+                        Ray ray = new Ray(rayOrigin, rayDirection);
+
+                        Vector3 spawnPosition = rayOrigin;
+
+                        if (Physics.Raycast(ray, out RaycastHit raycastHit))
+                        {
+                            spawnPosition = raycastHit.point;
+                        }
+
+
+                        GameObject myPTGO = PhotonNetwork.Instantiate("TITAN_VER3.1", spawnPosition, rot, 0);
+                        TITAN MyPT = myPTGO.GetComponent<TITAN>();
+                        GameObject.Destroy(myPTGO.GetComponent<TITAN_CONTROLLER>());
+                        myPTGO.GetComponent<TITAN>().nonAI = true;
+                        myPTGO.GetComponent<TITAN>().speed = 30f;
+                        myPTGO.GetComponent<TITAN_CONTROLLER>().enabled = true;
+                        myPTGO.GetComponent<TITAN>().isCustomTitan = true;
+                        return;
+                    }
                 }
-
-                GameObject myPTGO = PhotonNetwork.Instantiate("TITAN_VER3.1", spawnPosition, rot, 0);
-                TITAN MyPT = myPTGO.GetComponent<TITAN>();
-                GameObject.Destroy(myPTGO.GetComponent<TITAN_CONTROLLER>());
-                myPTGO.GetComponent<TITAN>().nonAI = true;
-                myPTGO.GetComponent<TITAN>().speed = 30f;
-                myPTGO.GetComponent<TITAN_CONTROLLER>().enabled = true;
-                myPTGO.GetComponent<TITAN>().isCustomTitan = true;
+                return;
             }
-
         }
     }
 }

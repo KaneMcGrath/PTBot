@@ -105,8 +105,8 @@ namespace TitanBot
                 {
                     if (int.TryParse(config["InfiniteTitanCount"], out int i))
                     {
-                        QuickMenu.infiniteTitanTextBox = i.ToString();
-                        KaneGameManager.InfTitanCount = i;
+                        QuickMenu.infinitePTBotTextBox = i.ToString();
+                        KaneGameManager.InfPTBotCount = i;
                     }
                     else
                     {

@@ -36,7 +36,8 @@ namespace TitanBot
         private static bool resetPositionsOnAttack = false;
         private static bool clearHitboxesOnAttack = false;
         public static string prunningSettingTextbox = "2";
-        public static string infiniteTitanTextBox = "5";
+        public static string infinitePTBotTextBox = "2";
+        public static string infiniteNormalTitanTextBox = "10";
         public static string titanNameTextBox = "PTBot";
         public static string speedTextBox = "60";
         private static GUIStyle labelStyle = new GUIStyle
@@ -52,9 +53,9 @@ namespace TitanBot
 
         private static void CheckForChanges()
         {
-            if (int.TryParse(infiniteTitanTextBox, out int i))
+            if (int.TryParse(infinitePTBotTextBox, out int i))
             {
-                isChanged[0] = (KaneGameManager.InfTitanCount != i);
+                isChanged[0] = (KaneGameManager.InfPTBotCount != i);
             }
             else
             {
@@ -156,15 +157,30 @@ namespace TitanBot
             FlatUI.TooltipButton(IndexToRect(1, 8, 7), "Send Join Message", "When a player joins your room they are sent a message with a link to the mod and what your current ping is. This setting enables or disables sending that message.", 6);
 
             Label(IndexToRect(2), "Endless Spawning");
-            FlatUI.TooltipButton(IndexToRect(3, 8, 7), "Endless Spawning", "This will spawn a certain amount of PTBots. when one dies another will immediatly spawn. Titans will only respawn when the number of total titans including other types is below the count.", 7);
+            FlatUI.TooltipButton(IndexToRect(3, 8, 7), "Endless Spawning", "This will endlessly respawn titans, specify the amount of normal titans and the amount of PTBots.  Each time a Titan dies a new titan will spawn", 7);
             KaneGameManager.doInfiniteTitans = FlatUI.Check(IndexToRect(3, 8, 0, 7), KaneGameManager.doInfiniteTitans, "Enable Endless Spawning");
-            GUI.Label(IndexToRect(4, 8, 1, 3), "Count");
-            infiniteTitanTextBox = FlatUI.TextField(IndexToRect(4, 8, 3, 2), infiniteTitanTextBox);
+            GUI.Label(IndexToRect(4, 8, 0, 3), "PTBot Count");
+            infinitePTBotTextBox = FlatUI.TextField(IndexToRect(4, 8, 3, 2), infinitePTBotTextBox);
             if (FlatUI.Button(IndexToRect(4, 8, 5, 2), "Apply", FlatUI.defaultButtonTex, isChanged[0] ? FlatUI.ChangedValueOutlineTex : FlatUI.outsideColorTex, true))
             {
-                if (int.TryParse(infiniteTitanTextBox, out int i))
+                if (int.TryParse(infinitePTBotTextBox, out int i))
                 {
-                    KaneGameManager.InfTitanCount = i;
+                    KaneGameManager.InfPTBotCount = i;
+                    CGTools.log("Infinite PTBot count updated to " + i);
+                }
+                else
+                {
+                    CGTools.log("Could not parse input!");
+                }
+                CheckForChanges();
+            }
+            GUI.Label(IndexToRect(5, 8, 0, 3), "Titan Count");
+            infiniteNormalTitanTextBox = FlatUI.TextField(IndexToRect(5, 8, 3, 2), infiniteNormalTitanTextBox);
+            if (FlatUI.Button(IndexToRect(5, 8, 5, 2), "Apply", FlatUI.defaultButtonTex, isChanged[0] ? FlatUI.ChangedValueOutlineTex : FlatUI.outsideColorTex, true))
+            {
+                if (int.TryParse(infiniteNormalTitanTextBox, out int i))
+                {
+                    KaneGameManager.InfiniteTitansCount = i;
                     CGTools.log("Infinite titan count updated to " + i);
                 }
                 else
@@ -173,16 +189,16 @@ namespace TitanBot
                 }
                 CheckForChanges();
             }
-            PlayerTitanBot.ReplaceSpawnedTitans = FlatUI.Check(IndexToRect(6, 8, 0, 7), PlayerTitanBot.ReplaceSpawnedTitans, "Replace Normal Titans");
-            FlatUI.TooltipButton(IndexToRect(6, 8, 7), "Replace Normal Titans", "This will replace any titan spawned by your game with a PTBot. You can use this for wave modes or on custom maps.", 8);
-            KaneGameManager.doSpawnTeleporting = FlatUI.Check(IndexToRect(7, 8, 0, 7), KaneGameManager.doSpawnTeleporting, "Teleport Titans from spawn");
-            FlatUI.TooltipButton(IndexToRect(7, 8, 7), "Teleport Titans Away From Spawn", "This only works on The Forest and The City. When a titan gets too close to the spawn position, it is teleported to a random position on the map. This will also teleport Player Titans.", 9);
+            PlayerTitanBot.ReplaceSpawnedTitans = FlatUI.Check(IndexToRect(7, 8, 0, 7), PlayerTitanBot.ReplaceSpawnedTitans, "Replace Normal Titans");
+            FlatUI.TooltipButton(IndexToRect(7, 8, 7), "Replace Normal Titans", "This will replace any titan spawned by your game with a PTBot. You can use this for wave modes or on custom maps.", 8);
+            KaneGameManager.doSpawnTeleporting = FlatUI.Check(IndexToRect(8, 8, 0, 7), KaneGameManager.doSpawnTeleporting, "Teleport Titans from spawn");
+            FlatUI.TooltipButton(IndexToRect(8, 8, 7), "Teleport Titans Away From Spawn", "This only works on The Forest and The City. When a titan gets too close to the spawn position, it is teleported to a random position on the map. This will also teleport Player Titans.", 9);
 
-            Label(IndexToRect(8), "Debug");
-            PlayerTitanBot.debugRaycasts = FlatUI.Check(IndexToRect(9), PlayerTitanBot.debugRaycasts, "Debug Raycasts");
-            PlayerTitanBot.debugTargets = FlatUI.Check(IndexToRect(10), PlayerTitanBot.debugTargets, "Debug Targets");
-            PTTools.debugPlayerData = FlatUI.Check(IndexToRect(11), PTTools.debugPlayerData, "Debug Predictions");
-            if (FlatUI.Button(IndexToRect(12), "Teleport titans back inside"))
+            Label(IndexToRect(9), "Debug");
+            PlayerTitanBot.debugRaycasts = FlatUI.Check(IndexToRect(10), PlayerTitanBot.debugRaycasts, "Debug Raycasts");
+            PlayerTitanBot.debugTargets = FlatUI.Check(IndexToRect(11), PlayerTitanBot.debugTargets, "Debug Targets");
+            PTTools.debugPlayerData = FlatUI.Check(IndexToRect(12), PTTools.debugPlayerData, "Debug Predictions");
+            if (FlatUI.Button(IndexToRect(13), "Teleport titans back inside"))
             {
                 foreach (GameObject t in GameObject.FindGameObjectsWithTag("titan"))
                 {
@@ -194,7 +210,7 @@ namespace TitanBot
                     }
                 }
             }
-            CGDebugConsole.UseCGDebugConsole = FlatUI.Check(IndexToRect(13), CGDebugConsole.UseCGDebugConsole, "Use CGDebugConsole");
+            CGDebugConsole.UseCGDebugConsole = FlatUI.Check(IndexToRect(14), CGDebugConsole.UseCGDebugConsole, "Use CGDebugConsole");
         }
 
         private static void tabPTBotSettings()
@@ -207,7 +223,7 @@ namespace TitanBot
                 CheckForChanges();
             }
             Label(IndexToRect(3), "Difficulty");
-            FlatUI.TooltipButton(IndexToRect(3, 12, 11), "Difficulty", "This only affects how accurate the PTBot predictions are. At lower difficulties It will miss alot of moves or throw them out too early or to late. You can see this effect with the Debug Predictions setting.", 6);
+            FlatUI.TooltipButton(IndexToRect(3, 12, 11), "Difficulty", "This only affects how accurate the PTBot predictions are. At lower difficulties It will miss alot of moves or throw them out too early or to late. You can see this effect with the Debug Predictions setting.  \nVery Very Hard adds no randomness to predictions and is the most performant", 6);
             if (FlatUI.Button(IndexToRect(4), "Very Very Hard", (PTTools.difficulty == Difficulty.VeryVeryHard) ? QuickMenu.PTButtonColor : FlatUI.insideColorTex))
             {
                 PTTools.difficulty = Difficulty.VeryVeryHard;
@@ -370,7 +386,7 @@ namespace TitanBot
             PlayerTitanBot.debugRaycasts = FlatUI.Check(IndexToRect(7), PlayerTitanBot.debugRaycasts, "Debug Raycasts");
             PlayerTitanBot.debugTargets = FlatUI.Check(IndexToRect(8), PlayerTitanBot.debugTargets, "Debug Targets");
             KaneGameManager.doInfiniteTitans = FlatUI.Check(IndexToRect(9), KaneGameManager.doInfiniteTitans, "Infinite Titans");
-            KaneGameManager.InfTitanCount = SetTextbox(IndexToRect(10), KaneGameManager.InfTitanCount, "Titan Count", 1);
+            KaneGameManager.InfPTBotCount = SetTextbox(IndexToRect(10), KaneGameManager.InfPTBotCount, "Titan Count", 1);
             if (FlatUI.Button(IndexToRect(11, 2, 0), "Load Data"))
             {
                 PTDataMachine.LoadHitboxData();

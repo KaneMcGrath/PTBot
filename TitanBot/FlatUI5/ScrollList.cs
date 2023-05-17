@@ -11,6 +11,13 @@ namespace TitanBot.FlatUI5
         public float ItemHeight = 30f;
         public Texture2D insideTex;
 
+        /// <summary>
+        /// when set to true, the scroll bar will snap to the bottom on the next blank
+        /// and then reset itself to false
+        /// you can initialize this to true to start at the bottom
+        /// </summary>
+        public bool snapBottom = false;
+
         private Rect rect;
         private int ElementCount = 0;
         private float scrollPosition = 0f;
@@ -137,7 +144,11 @@ namespace TitanBot.FlatUI5
                 }
                 scrollPosition = num4;
             }
-
+            if (snapBottom)
+            {
+                scrollPosition = SliderArea.height - SliderRect.height;
+                snapBottom = false;
+            }
         }
 
         //Returns a value from 0 to 1 based on the position of the slider from top to bottom

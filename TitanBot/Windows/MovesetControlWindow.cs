@@ -73,7 +73,7 @@ namespace TitanBot.Windows
                     ControlWindow.insideTex = tabColors[tabIndex]; //probably stupid but works
                     if (tabIndex == 0)
                     {
-                        if (CGTools.timer(ref checkForChangesTimer, 0.5f))
+                        if (CGTools.timer(ref checkForChangesTimer, 0.1f))
                         {
                             CheckForChanges();
                         }

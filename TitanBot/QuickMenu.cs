@@ -128,7 +128,7 @@ namespace TitanBot
                 MovesetControlWindow.OnGUI();
                 ToolTipWindow.OnGUI();
                 GUI.DrawTexture(new Rect(Input.mousePosition.x - (mouseScale / 2f), Screen.height - Input.mousePosition.y - (mouseScale / 2f), mouseScale, mouseScale), CGTools.mouseTex);
-                if (CGTools.timer(ref changeTrackerTimer, 0.5f))
+                if (CGTools.timer(ref changeTrackerTimer, 0.1f))
                 {
                     CheckForChanges();
                 }

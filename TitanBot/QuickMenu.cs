@@ -194,6 +194,7 @@ namespace TitanBot
                     }
                 }
             }
+            CGDebugConsole.UseCGDebugConsole = FlatUI.Check(IndexToRect(13), CGDebugConsole.UseCGDebugConsole, "Use CGDebugConsole");
         }
 
         private static void tabPTBotSettings()

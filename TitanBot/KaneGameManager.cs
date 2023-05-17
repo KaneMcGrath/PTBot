@@ -45,6 +45,7 @@ namespace TitanBot
             instance = SingletonFactory.CreateSingleton(instance);
             QuickMenu.Init();
             FlatUI.Init();
+            CGDebugConsole.Init();
             CGLog.Start();
             CGTools.Init();
             PTDataMachine.LoadHitboxData();

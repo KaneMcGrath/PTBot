@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Utility;
 using System.Diagnostics;
+using TitanBot.Windows;
 
 namespace ApplicationManagers
 {
@@ -33,6 +34,10 @@ namespace ApplicationManagers
 
         static void OnUnityDebugLog(string log, string stackTrace, LogType type)
         {
+            if (CGDebugConsole.UseCGDebugConsole)
+            {
+                CGDebugConsole.OnDebugMessage(stackTrace, log, type);
+            }
             AddMessage(stackTrace);
             AddMessage(log);
         }
@@ -52,11 +57,23 @@ namespace ApplicationManagers
         void Update()
         {
             if (Input.GetKeyDown(KeyCode.F11))
+            {
+                if (CGDebugConsole.UseCGDebugConsole)
+                {
+                    CGDebugConsole.DebugKeyPressed();
+                    _enabled = false;
+                    return;
+                }
                 _enabled = !_enabled;
+            }
         }
 
         void OnGUI()
         {
+            if (CGDebugConsole.UseCGDebugConsole)
+            {
+                CGDebugConsole.OnGUI();
+            }
             if (_enabled)
             {
                 // draw debug console over everything else

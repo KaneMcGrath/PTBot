@@ -417,6 +417,7 @@
     <Compile Include="TitanBot\PTTools.cs" />
     <Compile Include="TitanBot\QuickMenu.cs" />
     <Compile Include="TitanBot\HitData.cs" />
+    <Compile Include="TitanBot\Windows\CGDebugConsole.cs" />
     <Compile Include="TitanBot\Windows\MovesetControlWindow.cs" />
     <Compile Include="TitanBot\Windows\ToolTipWindow.cs" />
     <Compile Include="Unorganized\Language.cs" />

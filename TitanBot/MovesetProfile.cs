@@ -113,6 +113,18 @@ namespace TitanBot
                         CGTools.log("Could not parse Setting [InfiniteTitanCount]");
                     }
                 }
+                if (config.ContainsKey("InfiniteNormalTitanCount"))
+                {
+                    if (int.TryParse(config["InfiniteNormalTitanCount"], out int i))
+                    {
+                        QuickMenu.infiniteNormalTitanTextBox = i.ToString();
+                        InfiniteTitansCount = i;
+                    }
+                    else
+                    {
+                        CGTools.log("Could not parse Setting [InfiniteNormalTitanCount]");
+                    }
+                }
                 if (config.ContainsKey("ReplaceSpawnedTitans"))
                 {
                     if (bool.TryParse(config["ReplaceSpawnedTitans"], out bool b))

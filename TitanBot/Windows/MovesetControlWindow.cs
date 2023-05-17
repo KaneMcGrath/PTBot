@@ -153,6 +153,19 @@ namespace TitanBot.Windows
                             {
                                 MovesetProfile.LoadProfile(MovesetProfile.profiles[selectedProfileIndex]);
                                 selectedProfileIndex = -1;
+                                if (FengGameManagerMKII.instance.gameStart)
+                                {
+                                    foreach (GameObject t in GameObject.FindGameObjectsWithTag("titan"))
+                                    {
+                                        TITAN titan = t.GetComponent<TITAN>();
+                                        if (titan.isCustomTitan)
+                                        {
+                                            PlayerTitanBot b = (PlayerTitanBot)titan.controller;
+                                            b.LiveUpdateMovesetData();
+                                        }
+                                    }
+                                }
+                                CGTools.log("Moveset Updated for All Titans!");
                             }
                         }
                     }

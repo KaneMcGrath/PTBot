@@ -256,6 +256,28 @@ namespace TitanBot
                 {
                     isDevMode = true;
                 }
+                if (config.ContainsKey("AllowEyeHits"))
+                {
+                    if (bool.TryParse(config["AllowEyeHits"], out bool b))
+                    {
+                        PlayerTitanBot.AllowEyeHits = b;
+                    }
+                    else
+                    {
+                        CGTools.log("Could not parse Setting [AllowEyeHits]");
+                    }
+                }
+                if (config.ContainsKey("AllowAnkleHits"))
+                {
+                    if (bool.TryParse(config["AllowAnkleHits"], out bool b))
+                    {
+                        PlayerTitanBot.AllowAnkleHits = b;
+                    }
+                    else
+                    {
+                        CGTools.log("Could not parse Setting [AllowAnkleHits]");
+                    }
+                }
                 MovesetControlWindow.UpdateWindowData();
                 CGTools.log("Loaded config from " + Path + "\"Config.txt\"");
             }
@@ -302,6 +324,8 @@ namespace TitanBot
             {
                 config.Add("Dev", "True");
             }
+            config.Add("AllowEyeHits", PlayerTitanBot.AllowEyeHits.ToString());
+            config.Add("AllowAnkleHits", PlayerTitanBot.AllowAnkleHits.ToString());
             List<string> lines = new List<string>();
             foreach (string key in config.Keys)
             {

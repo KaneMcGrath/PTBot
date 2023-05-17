@@ -2611,6 +2611,7 @@ public class TITAN : Photon.MonoBehaviour
                 Vector3 vector = view.gameObject.transform.position - base.transform.position;
                 if (vector.magnitude < 20f)
                 {
+                    if (isCustomTitan && !PlayerTitanBot.AllowAnkleHits) return;
                     if (base.photonView.isMine && (this.grabbedTarget != null))
                     {
                         this.grabbedTarget.GetPhotonView().RPC("netUngrabbed", PhotonTargets.All, new object[0]);
@@ -2637,6 +2638,7 @@ public class TITAN : Photon.MonoBehaviour
             Vector3 vector = PhotonView.Find(viewID).gameObject.transform.position - this.neck.position;
             if (vector.magnitude < 20f)
             {
+                if (isCustomTitan && !PlayerTitanBot.AllowEyeHits) return;
                 if (base.photonView.isMine && (this.grabbedTarget != null))
                 {
                     this.grabbedTarget.GetPhotonView().RPC("netUngrabbed", PhotonTargets.All, new object[0]);

@@ -252,10 +252,18 @@ namespace TitanBot
                     }
                 }
             }
-            Label(IndexToRect(17), "Pruning");
-            GUI.Label(IndexToRect(18, 8, 0, 3), "Pruning Level");
-            prunningSettingTextbox = FlatUI.TextField(IndexToRect(18, 8, 3, 2), prunningSettingTextbox);
-            if (FlatUI.Button(IndexToRect(18, 8, 5, 2), "Apply", FlatUI.defaultButtonTex, isChanged[2] ? FlatUI.ChangedValueOutlineTex : FlatUI.outsideColorTex, true))
+
+            PlayerTitanBot.AllowAnkleHits = FlatUI.Check(IndexToRect(17, 8, 0, 7), PlayerTitanBot.AllowAnkleHits, "Allow ankle hits");
+            FlatUI.TooltipButton(IndexToRect(17, 8, 7), "Allow ankle hits", "If players are able to hit the titans ankles to force them to sit.  This is usually not possible on player titans" +
+                "\nDefault = false", 13);
+            PlayerTitanBot.AllowAnkleHits = FlatUI.Check(IndexToRect(18, 8, 0, 7), PlayerTitanBot.AllowAnkleHits, "Allow eye hits");
+            FlatUI.TooltipButton(IndexToRect(18, 8, 7), "Allow eye hits", "If players are able to hit the titans eyes to stun them.  This is usually not possible on player titans" +
+                "\nDefault = false", 12);
+
+            Label(IndexToRect(20), "Performance Options");
+            GUI.Label(IndexToRect(21, 8, 0, 3), "Pruning Level");
+            prunningSettingTextbox = FlatUI.TextField(IndexToRect(21, 8, 3, 2), prunningSettingTextbox);
+            if (FlatUI.Button(IndexToRect(21, 8, 5, 2), "Apply", FlatUI.defaultButtonTex, isChanged[2] ? FlatUI.ChangedValueOutlineTex : FlatUI.outsideColorTex, true))
             {
                 if (int.TryParse(prunningSettingTextbox, out int p))
                 {
@@ -279,9 +287,10 @@ namespace TitanBot
                 }
                 CheckForChanges();
             }
-            FlatUI.TooltipButton(IndexToRect(18, 8, 7), "Pruning Level", "This Setting is to help with performance, every players movement is predicted for each sampled hitbox. These hitboxes were sampled at a high framerate and overlap eachother. Pruning removes a number of hitboxes from the sampled data so they dont have to be calculated. A pruning level of 2 will keep 1 out of every 2 hitboxes, A pruning level of 3 will keep 1 out of every 3 hitboxes and so on.  I wouldn't recommend any higher than 4" +
+            FlatUI.TooltipButton(IndexToRect(21, 8, 7), "Pruning Level", "This Setting is to help with performance, every players movement is predicted for each sampled hitbox. These hitboxes were sampled at a high framerate and overlap eachother. Pruning removes a number of hitboxes from the sampled data so they dont have to be calculated. A pruning level of 2 will keep 1 out of every 2 hitboxes, A pruning level of 3 will keep 1 out of every 3 hitboxes and so on.  I wouldn't recommend any higher than 4" +
                 "\nDefault = 2", 7);
-            GUI.Label(IndexToRectMultiLine(19, 3), "*only keep 1 of every n number of hitboxes so the rest dont have to be calculated.  Most of them overlap so it is reccomended on large player or titan counts");
+            //GUI.Label(IndexToRectMultiLine(19, 3), "*only keep 1 of every n number of hitboxes so the rest dont have to be calculated.  Most of them overlap so it is reccomended on large player or titan counts");
+
         }
 
 

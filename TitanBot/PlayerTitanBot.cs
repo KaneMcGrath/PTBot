@@ -27,6 +27,8 @@ namespace TitanBot
         public static string TitanName = "PTBot";
         public static bool useCustomSpeed = false;
         public static float titanSpeed = 60f;
+        public static bool AllowEyeHits = false;
+        public static bool AllowAnkleHits = true;
 
         public static int[] AIWeightTable = new int[]
         {

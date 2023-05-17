@@ -231,6 +231,28 @@ namespace TitanBot
                         CGTools.log("Could not parse Setting [Speed]");
                     }
                 }
+                if (config.ContainsKey("AllowEyeHits"))
+                {
+                    if (bool.TryParse(config["AllowEyeHits"], out bool b))
+                    {
+                        PlayerTitanBot.AllowEyeHits = b;
+                    }
+                    else
+                    {
+                        CGTools.log("Could not parse Setting [AllowEyeHits]");
+                    }
+                }
+                if (config.ContainsKey("AllowAnkleHits"))
+                {
+                    if (bool.TryParse(config["AllowAnkleHits"], out bool b))
+                    {
+                        PlayerTitanBot.AllowAnkleHits = b;
+                    }
+                    else
+                    {
+                        CGTools.log("Could not parse Setting [AllowAnkleHits]");
+                    }
+                }
                 MovesetControlWindow.UpdateWindowData();
                 CGTools.log("Loaded profile " + name + ".txt");
             }

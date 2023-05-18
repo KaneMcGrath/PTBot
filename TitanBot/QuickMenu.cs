@@ -157,7 +157,7 @@ namespace TitanBot
             FlatUI.TooltipButton(IndexToRect(1, 8, 7), "Send Join Message", "When a player joins your room they are sent a message with a link to the mod and what your current ping is. This setting enables or disables sending that message.", 6);
             KaneGameManager.ShowHotkeyNotification = FlatUI.Check(IndexToRect(2, 8, 0, 7), KaneGameManager.ShowHotkeyNotification, "Show Hotkey Notification");
             FlatUI.TooltipButton(IndexToRect(2, 8, 7), "Show Hotkey Notification", "Displays the text in the bottom right corner showing which key to open the QuickMenu", 9);
-            Label(IndexToRect(3), "Endless Spawning");
+            Label(IndexToRect(3), "Spawning");
             FlatUI.TooltipButton(IndexToRect(4, 8, 7), "Endless Spawning", "This will endlessly respawn titans, specify the amount of normal titans and the amount of PTBots.  Each time a Titan dies a new titan will spawn", 7);
             KaneGameManager.doInfiniteTitans = FlatUI.Check(IndexToRect(4, 8, 0, 7), KaneGameManager.doInfiniteTitans, "Enable Endless Spawning");
             GUI.Label(IndexToRect(5, 8, 0, 3), "PTBot Count");
@@ -190,16 +190,47 @@ namespace TitanBot
                 }
                 CheckForChanges();
             }
-            PlayerTitanBot.ReplaceSpawnedTitans = FlatUI.Check(IndexToRect(8, 8, 0, 7), PlayerTitanBot.ReplaceSpawnedTitans, "Replace Normal Titans");
-            FlatUI.TooltipButton(IndexToRect(8, 8, 7), "Replace Normal Titans", "This will replace any titan spawned by your game with a PTBot. You can use this for wave modes or on custom maps.", 8);
-            KaneGameManager.doSpawnTeleporting = FlatUI.Check(IndexToRect(9, 8, 0, 7), KaneGameManager.doSpawnTeleporting, "Teleport Titans from spawn");
-            FlatUI.TooltipButton(IndexToRect(9, 8, 7), "Teleport Titans Away From Spawn", "This only works on The Forest and The City. When a titan gets too close to the spawn position, it is teleported to a random position on the map. This will also teleport Player Titans.", 9);
+            if (FlatUI.Button(IndexToRect(8), "Spawn A PTBot"))
+            {
+                if (PhotonNetwork.isMasterClient)
+                {
+                    Vector3 pos = Camera.main.transform.position;
+                    Quaternion rot = Quaternion.identity;
+                    float x = UnityEngine.Random.Range(-400f, 400f);
+                    float z = UnityEngine.Random.Range(-400f, 400f);
 
-            Label(IndexToRect(10), "Debug");
-            PlayerTitanBot.debugRaycasts = FlatUI.Check(IndexToRect(11), PlayerTitanBot.debugRaycasts, "Debug Raycasts");
-            PlayerTitanBot.debugTargets = FlatUI.Check(IndexToRect(12), PlayerTitanBot.debugTargets, "Debug Targets");
-            PTTools.debugPlayerData = FlatUI.Check(IndexToRect(13), PTTools.debugPlayerData, "Debug Predictions");
-            if (FlatUI.Button(IndexToRect(14), "Teleport titans back inside"))
+                    Vector3 rayOrigin = new Vector3(x, 200f, z);
+                    Vector3 rayDirection = Vector3.down;
+                    Ray ray = new Ray(rayOrigin, rayDirection);
+
+                    Vector3 spawnPosition = rayOrigin;
+
+                    if (Physics.Raycast(ray, out RaycastHit raycastHit))
+                    {
+                        spawnPosition = raycastHit.point;
+                    }
+
+                    GameObject myPTGO = PhotonNetwork.Instantiate("TITAN_VER3.1", spawnPosition, rot, 0);
+                    TITAN MyPT = myPTGO.GetComponent<TITAN>();
+                    myLastPT = MyPT;
+                    GameObject.Destroy(myPTGO.GetComponent<TITAN_CONTROLLER>());
+                    myPTGO.GetComponent<TITAN>().nonAI = true;
+                    myPTGO.GetComponent<TITAN>().speed = 30f;
+                    myPTGO.GetComponent<TITAN_CONTROLLER>().enabled = true;
+                    myPTGO.GetComponent<TITAN>().isCustomTitan = true;
+                }
+
+            }
+            PlayerTitanBot.ReplaceSpawnedTitans = FlatUI.Check(IndexToRect(10, 8, 0, 7), PlayerTitanBot.ReplaceSpawnedTitans, "Replace Normal Titans");
+            FlatUI.TooltipButton(IndexToRect(10, 8, 7), "Replace Normal Titans", "This will replace any titan spawned by your game with a PTBot. You can use this for wave modes or on custom maps.", 8);
+            KaneGameManager.doSpawnTeleporting = FlatUI.Check(IndexToRect(11, 8, 0, 7), KaneGameManager.doSpawnTeleporting, "Teleport Titans from spawn");
+            FlatUI.TooltipButton(IndexToRect(11, 8, 7), "Teleport Titans Away From Spawn", "This only works on The Forest and The City. When a titan gets too close to the spawn position, it is teleported to a random position on the map. This will also teleport Player Titans.", 9);
+
+            Label(IndexToRect(17), "Debug");
+            PlayerTitanBot.debugRaycasts = FlatUI.Check(IndexToRect(18), PlayerTitanBot.debugRaycasts, "Debug Raycasts");
+            PlayerTitanBot.debugTargets = FlatUI.Check(IndexToRect(19), PlayerTitanBot.debugTargets, "Debug Targets");
+            PTTools.debugPlayerData = FlatUI.Check(IndexToRect(20), PTTools.debugPlayerData, "Debug Predictions");
+            if (FlatUI.Button(IndexToRect(21), "Teleport titans back inside"))
             {
                 foreach (GameObject t in GameObject.FindGameObjectsWithTag("titan"))
                 {
@@ -211,7 +242,7 @@ namespace TitanBot
                     }
                 }
             }
-            CGDebugConsole.UseCGDebugConsole = FlatUI.Check(IndexToRect(15), CGDebugConsole.UseCGDebugConsole, "Use CGDebugConsole");
+            CGDebugConsole.UseCGDebugConsole = FlatUI.Check(IndexToRect(22), CGDebugConsole.UseCGDebugConsole, "Use CGDebugConsole");
         }
 
         private static void tabPTBotSettings()
@@ -341,7 +372,7 @@ namespace TitanBot
 
         public static void tabExtra()
         {
-            if (FlatUI.Button(IndexToRect(1), "Spawn Random"))
+            if (FlatUI.Button(IndexToRect(1), "Spawn Random") && PhotonNetwork.isMasterClient)
             {
                 Vector3 pos = Camera.main.transform.position;
                 Quaternion rot = Quaternion.identity;

@@ -30,7 +30,7 @@ namespace TitanBot
         public static bool doInfiniteTitans = false;
         public static bool sendJoinMessage = true;
         public static bool ShowHotkeyNotification = true;
-        private static float spawnRad = 350f;
+        private static float spawnRad = 420f;
 
         public static bool isDevMode = false;
 

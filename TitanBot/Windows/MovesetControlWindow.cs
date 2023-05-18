@@ -37,7 +37,6 @@ namespace TitanBot.Windows
         /// </summary>
         public static void Init()
         {
-
             tabColors = new Texture2D[]
             {
                 CGTools.ColorTex(CGTools.randomColor()),
@@ -57,7 +56,6 @@ namespace TitanBot.Windows
                 startAnimAtTextBoxs.Add(action, "0");
                 moveEnabled[action] = true;
             }
-
         }
 
         public static void OnGUI()
@@ -106,10 +104,12 @@ namespace TitanBot.Windows
                     else if(tabIndex == 1)
                     {
                         MovesetProfile.ProfilesUpdateCheck();
+                        Rect LabelRect = new Rect(ControlWindow.ContentRect.x, ControlWindow.ContentRect.y, ControlWindow.ContentRect.width, 30f);
                         Rect TopRect = new Rect(ControlWindow.ContentRect.x, ControlWindow.ContentRect.y + 30f, ControlWindow.ContentRect.width, 30f);
                         Rect TopLabelRect = RTools.SplitH(TopRect, 4, 0);
                         Rect TopTextBoxRect = RTools.SplitH(TopRect, 4, 1, 2);
                         Rect TopButtonRect = RTools.SplitH(TopRect, 4, 3);
+                        FlatUI.Label(LabelRect, "New Profile", labelStyle);
                         FlatUI.Label(TopLabelRect, "Profile Name");
                         ProfileName = FlatUI.TextField(TopTextBoxRect, ProfileName);
                         if (FlatUI.Button(TopButtonRect, "Save"))
@@ -287,6 +287,15 @@ namespace TitanBot.Windows
             clipping = TextClipping.Overflow,
             wordWrap = true,
             normal = { textColor = Color.red }
+        };
+
+        private static GUIStyle labelStyle = new GUIStyle
+        {
+            border = new RectOffset(1, 1, 1, 1),
+            alignment = TextAnchor.LowerCenter,
+            fontSize = 16,
+            fontStyle = FontStyle.Bold,
+            normal = { textColor = Color.white }
         };
     }
 }

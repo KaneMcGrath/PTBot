@@ -25,7 +25,7 @@ namespace TitanBot
 
         private static float movetoRPCTimer = 0f;
         public static bool doSpawnTeleporting = false;
-        public static int InfPTBotCount = 5;
+        public static int InfPTBotCount = 2;
         public static int InfiniteTitansCount = 10;
         public static bool doInfiniteTitans = false;
         public static bool sendJoinMessage = true;
@@ -373,8 +373,8 @@ namespace TitanBot
         public static void ResetDefaults()
         {
             sendJoinMessage = true;
-            InfPTBotCount = 5;
-            QuickMenu.infinitePTBotTextBox = "5";
+            InfPTBotCount = 2;
+            QuickMenu.infinitePTBotTextBox = "2";
             PlayerTitanBot.ReplaceSpawnedTitans = false;
             doSpawnTeleporting = false;
             PTTools.difficulty = Difficulty.VeryVeryHard;
@@ -390,6 +390,11 @@ namespace TitanBot
             PlayerTitanBot.useCustomSpeed = false;
             PlayerTitanBot.titanSpeed = 60f;
             QuickMenu.speedTextBox = "60";
+            QuickMenu.infiniteNormalTitanTextBox = "10";
+            InfiniteTitansCount = 10;
+            ShowHotkeyNotification = true;
+            PlayerTitanBot.AllowAnkleHits = true;
+            PlayerTitanBot.AllowEyeHits = true;
             CGTools.log("Reset settings to default values");
         }
 

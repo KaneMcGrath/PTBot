@@ -29,6 +29,7 @@ namespace TitanBot
         public static int InfiniteTitansCount = 10;
         public static bool doInfiniteTitans = false;
         public static bool sendJoinMessage = true;
+        public static bool ShowHotkeyNotification = true;
         private static float spawnRad = 350f;
 
         public static bool isDevMode = false;
@@ -80,12 +81,11 @@ namespace TitanBot
             {
                 if (FengGameManagerMKII.instance.gameStart)
                 {
-                    GUI.Label(new Rect(Screen.width - TagWidth - 10f, Screen.height - TagHeight - 10f, TagWidth, TagHeight), GameVersionString + Environment.NewLine + "Press \"" + QuickMenuKey.ToString() + "\" to Open Quick Menu", TagStyle);
+                    if (ShowHotkeyNotification) GUI.Label(new Rect(Screen.width - TagWidth - 10f, Screen.height - TagHeight - 20f, TagWidth, TagHeight), GameVersionString + Environment.NewLine + "Press \"" + QuickMenuKey.ToString() + "\" to Open Quick Menu", TagStyle);
                 }
             }
             //GUI.Label(new Rect(200f, 200f, 200f, 30f), Time.deltaTime.ToString() + ":" + cameraRotationSpeed.ToString());
         }
-
 
         public static void LoadConfig()
         {
@@ -293,6 +293,17 @@ namespace TitanBot
                         CGTools.log("Could not parse Setting [AllowAnkleHits]");
                     }
                 }
+                if (config.ContainsKey("ShowHotkeyNotification"))
+                {
+                    if (bool.TryParse(config["ShowHotkeyNotification"], out bool b))
+                    {
+                        ShowHotkeyNotification = b;
+                    }
+                    else
+                    {
+                        CGTools.log("Could not parse Setting [ShowHotkeyNotification]");
+                    }
+                }
                 MovesetControlWindow.UpdateWindowData();
                 CGTools.log("Loaded config from " + Path + "\"Config.txt\"");
             }
@@ -342,6 +353,7 @@ namespace TitanBot
             }
             config.Add("AllowEyeHits", PlayerTitanBot.AllowEyeHits.ToString());
             config.Add("AllowAnkleHits", PlayerTitanBot.AllowAnkleHits.ToString());
+            config.Add("ShowHotkeyNotification", ShowHotkeyNotification.ToString());
             List<string> lines = new List<string>();
             foreach (string key in config.Keys)
             {

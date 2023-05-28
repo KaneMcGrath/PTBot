@@ -85,7 +85,14 @@ namespace TitanBot
             {
                 isChanged[3] = false;
             }
-
+            if (int.TryParse(infiniteNormalTitanTextBox, out int g))
+            {
+                isChanged[4] = (KaneGameManager.InfiniteTitansCount != g);
+            }
+            else
+            {
+                isChanged[4] = false;
+            }
 
         }
 
@@ -177,7 +184,7 @@ namespace TitanBot
             }
             GUI.Label(IndexToRect(6, 8, 0, 3), "Titan Count");
             infiniteNormalTitanTextBox = FlatUI.TextField(IndexToRect(6, 8, 3, 2), infiniteNormalTitanTextBox);
-            if (FlatUI.Button(IndexToRect(6, 8, 5, 2), "Apply", FlatUI.defaultButtonTex, isChanged[0] ? FlatUI.ChangedValueOutlineTex : FlatUI.outsideColorTex, true))
+            if (FlatUI.Button(IndexToRect(6, 8, 5, 2), "Apply", FlatUI.defaultButtonTex, isChanged[4] ? FlatUI.ChangedValueOutlineTex : FlatUI.outsideColorTex, true))
             {
                 if (int.TryParse(infiniteNormalTitanTextBox, out int i))
                 {

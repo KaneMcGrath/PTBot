@@ -2,6 +2,10 @@
 
 [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/rC5HgrP6xPQ/0.jpg)](https://www.youtube.com/watch?v=rC5HgrP6xPQ)
 
+[Watch On Youtube](https://www.youtube.com/watch?v=rC5HgrP6xPQ)
+
+#
+
 A Custom Titan AI for the Attack on Titan Tribute Game
 
 [Download Latest Version](https://github.com/KaneMcGrath/PTBot/releases/download/1.82/PTBot.1.82.zip)

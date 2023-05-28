@@ -232,13 +232,16 @@ namespace TitanBot
             PTTools.debugPlayerData = FlatUI.Check(IndexToRect(20), PTTools.debugPlayerData, "Debug Predictions");
             if (FlatUI.Button(IndexToRect(21), "Teleport titans back inside"))
             {
-                foreach (GameObject t in GameObject.FindGameObjectsWithTag("titan"))
+                if (PhotonNetwork.isMasterClient)
                 {
-                    if (t.GetPhotonView().isMine)
+                    foreach (GameObject t in GameObject.FindGameObjectsWithTag("titan"))
                     {
-                        float x = UnityEngine.Random.Range(-300f, 300f);
-                        float z = UnityEngine.Random.Range(-300f, 300f);
-                        t.transform.position = new Vector3(x, 10f, z);
+                        if (t.GetPhotonView().isMine)
+                        {
+                            float x = UnityEngine.Random.Range(-300f, 300f);
+                            float z = UnityEngine.Random.Range(-300f, 300f);
+                            t.transform.position = new Vector3(x, 10f, z);
+                        }
                     }
                 }
             }

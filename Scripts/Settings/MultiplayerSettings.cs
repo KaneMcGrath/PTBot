@@ -28,7 +28,7 @@ namespace Settings
         {
             { MultiplayerRegion.EU, "135.125.239.180" },
             { MultiplayerRegion.US, "142.44.242.29" },
-            { MultiplayerRegion.SA, "172.107.193.233" },
+            { MultiplayerRegion.SA, "108.181.69.221" },
             { MultiplayerRegion.ASIA, "51.79.164.137" },
         };
         public readonly int DefaultPort = 5055;

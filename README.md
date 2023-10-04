@@ -36,7 +36,7 @@ This only affects how accurate the PTBot predictions are.  At lower difficulties
 
 ### Edit Moves
 
-This button will open the Moveset Control Window, which lets you edit each attack that PTBot can do.  You can find more info in the moveset control window section [below](https://github.com/KaneMcGrath/PTBot/edit/main/README.md#moveset-control-window)
+This button will open the Moveset Control Window, which lets you edit each attack that PTBot can do.  You can find more info in the moveset control window section below
 
 ### Custom Speed
 

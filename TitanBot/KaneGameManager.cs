@@ -13,7 +13,7 @@ namespace TitanBot
     {
         public static KaneGameManager instance;
         public static bool toggleQuickMenu = false;
-        public static string GameVersionString = "PTBot 1.83";
+        public static string GameVersionString = "PTBot 1.85";
         public static bool doCameraRotation = false;
         public static float cameraRotationSpeed = 30f;
         public static string Path = Application.dataPath + "/PTBot/";
@@ -602,6 +602,73 @@ namespace TitanBot
                     ""
                 });
 
+            }
+        }
+
+        /// <summary>
+        /// For use with Custom Logic
+        /// </summary>
+        public static void SpawnPTBotAction(float size, int health, int number)
+        {
+            Vector3 position = new Vector3(UnityEngine.Random.Range((float)-400f, (float)400f), 0f, UnityEngine.Random.Range((float)-400f, (float)400f));
+            Quaternion rotation = new Quaternion(0f, 0f, 0f, 1f);
+            if (FengGameManagerMKII.instance.titanSpawns.Count > 0)
+            {
+                position = FengGameManagerMKII.instance.titanSpawns[UnityEngine.Random.Range(0, FengGameManagerMKII.instance.titanSpawns.Count)];
+            }
+            else
+            {
+                GameObject[] objArray = GameObject.FindGameObjectsWithTag("titanRespawn");
+                if (objArray.Length > 0)
+                {
+                    int index = UnityEngine.Random.Range(0, objArray.Length);
+                    GameObject obj2 = objArray[index];
+                    position = obj2.transform.position;
+                    rotation = obj2.transform.rotation;
+                }
+            }
+            for (int i = 0; i < number; i++)
+            {
+                GameObject obj3 = PhotonNetwork.Instantiate("TITAN_VER3.1", position, rotation, 0);
+                obj3.GetComponent<TITAN>().resetLevel(size);
+                obj3.GetComponent<TITAN>().hasSetLevel = true;
+                if (health > 0f)
+                {
+                    obj3.GetComponent<TITAN>().currentHealth = health;
+                    obj3.GetComponent<TITAN>().maxHealth = health;
+                }
+                obj3.GetComponent<TITAN>().setAbnormalType2(AbnormalType.NORMAL, false);
+                GameObject.Destroy(obj3.GetComponent<TITAN_CONTROLLER>());
+                obj3.GetComponent<TITAN>().nonAI = true;
+                obj3.GetComponent<TITAN>().speed = 30f;
+                obj3.GetComponent<TITAN_CONTROLLER>().enabled = true;
+                obj3.GetComponent<TITAN>().isCustomTitan = true;
+            }
+        }
+
+        /// <summary>
+        /// For use with Custom Logic
+        /// </summary>
+        public static void SpawnPTBotAtAction(float size, int health, int number, float posX, float posY, float posZ)
+        {
+            Vector3 position = new Vector3(posX, posY, posZ);
+            Quaternion rotation = new Quaternion(0f, 0f, 0f, 1f);
+            for (int i = 0; i < number; i++)
+            {
+                GameObject obj2 = PhotonNetwork.Instantiate("TITAN_VER3.1", position, rotation, 0);
+                obj2.GetComponent<TITAN>().resetLevel(size);
+                obj2.GetComponent<TITAN>().hasSetLevel = true;
+                if (health > 0f)
+                {
+                    obj2.GetComponent<TITAN>().currentHealth = health;
+                    obj2.GetComponent<TITAN>().maxHealth = health;
+                }
+                obj2.GetComponent<TITAN>().setAbnormalType2(AbnormalType.NORMAL, false);
+                GameObject.Destroy(obj2.GetComponent<TITAN_CONTROLLER>());
+                obj2.GetComponent<TITAN>().nonAI = true;
+                obj2.GetComponent<TITAN>().speed = 30f;
+                obj2.GetComponent<TITAN_CONTROLLER>().enabled = true;
+                obj2.GetComponent<TITAN>().isCustomTitan = true;
             }
         }
 

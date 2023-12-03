@@ -6539,6 +6539,25 @@ public class FengGameManagerMKII : Photon.MonoBehaviour
                             action = new RCAction(num13, 1, null, new RCActionHelper[] { helper, helper2, helper3, helper4 });
                             sentTrueActions.Add(action);
                         }
+                        else if (str2.StartsWith("SpawnPTBotAt"))
+                        {
+                            helper = this.returnHelper(strArray3[0]);
+                            helper2 = this.returnHelper(strArray3[1]);
+                            helper3 = this.returnHelper(strArray3[2]);
+                            helper4 = this.returnHelper(strArray3[3]);
+                            RCActionHelper helper5 = this.returnHelper(strArray3[4]);
+                            RCActionHelper helper6 = this.returnHelper(strArray3[5]);
+                            action = new RCAction(num13, 6, null, new RCActionHelper[] { helper, helper2, helper3, helper4, helper5, helper6});
+                            sentTrueActions.Add(action);
+                        }
+                        else if (str2.StartsWith("SpawnPTBot"))
+                        {
+                            helper = this.returnHelper(strArray3[0]);
+                            helper2 = this.returnHelper(strArray3[1]);
+                            helper3 = this.returnHelper(strArray3[2]);
+                            action = new RCAction(num13, 5, null, new RCActionHelper[] { helper, helper2, helper3});
+                            sentTrueActions.Add(action);
+                        }
                         else if (str2.StartsWith("SetHealth"))
                         {
                             helper = this.returnHelper(strArray3[0]);

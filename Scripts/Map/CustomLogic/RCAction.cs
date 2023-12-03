@@ -6,6 +6,7 @@
 using ExitGames.Client.Photon;
 using System;
 using UnityEngine;
+using TitanBot;
 
 public class RCAction
 {
@@ -531,6 +532,16 @@ public class RCAction
                         {
                             titan4.photonView.RPC("moveToRPC", titan4.photonView.owner, new object[] { this.parameters[1].returnFloat(null), this.parameters[2].returnFloat(null), this.parameters[3].returnFloat(null) });
                         }
+                        return;
+                    }
+                    case 5:
+                    {
+                        KaneGameManager.SpawnPTBotAction(this.parameters[0].returnFloat(null), this.parameters[1].returnInt(null), this.parameters[2].returnInt(null));
+                        return;
+                    }
+                    case 6:
+                    {
+                        KaneGameManager.SpawnPTBotAtAction(this.parameters[0].returnFloat(null), this.parameters[1].returnInt(null), this.parameters[2].returnInt(null), this.parameters[3].returnFloat(null), this.parameters[4].returnFloat(null), this.parameters[5].returnFloat(null));
                         return;
                     }
                 }

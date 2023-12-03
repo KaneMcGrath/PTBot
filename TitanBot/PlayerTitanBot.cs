@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reflection.Emit;
 using UnityEngine;
 using static TitanBot.HitData;
 
@@ -338,18 +339,44 @@ namespace TitanBot
             {
                 lastRaycasts.Clear();
             }
-
+            bool isCity = (FengGameManagerMKII.level == "The City");
+            bool isForest = (LevelInfo.getInfo(FengGameManagerMKII.level).mapName.Contains("Forest"));
+            float distance = 0f;
+            if (isForest)
+            {
+                distance = Vector3.Distance(MyTitan.transform.position, new Vector3(0f, MyTitan.transform.position.y, 0f));
+            }
             Vector3 rayOrigin2 = MyTitan.transform.position + Vector3.up * 10f;
             for (int i = 0; i < raycasts; i++)
             {
 
                 Vector3 rayDirection2 = Quaternion.Euler(new Vector3(0f, i * (360 / raycasts), 0f)) * MyTitan.transform.forward;
                 Ray ray2 = new Ray(rayOrigin2, rayDirection2);
-                bool isCity = (FengGameManagerMKII.level == "The City");
+                
                 LayerMask mask = ((int)1) << PhysicsLayer.Ground;
                 if (Physics.Raycast(ray2, out RaycastHit raycastHit2, 10000f, mask.value))
                 {
-                    if (isCity && Vector3.Distance(raycastHit2.point, cityGate) < 300f)
+                    if (isForest)
+                    {
+                        if (distance > 250f)
+                        {
+                            if (raycastHit2.distance - Vector3.Distance(raycastHit2.point, new Vector3(0f, MyTitan.transform.position.y, 0f)) > lastFarthestDistance)
+                            {
+                                lastFarthestDistance = raycastHit2.distance;
+                                lastFarthestPoint = raycastHit2.point;
+                            }
+                        }
+                        else
+                        {
+                            if (raycastHit2.distance > lastFarthestDistance)
+                            {
+                                lastFarthestDistance = raycastHit2.distance;
+                                lastFarthestPoint = raycastHit2.point;
+                            }
+                        }
+                        
+                    }
+                    else if (isCity && Vector3.Distance(raycastHit2.point, cityGate) < 300f)
                     {
 
                     }

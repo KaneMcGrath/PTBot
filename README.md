@@ -125,6 +125,17 @@ In the Moveset Control Window under the Profiles tab, there are now Profiles to 
 
 Profiles are stored in the profiles folder Profiles are identical to the config file.  You can add any setting from the config file to a profile and it will be loaded when the profile is loaded.
 
+# Custom Logic
+
+Two new actions have been added to the RC Mods custom logic system
+
+ - Titan.SpawnPTBot(float size, int health, int count);
+
+ - Titan.SpawnPTBotAt(float size, int health, int count, float x, float y, float z);
+
+
+They are identical to The default spawn actions without the type option at the front
+
 # Source Code
 This mod is forked from the RCMod 5/5/2022 Update https://github.com/rc174945/RCMod By Ricecake
 

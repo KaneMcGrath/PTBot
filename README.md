@@ -139,6 +139,6 @@ They are identical to The default spawn actions without the type option at the f
 # Source Code
 This mod is forked from the RCMod 5/5/2022 Update https://github.com/rc174945/RCMod By Ricecake
 
-Almost all of my changes are under the PTBot namespace
+Almost all of my changes are under the TitanBot namespace
 
 This mod is open source and you are welcome to include or improve any parts of it in your own mods. As long as credit is given.  I didn't use any external dependencies and everything is fairly self contained, so if you know how to mod the game, it should not be too difficult to implement.
